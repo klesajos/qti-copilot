@@ -4,6 +4,18 @@
 
 > ⏱ 25 min (5 demo + 20 exercise 5) · Docs: [Custom agents](https://docs.github.com/en/copilot/concepts/customizations/custom-agents) · [Creating and using custom agents for Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** The CLI. One Markdown file per agent.
+
+**What it is for:** A custom agent is a specialist with its own instructions, its own list of tools and its own context window. Your session hands it a task and gets back only the result, not the noise.
+
+**Three uses that pay off most:**
+
+1. A read-only reviewer that checks your diff and cannot change a single file.
+2. An explorer that finds where a feature lives without filling your session with file contents.
+3. A test writer that only writes tests, so the fix stays a separate step you can check.
+
 ## What is a custom agent?
 
 A custom agent is a Markdown file: frontmatter plus a prompt. It has three things of its own:

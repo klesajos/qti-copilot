@@ -4,6 +4,20 @@
 
 > ⏱ 15 min, jen demo (`-p` a JSONL 4 · `/fleet` 4 · Conductor 5 · dynamická workflow 2) · Dokumentace: [/fleet](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/speed-up-task-completion) · [Running the CLI programmatically](https://docs.github.com/en/copilot/how-tos/copilot-cli/automate-copilot-cli/run-cli-programmatically) · [Conductor](https://github.com/microsoft/conductor) · [Dynamic workflows](https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/dynamic-workflows) · Ověřeno na Copilot CLI 1.0.114 a Conductor v0.1.47
 
+## Ve zkratce
+
+**Potřebuješ:** CLI a `jq` na výstup v JSONu. Pro Conductor: `uv` a Python 3.12+.
+
+**K čemu to je:** Jde dál než jeden chat: několik agentů pracuje paralelně, Copilot běží ve skriptech a v CI a pevné víceagentní pipeline jsou popsané v souboru.
+
+**Tři nejužitečnější použití:**
+
+1. Rozděl velkou práci jen pro čtení, třeba audit nebo přehled chybějících testů, mezi paralelní subagenty přes `/fleet`.
+2. Spusť Copilot v CI nebo v nočním skriptu přes `copilot -p` a nech skript přečíst výsledek.
+3. Popiš celotýmový postup jednou v YAML souboru pro Conductor a spouštěj ho pokaždé stejně.
+
+## Čtyři cesty za jednu session
+
 Návody 02–09 ladí jednoho agenta v jedné session. Čtyři způsoby, jak jít dál:
 
 | Použij | Kdy | Kdo rozhoduje o rozdělení | Kde žije |

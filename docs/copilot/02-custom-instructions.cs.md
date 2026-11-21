@@ -4,6 +4,18 @@
 
 > ⏱ 15 min (5 demo + 10 cvičení 1) · Dokumentace: [Adding custom instructions for Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) · [Support per surface](https://docs.github.com/en/copilot/reference/custom-instructions-support) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** CLI z [01](01-getting-started.cs.md) a textový editor. Na kontrolu víc rep najednou: `jq`.
+
+**K čemu to je:** Copilot začíná každou session a o tvém projektu neví nic. Soubory s instrukcemi jsou trvalý briefing, který dostane pokaždé: stack, konvence, příkazy, co nedělat.
+
+**Tři nejužitečnější použití:**
+
+1. Zastav opakované chyby jednou provždy: „Spring Boot 4, ne 3“, „používej `MockMvcTester`“, „žádné hvězdičkové importy“.
+2. Dej každé části repa vlastní pravidla přes `applyTo`, takže pravidla pro Android se načtou, jen když Copilot sáhne na soubory pro Android.
+3. Zjisti, co repo, které už má `CLAUDE.md`, `AGENTS.md` nebo pravidla pro Cursor, Copilotu opravdu posílá (`scripts/instruction-audit.sh`).
+
 ## Co jsou vlastní instrukce?
 
 Soubory v Markdownu, které Copilot načítá jako trvalé pokyny. Liší se v tom, *kdy* se dostanou k modelu:

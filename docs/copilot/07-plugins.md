@@ -4,6 +4,18 @@
 
 > ⏱ 15 min (7 demo + 8 exercise 6) · Docs: [Plugins for GitHub Copilot](https://docs.github.com/en/copilot/concepts/customizations/plugins) · [Creating a plugin](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-creating) · [Finding and installing plugins](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** The CLI. To share a tool at a guild: a git repository that hosts the marketplace.
+
+**What it is for:** A plugin packs skills, agents, hooks and MCP servers into one bundle with a name and a version. It is how a tool you built in one repo reaches the other 170 My2N repos.
+
+**Three uses that pay off most:**
+
+1. Share a guild tool: colleagues install it by name instead of copying files.
+2. Switch a team toolset on for a whole repo with two settings keys; everyone gets it after trusting the folder.
+3. Version a tool, so a change can be rolled out and rolled back.
+
 ## What is a plugin?
 
 A **plugin** is a directory with a manifest, `plugin.json`, that bundles skills, agents, hooks, MCP

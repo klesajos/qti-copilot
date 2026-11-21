@@ -4,6 +4,18 @@
 
 > ⏱ 25 min (5 lab s payloadem + 5 demo zamítnutí + 15 cvičení 3) · Dokumentace: [Hooks for GitHub Copilot](https://docs.github.com/en/copilot/concepts/customizations/hooks) · [GitHub Copilot hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference) · [Using hooks with GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** bash a `jq`, Copilot spuštěný z kořene repa v důvěryhodné složce. Na Windows: WSL 2.
+
+**K čemu to je:** Hook je skript, který spouští samotné CLI při nějaké události, třeba před každým shellovým příkazem. Model ho nemůže přeskočit, takže patří tam pravidla, která musí platit úplně pokaždé.
+
+**Tři nejužitečnější použití:**
+
+1. Zablokuj nebezpečné příkazy nebo ty, které vynesou tajné údaje, třeba `rm -rf` nebo `cat .env`, dřív než se spustí.
+2. Automaticky naformátuj každý soubor, který Copilot upraví.
+3. Nenech agenta skončit, dokud jsou testy červené.
+
 ## Co je hook?
 
 Hook je příkaz, který CLI spustí samo, když nastane událost: začne session, má se spustit

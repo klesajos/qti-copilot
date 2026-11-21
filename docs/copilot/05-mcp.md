@@ -4,6 +4,18 @@
 
 > ⏱ 10 min (5 talk + 5 facilitator demo: exercise 4, steps 1 to 3) · Docs: [Adding MCP servers for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers) · [Built-in MCP servers](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#built-in-mcp-servers) · [MCP server usage in your company](https://docs.github.com/en/copilot/concepts/enterprise/mcp-management) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** The CLI, logged in: the GitHub server is built in. `gh` is optional. For any other server: a place on 2N's approved list, such as the Jira MCP and its URL.
+
+**What it is for:** MCP plugs outside systems into the agent as tools: GitHub, Jira, a database. Copilot then reads the issue or ticket itself instead of you pasting it in.
+
+**Three uses that pay off most:**
+
+1. Implement a feature straight from a GitHub issue or a Jira ticket.
+2. Search code across the organisation's repositories without leaving the session.
+3. Bring in facts the model cannot know: a ticket's acceptance criteria, a shared Copilot Space.
+
 ## What is MCP?
 
 MCP (Model Context Protocol) gives the agent tools the CLI does not ship with. A server is a

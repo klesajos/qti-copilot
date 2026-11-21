@@ -4,6 +4,18 @@
 
 > ⏱ 15 min (5 demo + 10 exercise 1) · Docs: [Adding custom instructions for Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) · [Support per surface](https://docs.github.com/en/copilot/reference/custom-instructions-support) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** The CLI from [01](01-getting-started.md) and a text editor. For checking many repos at once: `jq`.
+
+**What it is for:** Copilot starts every session knowing nothing about your project. Instruction files are the standing briefing it gets every time: the stack, the conventions, the commands, what not to do.
+
+**Three uses that pay off most:**
+
+1. Stop repeated mistakes once and for all: "Spring Boot 4, not 3", "use `MockMvcTester`", "no wildcard imports".
+2. Give each part of the repo its own rules with `applyTo`, so Android rules load only when Copilot touches Android files.
+3. Check what an existing repo with `CLAUDE.md`, `AGENTS.md` or Cursor rules really sends to Copilot (`scripts/instruction-audit.sh`).
+
 ## What are custom instructions?
 
 Markdown files Copilot loads as standing orders. They differ in *when* they reach the model:

@@ -4,6 +4,18 @@
 
 > ⏱ 20 min (5 demo + 15 exercise 2) · Docs: [Adding agent skills for Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills) · [Agent skills](https://docs.github.com/en/copilot/concepts/customizations/agent-skills) · [Agent Skills specification](https://agentskills.io/specification) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** The CLI. Nothing else: a skill is one Markdown file in a folder.
+
+**What it is for:** A skill is a how-to that Copilot reads only when the task needs it, for example "how we write board tests here". Until then it costs one line of context, so you can have many.
+
+**Three uses that pay off most:**
+
+1. The recipe for the change you make most often: a new endpoint, a migration, a screen.
+2. Team conventions too long for the instruction file: test style, error format, logging.
+3. A repeatable job you call by name, for example `/2048-dev:build-test` builds and tests everything.
+
 ## What is a skill?
 
 A folder with a `SKILL.md`: instructions that are loaded **only when the task needs them**. The

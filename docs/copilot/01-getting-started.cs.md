@@ -4,6 +4,18 @@
 
 > ⏱ Příprava předem 15 min · workshop 10 min (3 min první session + 7 min [cvičení 0](exercises.cs.md)) · Dokumentace: [Installing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli) · [Plan mode](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices#plan-mode) · [Rolling back changes](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/roll-back-changes) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** Licenci Copilot Business od `2n-labs`, JDK 17–27, Node.js 24.15+ nebo 26, `git` a `jq`. Na Windows: WSL 2.
+
+**K čemu to je:** Rozjede Copilot CLI v tomhle repu a naučí jednu smyčku, kterou opakuje každé další cvičení: plán, padající test, oprava, důkaz. Tak se pracuje na úrovni 5: kód píše Copilot a ty ho kontroluješ.
+
+**Tři nejužitečnější použití:**
+
+1. Oprav chybu, aniž bys psal kód: popiš ji, nech Copilot napsat padající test a opravu, přečti diff.
+2. Vrať špatný krok za pár sekund přes `/rewind`, místo abys uklízel ručně.
+3. Nech si každou změnu před commitem zkontrolovat přes `/review`.
+
 ## Před dnem workshopu (příprava předem, 15 min)
 
 Potřebuješ seat Copilot Business od `2n-labs` se zapnutou politikou Copilot CLI, libovolné JDK

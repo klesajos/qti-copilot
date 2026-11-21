@@ -4,6 +4,18 @@
 
 > ⏱ 25 min (5 demo + 20 cvičení 5) · Dokumentace: [Custom agents](https://docs.github.com/en/copilot/concepts/customizations/custom-agents) · [Creating and using custom agents for Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** CLI. Jeden soubor v Markdownu na agenta.
+
+**K čemu to je:** Vlastní agent je specialista s vlastními instrukcemi, vlastním seznamem nástrojů a vlastním kontextovým oknem. Tvoje session mu předá úkol a dostane zpátky jen výsledek, ne šum kolem.
+
+**Tři nejužitečnější použití:**
+
+1. Reviewer jen pro čtení, který zkontroluje tvůj diff a nezmění ani jeden soubor.
+2. Průzkumník, který najde, kde featura žije, a nezaplní ti session obsahem souborů.
+3. Autor testů, který píše jen testy, takže oprava zůstane samostatný krok, který zkontroluješ.
+
 ## Co je vlastní agent?
 
 Vlastní agent je Markdown soubor: frontmatter plus prompt. Tři věci má jen pro sebe:

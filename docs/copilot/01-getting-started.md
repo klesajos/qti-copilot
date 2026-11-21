@@ -4,6 +4,18 @@
 
 > ⏱ Pre-work 15 min · workshop 10 min (3 min first session + 7 min [exercise 0](exercises.md)) · Docs: [Installing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli) · [Plan mode](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices#plan-mode) · [Rolling back changes](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/roll-back-changes) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** A Copilot Business seat from `2n-labs`, JDK 17–27, Node.js 24.15+ or 26, `git` and `jq`. On Windows: WSL 2.
+
+**What it is for:** Gets Copilot CLI running in this repo and teaches the one loop every later exercise repeats: plan, failing test, fix, evidence. That loop is how you work at level 5, where Copilot writes the code and you check it.
+
+**Three uses that pay off most:**
+
+1. Fix a bug without typing code: describe it, let Copilot write the failing test and the fix, read the diff.
+2. Undo a wrong turn in seconds with `/rewind` instead of cleaning up by hand.
+3. Have every change reviewed with `/review` before you commit it.
+
 ## Before the workshop day (pre-work, 15 min)
 
 You need a Copilot Business seat from `2n-labs` with the Copilot CLI policy enabled, any JDK

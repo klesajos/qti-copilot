@@ -4,6 +4,18 @@
 
 > ⏱ 15 min (10 demo + 5 vyzkoušení) · Dokumentace: [Allowing and denying tool use](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/allowing-tools) · [Tool permission patterns](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#tool-permission-patterns) · [Using local sandboxing](https://docs.github.com/en/copilot/how-tos/cloud-and-local-sandboxes/using-local-sandboxing) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** CLI a launcher `scripts/copilot-ws.sh`. Pro sandbox: macOS, Linux nebo Windows.
+
+**K čemu to je:** Oprávnění rozhodují, co smí agent udělat, aniž by se tě ptal: které příkazy, které soubory, které cesty. Sandbox k tomu přidá plot na úrovni operačního systému kolem shellových příkazů.
+
+**Tři nejužitečnější použití:**
+
+1. Nech buildy a testy běžet bez dotazu při každém volání (`shell(./gradlew:*)`).
+2. Drž tajné údaje, třeba `.env`, mimo dosah agenta.
+3. Pusť Copilot bez obsluhy, ve skriptu nebo přes noc, přesně s právy, která potřebuje, a s žádnými dalšími.
+
 ## Co jsou oprávnění?
 
 CLI se zeptá, než spustí shellový příkaz, upraví soubor, sáhne na cestu nebo URL mimo pracovní

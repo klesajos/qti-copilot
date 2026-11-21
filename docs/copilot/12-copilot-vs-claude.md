@@ -4,6 +4,18 @@
 
 > ⏱ 10 min (talk + questions: talk through the Models and GitHub platform rows and the wrap-up; the rest is reference) · Docs: [Copilot customization cheat sheet](https://docs.github.com/en/copilot/reference/customization-cheat-sheet) · [Claude Code docs index](https://code.claude.com/docs/llms.txt) · Verified on Copilot CLI 1.0.114 · Compared on 2026-11-21 with the Claude Code docs of that day; both tools change monthly, so re-check a row before you decide on it
 
+## In short
+
+**You need:** Nothing to install: this is a talk. It helps if you did the Claude Code workshop.
+
+**What it is for:** Shows what Copilot has and Claude Code does not, what is the same idea under another name, and how one repo can serve both tools without trouble.
+
+**Three uses that pay off most:**
+
+1. Know which Copilot-only features are worth using at 2N: the choice of models, the GitHub integration, the metrics.
+2. Carry your Claude Code habits over with the name-mapping table.
+3. Stop a repo that both tools read from sending the same instructions twice.
+
 ## Only in Copilot
 
 Ordered by how much a 2N developer feels the difference. Where Claude Code has a partial

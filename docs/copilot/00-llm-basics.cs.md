@@ -4,6 +4,18 @@
 
 > ⏱ 20 min (12 výklad + 8 praxe) · Dokumentace: [Supported AI models](https://docs.github.com/en/copilot/reference/ai-models/supported-models) · [Choosing a model in Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/choose-a-model) · [Managing context](https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** Copilot CLI nainstalované a přihlášené (příprava předem v [01](01-getting-started.cs.md)), otevřené tohle repo. Nic dalšího.
+
+**K čemu to je:** Kódovací agent je prediktor textu ve smyčce, který umí volat nástroje. Jakmile víš, co vidí, co zapomíná a kolik stojí, víš, proč se plete a co změnit: prompt, kontext, nebo model.
+
+**Tři nejužitečnější použití:**
+
+1. Zvol model a effort podle úkolu: levný a rychlý model na mechanické úpravy, effort `high` na hledání příčiny napříč soubory.
+2. Udrž dlouhou session levnou a ostrou: `/context` ukáže, co plní okno, `/new` nebo `/compact` ho vyprázdní.
+3. Správně si vylož špatnou odpověď: chybějící informace potřebuje instrukci nebo soubor, ne větší model.
+
 ## LLM v sedmi řádcích
 
 | Vlastnost | Co to znamená v praxi |

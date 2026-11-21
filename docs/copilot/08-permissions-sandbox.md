@@ -4,6 +4,18 @@
 
 > ⏱ 15 min (10 demo + 5 try) · Docs: [Allowing and denying tool use](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/allowing-tools) · [Tool permission patterns](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#tool-permission-patterns) · [Using local sandboxing](https://docs.github.com/en/copilot/how-tos/cloud-and-local-sandboxes/using-local-sandboxing) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** The CLI and the launcher `scripts/copilot-ws.sh`. For the sandbox: macOS, Linux or Windows.
+
+**What it is for:** Permissions decide what the agent may do without asking you: which commands, which files, which paths. The sandbox adds a fence at the operating-system level around shell commands.
+
+**Three uses that pay off most:**
+
+1. Let builds and tests run without a prompt on every call (`shell(./gradlew:*)`).
+2. Keep secrets such as `.env` away from the agent.
+3. Run Copilot unattended, in a script or overnight, with exactly the rights it needs and nothing more.
+
 ## What are permissions?
 
 The CLI asks before it runs a shell command, edits a file, touches a path or URL outside the

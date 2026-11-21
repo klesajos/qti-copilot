@@ -4,6 +4,18 @@
 
 > ⏱ 10 min (5 výklad + 5 demo lektora: cvičení 4, kroky 1 až 3) · Dokumentace: [Adding MCP servers for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers) · [Built-in MCP servers](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#built-in-mcp-servers) · [MCP server usage in your company](https://docs.github.com/en/copilot/concepts/enterprise/mcp-management) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** CLI, přihlášené: server pro GitHub je vestavěný. `gh` je volitelný. Pro jakýkoli jiný server: místo na schváleném seznamu 2N, jako má Jira MCP se svou URL.
+
+**K čemu to je:** MCP připojí k agentovi vnější systémy jako nástroje: GitHub, Jiru, databázi. Copilot si pak issue nebo tiket přečte sám a ty ho nemusíš kopírovat.
+
+**Tři nejužitečnější použití:**
+
+1. Implementuj featuru přímo z GitHub issue nebo z tiketu v Jiře.
+2. Prohledej kód napříč repozitáři organizace, aniž bys opustil session.
+3. Dodej fakta, která model znát nemůže: akceptační kritéria tiketu, sdílený Copilot Space.
+
 ## Co je MCP?
 
 MCP (Model Context Protocol) dává agentovi nástroje, které CLI samo nemá. Server je lokální

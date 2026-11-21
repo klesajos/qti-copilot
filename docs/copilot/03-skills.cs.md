@@ -4,6 +4,18 @@
 
 > ⏱ 20 min (5 demo + 15 cvičení 2) · Dokumentace: [Adding agent skills for Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills) · [Agent skills](https://docs.github.com/en/copilot/concepts/customizations/agent-skills) · [Agent Skills specification](https://agentskills.io/specification) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** CLI. Nic dalšího: skill je jeden soubor v Markdownu ve složce.
+
+**K čemu to je:** Skill je návod, který si Copilot přečte, jen když ho úkol potřebuje, třeba „jak se tady píšou testy desky“. Do té doby stojí jeden řádek kontextu, takže jich můžeš mít hodně.
+
+**Tři nejužitečnější použití:**
+
+1. Recept na změnu, kterou děláš nejčastěji: nový endpoint, migrace, obrazovka.
+2. Týmové konvence, které jsou na soubor s instrukcemi moc dlouhé: styl testů, formát chyb, logování.
+3. Opakovaná práce, kterou zavoláš jménem, třeba `/2048-dev:build-test` sestaví a otestuje všechno.
+
 ## Co je skill?
 
 Složka se souborem `SKILL.md`: instrukce, které se načtou, **jen když je úkol potřebuje**. Soubory

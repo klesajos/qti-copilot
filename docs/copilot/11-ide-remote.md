@@ -4,6 +4,18 @@
 
 > ⏱ 5 min (talk: the first three tables; the numbered lists, the Coder section and the comparison table are reading for after the workshop) · Docs: [Copilot in IDEs](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-in-ides) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · [/delegate](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/delegate-tasks-to-cca) · [Remote control](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/steer-remotely) · [Coder](https://github.com/coder/coder) · Nothing here was run for this repo: not in IntelliJ IDEA, not `/delegate`, not `/remote`, not on Coder. Sources: [plugin release notes](https://plugins.jetbrains.com/plugin/17718-github-copilot/versions) up to 1.21.1, the CLI 1.0.114 help, the GitHub and Coder docs
 
+## In short
+
+**You need:** IntelliJ IDEA with the GitHub Copilot plugin, 1.20.0 or later. For `/delegate`: the Copilot cloud agent enabled for the repo. For Coder: a workspace from 2N.
+
+**What it is for:** The same Copilot outside your terminal: inside the IDE, in the cloud on GitHub, or on a remote machine that keeps working while your laptop is closed.
+
+**Three uses that pay off most:**
+
+1. Stay in IDEA for small edits, with this repo's instructions and agents loaded.
+2. Hand a long task to the cloud agent with `/delegate` and get a draft pull request back.
+3. Let an agent run overnight in a Coder workspace and review its result in the morning.
+
 ## IntelliJ IDEA plugin
 
 IntelliJ IDEA is allowed at 2N. The plugin's chat agent reads most of this repo's files, but not

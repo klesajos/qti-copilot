@@ -4,6 +4,18 @@
 
 > ⏱ 20 min (5 demo + 15 [cvičení 8](exercises.cs.md)) · Dokumentace: [Vally](https://microsoft.github.io/vally/) · [Eval Spec Reference](https://microsoft.github.io/vally/reference/eval-spec/) · [GitHub Copilot Evals](https://github.github.io/evals/) · Ověřeno na Copilot CLI 1.0.114, Vally CLI 0.21.0
 
+## Ve zkratce
+
+**Potřebuješ:** Node.js 24.15+ nebo 26 a `npm ci` v kořeni repa (nainstaluje Vally). Skutečný běh stojí kredity Copilotu.
+
+**K čemu to je:** Eval dokáže, že skill nebo plugin opravdu pomáhá: stejný úkol s ním a bez něj, automaticky obodovaný. Bez evalu je „skill pomáhá“ jen názor.
+
+**Tři nejužitečnější použití:**
+
+1. Dokaž, že si skill své místo zaslouží, dřív než ho nasdílíš na guildě.
+2. Zachyť regresi, když skill upravíš nebo přejdeš na jiný model.
+3. Porovnej dvě verze instrukce podle čísel, ne podle jednoho šťastného běhu.
+
 ## Co je eval?
 
 Skill, agent nebo plugin je hypotéza: „s tímhle Copilot udělá úkol líp“. Stojí tokeny a čas

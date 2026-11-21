@@ -4,6 +4,18 @@
 
 > ⏱ 20 min (5 demo + 15 [exercise 8](exercises.md)) · Docs: [Vally](https://microsoft.github.io/vally/) · [Eval Spec Reference](https://microsoft.github.io/vally/reference/eval-spec/) · [GitHub Copilot Evals](https://github.github.io/evals/) · Verified on Copilot CLI 1.0.114, Vally CLI 0.21.0
 
+## In short
+
+**You need:** Node.js 24.15+ or 26 and `npm ci` in the repo root (it installs Vally). A real run spends Copilot credits.
+
+**What it is for:** An eval proves that a skill or plugin really helps: the same task with and without it, scored automatically. Without one, "the skill helps" is an opinion.
+
+**Three uses that pay off most:**
+
+1. Prove a skill earns its place before you share it at a guild.
+2. Catch a regression when you edit a skill or switch to another model.
+3. Compare two versions of an instruction on numbers, not on one lucky run.
+
 ## What is an eval?
 
 A skill, agent or plugin is a hypothesis: "with this, Copilot does the task better". It costs

@@ -4,6 +4,18 @@
 
 > ⏱ 15 min (7 demo + 8 cvičení 6) · Dokumentace: [Plugins for GitHub Copilot](https://docs.github.com/en/copilot/concepts/customizations/plugins) · [Creating a plugin](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-creating) · [Finding and installing plugins](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) · Ověřeno na Copilot CLI 1.0.114
 
+## Ve zkratce
+
+**Potřebuješ:** CLI. Na sdílení nástroje na guildě: git repozitář, ve kterém marketplace žije.
+
+**K čemu to je:** Plugin zabalí skilly, agenty, hooky a MCP servery do jednoho balíku se jménem a verzí. Tak se nástroj, který jsi postavil v jednom repu, dostane do dalších 170 rep My2N.
+
+**Tři nejužitečnější použití:**
+
+1. Sdílej nástroj z guildy: kolegové si ho nainstalují jménem, místo aby kopírovali soubory.
+2. Zapni týmovou sadu nástrojů pro celé repo dvěma klíči v nastavení; každý ji dostane, jakmile složce udělí důvěru.
+3. Verzuj nástroj, aby šla změna nasadit i vrátit.
+
 ## Co je plugin?
 
 **Plugin** je adresář s manifestem `plugin.json`, který pod jedním jménem a verzí sdružuje skilly,

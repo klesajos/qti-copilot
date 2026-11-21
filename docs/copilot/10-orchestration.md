@@ -4,6 +4,20 @@
 
 > ⏱ 15 min, demo only (`-p` and JSONL 4 · `/fleet` 4 · Conductor 5 · dynamic workflows 2) · Docs: [/fleet](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/speed-up-task-completion) · [Running the CLI programmatically](https://docs.github.com/en/copilot/how-tos/copilot-cli/automate-copilot-cli/run-cli-programmatically) · [Conductor](https://github.com/microsoft/conductor) · [Dynamic workflows](https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/dynamic-workflows) · Verified on Copilot CLI 1.0.114 and Conductor v0.1.47
 
+## In short
+
+**You need:** The CLI and `jq` for the JSON output. For Conductor: `uv` and Python 3.12+.
+
+**What it is for:** Goes past one chat: several agents working in parallel, Copilot inside scripts and CI, and fixed multi-agent pipelines defined in a file.
+
+**Three uses that pay off most:**
+
+1. Split a big read-only job, such as an audit or a test-gap report, across parallel subagents with `/fleet`.
+2. Run Copilot in CI or a nightly script with `copilot -p` and let the script read the result.
+3. Define a team-wide flow once in a Conductor YAML file and run it the same way every time.
+
+## Four ways past one session
+
 Guides 02–09 shape one agent in one session. Four ways to go past that:
 
 | Use | When | Who decides the split | Lives in |

@@ -4,6 +4,18 @@
 
 > ⏱ 10 min (výklad + dotazy: projdi řádky Modely a Platforma GitHub a závěr; zbytek je reference) · Dokumentace: [Copilot customization cheat sheet](https://docs.github.com/en/copilot/reference/customization-cheat-sheet) · [Claude Code docs index](https://code.claude.com/docs/llms.txt) · Ověřeno na Copilot CLI 1.0.114 · Porovnáno 2026-11-21 s tehdejší dokumentací Claude Code; oba nástroje se mění každý měsíc, takže si řádek znovu ověř, než se podle něj rozhodneš
 
+## Ve zkratce
+
+**Potřebuješ:** Nic k instalaci: je to výklad. Pomůže, pokud jsi absolvoval workshop Claude Code.
+
+**K čemu to je:** Ukáže, co má Copilot a Claude Code ne, co je stejná myšlenka pod jiným jménem a jak může jedno repo bez potíží sloužit oběma nástrojům.
+
+**Tři nejužitečnější použití:**
+
+1. Zjisti, které funkce jen pro Copilot se na 2N vyplatí: výběr modelů, napojení na GitHub, metriky.
+2. Přenes si zvyky z Claude Code pomocí tabulky s mapováním názvů.
+3. Zabraň tomu, aby repo, které čtou oba nástroje, posílalo stejné instrukce dvakrát.
+
 ## Jen v Copilotu
 
 Seřazeno podle toho, jak moc rozdíl pocítí vývojář ve 2N. Kde má Claude Code částečnou

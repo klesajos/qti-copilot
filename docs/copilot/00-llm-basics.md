@@ -4,6 +4,18 @@
 
 > ⏱ 20 min (12 talk + 8 hands-on) · Docs: [Supported AI models](https://docs.github.com/en/copilot/reference/ai-models/supported-models) · [Choosing a model in Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/choose-a-model) · [Managing context](https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** Copilot CLI installed and logged in ([01](01-getting-started.md) pre-work), this repo open. Nothing else.
+
+**What it is for:** A coding agent is a text predictor in a loop that can call tools. Once you know what it sees, what it forgets and what it costs, you know why it gets things wrong and what to change: the prompt, the context or the model.
+
+**Three uses that pay off most:**
+
+1. Pick the model and effort for the task: a cheap, fast model for mechanical edits, `high` effort for a root cause across files.
+2. Keep a long session cheap and sharp: `/context` shows what fills the window, `/new` or `/compact` empties it.
+3. Read a wrong answer correctly: missing information needs an instruction or a file, not a bigger model.
+
 ## An LLM in seven lines
 
 | Property | What it means in practice |

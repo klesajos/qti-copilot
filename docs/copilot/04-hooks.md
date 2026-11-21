@@ -4,6 +4,18 @@
 
 > ⏱ 25 min (5 payload lab + 5 deny demo + 15 exercise 3) · Docs: [Hooks for GitHub Copilot](https://docs.github.com/en/copilot/concepts/customizations/hooks) · [GitHub Copilot hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference) · [Using hooks with GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks) · Verified on Copilot CLI 1.0.114
 
+## In short
+
+**You need:** bash and `jq`, Copilot started from the repo root in a trusted folder. On Windows: WSL 2.
+
+**What it is for:** A hook is a script that the CLI itself runs on an event, for example before every shell command. The model cannot skip it, so it is the place for rules that must hold every single time.
+
+**Three uses that pay off most:**
+
+1. Block dangerous or secret-leaking commands such as `rm -rf` or `cat .env` before they run.
+2. Format every file Copilot edits, automatically.
+3. Do not let the agent finish while the tests are red.
+
 ## What is a hook?
 
 A hook is a command that the CLI runs itself when an event happens: a session starts, a tool is

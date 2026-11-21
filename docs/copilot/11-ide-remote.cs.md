@@ -4,6 +4,18 @@
 
 > ⏱ 5 min (výklad: první tři tabulky; číslované seznamy, sekce o Coderu a srovnávací tabulka jsou k přečtení po workshopu) · Dokumentace: [Copilot in IDEs](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-in-ides) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · [/delegate](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/delegate-tasks-to-cca) · [Remote control](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/steer-remotely) · [Coder](https://github.com/coder/coder) · Nic z toho se pro tohle repo nespouštělo: ani v IntelliJ IDEA, ani `/delegate`, ani `/remote`, ani na Coderu. Zdroje: [release notes pluginu](https://plugins.jetbrains.com/plugin/17718-github-copilot/versions) do 1.21.1, nápověda CLI 1.0.114, dokumentace GitHubu a Coderu
 
+## Ve zkratce
+
+**Potřebuješ:** IntelliJ IDEA s pluginem GitHub Copilot ve verzi 1.20.0 nebo novější. Pro `/delegate`: cloud agenta Copilotu zapnutého pro repo. Pro Coder: workspace od 2N.
+
+**K čemu to je:** Stejný Copilot mimo terminál: v IDE, v cloudu na GitHubu, nebo na vzdáleném stroji, který pracuje dál, i když máš notebook zavřený.
+
+**Tři nejužitečnější použití:**
+
+1. Zůstaň u drobných úprav v IDEA a měj načtené instrukce a agenty tohoto repa.
+2. Předej dlouhý úkol cloud agentovi přes `/delegate` a dostaň zpátky draft pull requestu.
+3. Nech agenta běžet přes noc ve workspace v Coderu a ráno zkontroluj výsledek.
+
 ## Plugin pro IntelliJ IDEA
 
 IntelliJ IDEA je ve 2N povolená. Chat agent pluginu čte většinu souborů tohohle repa, ale ne
