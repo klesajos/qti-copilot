@@ -21,12 +21,12 @@ Návody k workshopu jsou v [docs/copilot/](docs/copilot/README.cs.md). Začni ta
 ## Build a spuštění
 
 ```bash
-./gradlew build                 # přeloží a otestuje engine + api
-./gradlew :api:bootRun          # API na http://localhost:8080
+./gradlew build                 # compile and test engine + api
+./gradlew :api:bootRun          # API on http://localhost:8080
 
 cd web
-npm ci                          # jednou
-npm run dev                     # UI na http://localhost:5173, /api přeposílá na API
+npm ci                          # once
+npm run dev                     # UI on http://localhost:5173, proxies /api to the API
 ```
 
 Otevři http://localhost:5173, když běží API.
@@ -34,7 +34,7 @@ Otevři http://localhost:5173, když běží API.
 ## Testy
 
 ```bash
-./gradlew test                  # engine (JUnit) + api (testy Spring MVC)
+./gradlew test                  # engine (JUnit) + api (Spring MVC tests)
 cd web && npm test              # Vitest
 cd web && npm run lint && npm run build
 ```
@@ -46,14 +46,14 @@ Dlaždice posouvají šipky nebo `W` `A` `S` `D`. **New game** začne znovu.
 ## Struktura
 
 ```
-engine/   pravidla hry: Board.kt (slideLineLeft, Board) a jeho testy   ← bez I/O, bez Springu
-api/      REST služba: GameService, GameController, obsluha chyb       ← /api/v1/games
-web/      React UI: App, Board, API klient, mapování kláves
-.github/  úpravy Copilota: instrukce, skill, agenti, hooky, nastavení pluginu
-plugins/  plugin 2048-dev, který nabízí marketplace přímo v repozitáři (marketplace.json)
-evals/    evaly pro skill, agenta a plugin
-conductor/ workflow pro Microsoft Conductor
-docs/copilot/  návody k workshopu, cvičení, tahák
+engine/   game rules: Board.kt (slideLineLeft, Board) and its tests   ← no I/O, no Spring
+api/      REST service: GameService, GameController, error handler    ← /api/v1/games
+web/      React UI: App, Board, API client, key mapping
+.github/  Copilot customizations: instructions, skill, agents, hooks, plugin settings
+plugins/  the 2048-dev plugin, served by the in-repo marketplace (marketplace.json)
+evals/    evals for the skill, the agent and the plugin
+conductor/ a Microsoft Conductor workflow
+docs/copilot/  workshop guides, exercises, cheat sheet
 ```
 
 Srdcem hry je `slideLineLeft()` v
