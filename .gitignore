@@ -1,0 +1,25 @@
+# Build output
+build/
+.gradle/
+.kotlin/
+node_modules/
+dist/
+*.tsbuildinfo
+
+# IDE / OS
+.idea/
+*.iml
+.DS_Store
+
+# Secrets
+.env
+.env.*
+
+# Copilot CLI: personal overrides and hook payload dumps
+.github/copilot/settings.local.json
+.github/hooks/logs/
+
+# Eval results (contain prompts and tool output — review before sharing)
+evals/results/
+vally-results/
+.copilot/evals/results/
