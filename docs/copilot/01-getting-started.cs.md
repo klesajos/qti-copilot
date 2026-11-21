@@ -6,7 +6,7 @@
 
 ## Ve zkratce
 
-**Potřebuješ:** Licenci Copilot Business od `2n-labs`, JDK 17–27, Node.js 24.15+ nebo 26, `git` a `jq`. Na Windows: WSL 2.
+**Potřebuješ:** Licenci Copilot Business nebo Enterprise, JDK 17–27, Node.js 24.15+ nebo 26, `git` a `jq`. Na Windows: WSL 2.
 
 **K čemu to je:** Rozjede Copilot CLI v tomhle repu a naučí jednu smyčku, kterou opakuje každé další cvičení: plán, padající test, oprava, důkaz. Tak se pracuje na úrovni 5: kód píše Copilot a ty ho kontroluješ.
 
@@ -18,7 +18,7 @@
 
 ## Před dnem workshopu (příprava předem, 15 min)
 
-Potřebuješ seat Copilot Business od `2n-labs` se zapnutou politikou Copilot CLI, libovolné JDK
+Potřebuješ seat Copilot Business nebo Enterprise se zapnutou politikou Copilot CLI, libovolné JDK
 17–27 (toolchain JDK 21 si Gradle stáhne sám), Node.js 24.15+ nebo 26, `jq` a `git`. Na
 Windows použij WSL 2: hooky jsou bash skripty.
 
@@ -28,7 +28,7 @@ Windows použij WSL 2: hooky jsou bash skripty.
    npm install -g @github/copilot
    copilot --version                 # GitHub Copilot CLI 1.0.114.   (or newer)
    ```
-2. **Přihlas se** účtem, který má seat 2N ([autentizace](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli)).
+2. **Přihlas se** účtem, který má seat Copilotu ([autentizace](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli)).
    Exportovaný `COPILOT_GITHUB_TOKEN`, `GH_TOKEN` nebo `GITHUB_TOKEN` přebije uložené přihlášení.
    ```bash
    copilot login                                        # browser flow; over SSH: --device-code
@@ -74,7 +74,7 @@ repo načetlo?“ `/env` vypisuje na časovou osu (PgUp roluje); ostatní otevř
 
 ## Smyčka úrovně 5
 
-Ve 2N kód generuješ, nepíšeš ho, a přesto za něj ručíš: úroveň 5 nebo vyšší na škále
+V tomhle workshopu kód generuješ, nepíšeš ho, a přesto za něj ručíš: úroveň 5 nebo vyšší na škále
 z [Using AI to Contribute to Open Source](https://www.visidata.org/blog/2026/ai/).
 
 | Úroveň | Název v příspěvku | Čteš | Na základě důkazů přijímáš |
@@ -150,9 +150,9 @@ pravidlo v `engine/`. Odpověz pravidlem repa: o tom, co se děje kolem tahu, ro
 Referenční diff: [solutions/ex0.patch](solutions/ex0.patch). Teď to udělej sám: cvičení 0 v
 [exercises.cs.md](exercises.cs.md). Když přečteš každý změněný řádek, pracuješ na úrovni 5.
 
-## Co počítají metriky 2N
+## Co počítají metriky využití
 
-2N měří používání Copilot **CLI**. Pole pro CLI v
+Organizace vidí používání Copilot **CLI** po uživatelích. Pole pro CLI v
 [referenci metrik využití](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics#copilot-cli-metrics-fields):
 
 - `totals_by_cli`, po dnech: `session_count` (počet různých spuštěných CLI sessions),

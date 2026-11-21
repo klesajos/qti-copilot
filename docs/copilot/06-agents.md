@@ -145,7 +145,7 @@ The model may rename the first heading (`What I found`) or fold the reason into 
 
 | Key | What it does |
 |-----|--------------|
-| `model`, `models` | Model, or models in priority order. No agent here sets it: allowed models differ per organisation (2N: all except Fable) and a subagent inherits the session model. Ignored when the session model is Auto. Per-user override: `/subagents` |
+| `model`, `models` | Model, or models in priority order. No agent here sets it: allowed models differ per organisation and a subagent inherits the session model. Ignored when the session model is Auto. Per-user override: `/subagents` |
 | `model-policy` | `preferred` (default), or `required`: refuse the dispatch instead of using another model |
 | `reasoning-effort` | Effort level for this agent |
 | `mcp-servers` | MCP servers for this agent only. In `tools`, MCP tools are `server/tool` or `server/*` |
@@ -179,4 +179,4 @@ Claude Code calls this **subagents**: `.claude/agents/*.md`, the same own contex
 - **A "read-only" agent changed a file** → it has `execute` or no `tools` key. Remove `execute`.
 - **A `-p` run ends with "Permission denied ..."** → pre-approve the tool: `--allow-tool='shell(git:*)'`.
 
-Next: [07 · Plugins and guild sharing](07-plugins.md)
+Next: [07 · Plugins and sharing across teams](07-plugins.md)

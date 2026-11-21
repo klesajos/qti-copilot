@@ -6,7 +6,7 @@
 
 ## In short
 
-**You need:** The CLI, logged in: the GitHub server is built in. `gh` is optional. For any other server: a place on 2N's approved list, such as the Jira MCP and its URL.
+**You need:** The CLI, logged in: the GitHub server is built in. `gh` is optional. For any other server: its URL, and a place on your organisation's allow-list if it has one.
 
 **What it is for:** MCP plugs outside systems into the agent as tools: GitHub, Jira, a database. Copilot then reads the issue or ticket itself instead of you pasting it in.
 
@@ -26,12 +26,12 @@ definitions to the model's context. In permission rules it is `name` or `name(to
 
 ```
 (inside the CLI)      ← github-mcp-server: built in, starts at sign-in, nothing to configure
-.mcp.json.example     ← the file format, with the approved 2N Jira MCP as the pattern
+.mcp.json.example     ← the file format, with a Jira MCP server as the pattern
 .mcp.json             ← your copy with the real URL; gitignored
 ```
 
-2N allows MCP servers from an approved list only and runs its own Jira MCP. The repo therefore
-ships no live third-party server, on purpose: it would be blocked on your machine.
+Many organisations allow MCP servers from an approved list only. The repo therefore ships no live
+third-party server, on purpose: it could be blocked on your machine.
 
 ## The built-in GitHub MCP server
 
@@ -74,7 +74,7 @@ The CLI reads `.mcp.json` from the repo root once the folder is trusted. `.mcp.j
 
 - `mcpServers`: the top-level key. With VS Code's `servers` key the CLI loads nothing.
 - `jira`: the server name. It prefixes the tool names, appears in permission rules
-  (`jira(tool)`), and a name-based allow-list matches on it. Use the exact name 2N gives you.
+  (`jira(tool)`), and a name-based allow-list matches on it. Use the exact name your administrator gives you.
 - `type`, `url`: `http` is a remote server; a local one uses `"type": "local"` with `command` and
   `args`. Write the URL literally: an allow-list blocks a server with an unresolved `${VAR}`.
 - `"tools": ["*"]`: expose every tool; list names to keep unused definitions out of the context.
@@ -82,7 +82,7 @@ The CLI reads `.mcp.json` from the repo root once the folder is trusted. `.mcp.j
 
 ## Create your own, step by step
 
-1. `cp .mcp.json.example .mcp.json`, put in the name and URL from 2N, run `jq . .mcp.json`.
+1. `cp .mcp.json.example .mcp.json`, put in the name and URL of your server, run `jq . .mcp.json`.
 2. Start `copilot` and trust the folder, or run `/mcp reload` in an open session. `/mcp list`
    shows `jira` as `connected`; `/mcp auth jira` signs in. ⚠️ not run in this repo
 
@@ -100,7 +100,7 @@ The CLI reads `.mcp.json` from the repo root once the folder is trusted. `.mcp.j
 - `N MCP servers were blocked by policy: 'name' (reason)`, e.g. `Not found in registry <url>`.
 - `MCP server "SERVER-NAME" was blocked by your enterprise "ENTERPRISE-NAME".`
 
-The config is fine: send the server name and URL to the 2N administrator. If the policy cannot
+The config is fine: send the server name and URL to your Copilot administrator. If the policy cannot
 be fetched, every server except the built-in ones is blocked, so check VPN and proxy first.
 
 ## Optional parameters

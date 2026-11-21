@@ -6,7 +6,7 @@
 
 ## Ve zkratce
 
-**Potřebuješ:** IntelliJ IDEA s pluginem GitHub Copilot ve verzi 1.20.0 nebo novější. Pro `/delegate`: cloud agenta Copilotu zapnutého pro repo. Pro Coder: workspace od 2N.
+**Potřebuješ:** IntelliJ IDEA s pluginem GitHub Copilot ve verzi 1.20.0 nebo novější. Pro `/delegate`: cloud agenta Copilotu zapnutého pro repo. Pro Coder: nasazený Coder a v něm workspace pro tebe.
 
 **K čemu to je:** Stejný Copilot mimo terminál: v IDE, v cloudu na GitHubu, nebo na vzdáleném stroji, který pracuje dál, i když máš notebook zavřený.
 
@@ -18,8 +18,8 @@
 
 ## Plugin pro IntelliJ IDEA
 
-IntelliJ IDEA je ve 2N povolená. Chat agent pluginu čte většinu souborů tohohle repa, ale ne
-všechny stejným způsobem, a metriky 2N ho nepočítají. Pro uživatele Android Studia a Xcode:
+Chat agent pluginu pro IntelliJ IDEA čte většinu souborů tohohle repa, ale ne všechny stejným
+způsobem, a nepočítá se jako používání CLI. Pro uživatele Android Studia a Xcode:
 tahle sekce se týká jen IntelliJ IDEA; nástroj společný všem šesti stackům je terminálové CLI.
 
 | Soubor v tomhle repu | V pluginu | Poznámka |
@@ -44,18 +44,18 @@ aktuální runtime, počítá se jako CLI. Plugin si nech na doplňování a nex
 > 🔷 **Jen Copilot:** `copilot --acp` je vestavěný režim ACP serveru; Claude Code žádný nemá a
 > k ACP editorům se dostane jen přes adaptér třetí strany.
 
-**Jak se používání připisuje v metrikách 2N.** CLI má vlastní počítadla: `totals_by_cli`
+**Jak se používání připisuje v metrikách.** CLI má vlastní počítadla: `totals_by_cli`
 (sessions, požadavky, prompty, tokeny) a denní příznak `used_cli` pro každého uživatele.¹
 
 | Co spouštíš | Vykazuje se jako |
 |-------------|------------------|
 | `copilot` v terminálu, včetně terminálu IDE | ✅ CLI |
 | Chat agent pluginu, doplňování, next edit suggestions | ❌ JetBrains (plugin 1.20.0 nebo novější) |
-| Evaly ve Vally a Conductor (Copilot SDK), `/delegate` (cloud agent) | ⚠️ Dokud to 2N nepotvrdí, počítej s tím, že to CLI není |
+| Evaly ve Vally a Conductor (Copilot SDK), `/delegate` (cloud agent) | ⚠️ Dokud to administrátor nepotvrdí, počítej s tím, že to CLI není |
 
 Plugin 1.15.0–1.19.x počítal některé agentní sessions z IDE jako aktivitu CLI
 ([opraveno v 1.20.0, zpětně nedoplněno](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/usage-metrics-coverage)):
-plugin aktualizuj. Které pole 2N čte, je otázka v [preflight.cs.md](preflight.cs.md).
+plugin aktualizuj. Které pole čte tvoje organizace, je otázka v [preflight.cs.md](preflight.cs.md).
 
 ¹ Stránka dokumentace si u `totals_by_feature` protiřečí: jedna sekce říká, že se tam používání
 CLI neprojevuje, tabulka featur uvádí `copilot_cli`. Ptej se, ze kterého pole číslo pochází.
@@ -83,7 +83,7 @@ smyčky (nastav limit kreditů a kol) a review se přesouvá na konec: úroveň 
 |--------|----------------|--------------|--------------|
 | `/delegate` | Na GitHubu, jako Copilot cloud agent | Politiky pro Copilot CLI a cloud agenta; repo na GitHubu | Úkol je dobře specifikovaný a notebook se může zavřít |
 | `/remote on` | Na tvém stroji | Politiku „Store local sessions in the Cloud“ nastavenou na „View and control“; stroj zapnutý a online | Úkol potřebuje tvoje lokální prostředí nebo nepushnuté soubory |
-| Coder Workspaces | Na infrastruktuře 2N | Šablonu Coderu s Copilot CLI a přihlášení ke GitHubu ve workspace | Úloha trvá déle než jednu noc. Ve 2N se plánuje |
+| Coder Workspaces | Na vlastní infrastruktuře | Šablonu Coderu s Copilot CLI a přihlášení ke GitHubu ve workspace | Úloha trvá déle než jednu noc |
 
 **`/delegate` na cloud agenta.** Napiš `/delegate <prompt>`, nebo začni prompt znakem `&`.
 Copilot nabídne, že tvoje nestagované změny commitne jako checkpoint na novou branch. Cloud agent

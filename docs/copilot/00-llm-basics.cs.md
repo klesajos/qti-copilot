@@ -76,8 +76,8 @@ výchozí tier. Několik cen je akčních a skončí. `/model` u každého model
 | xAI | Grok 4.5, 4.6, 4.7 | Versatile | Obecné kódování a agentní úkoly | 2.00 / 6.00 |
 | Moonshot AI | Kimi K3 | Powerful | Agentní kódování a práce s dlouhým kontextem. **Ve výchozím stavu vypnuto** | 3.00 / 15.00 |
 
-- **Ve 2N:** Copilot Business spravovaný organizací `2n-labs`, všechny modely kromě rodiny Claude
-  Fable (5, 5.1, 5.2). GitHub nechává Fable vypnutý, dokud vlastník organizace nepovolí každý model v
+- **Které modely můžeš vybrat, rozhoduje tvoje organizace.** Rodina Claude Fable (5, 5.1, 5.2) je
+  ve výchozím stavu vypnutá: GitHub nechává Fable vypnutý, dokud vlastník organizace nepovolí každý model v
   Settings → Copilot → Models ([dokumentace](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-default-models)),
   protože se na něj nevztahuje dohoda GitHubu o uchovávání dat (Anthropic prompty a výstupy
   standardně uchovává, aby nad nimi pouštěl bezpečnostní klasifikátory). Auto na něj nikdy nesměruje.

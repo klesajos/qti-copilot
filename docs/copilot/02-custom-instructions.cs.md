@@ -97,7 +97,7 @@ navrhuje úpravy `.github/copilot-instructions.md` podle sessions z tohoto repa 
 
 ## Repo, které už AI instrukce má
 
-Většina z asi 170 repozitářů My2N nějaké má. Nejdřív si mimo session vypiš, co tam Copilot načítá:
+Většina skutečných repozitářů už nějaké má. Nejdřív si mimo session vypiš, co tam Copilot načítá:
 
 ```bash
 copilot instruction list --json | jq -r '.[] | [.location, .sourcePath, ((.applyTo // ["every session"]) | join(","))] | @tsv'

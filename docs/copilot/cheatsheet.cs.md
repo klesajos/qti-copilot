@@ -60,14 +60,14 @@ Autopilot, `Ctrl+O` rozbalí položky timeline, `?` na prázdném promptu vypí�
 
 | Téma | Jak |
 |------|-----|
-| Výběr modelu | `/model`, `--model <model-id>`, `COPILOT_MODEL` nebo nastavení `model`. Ve 2N jde vybrat každý model kromě rodiny Claude Fable; model, který použít nemůžeš, je v `/model` pořád vidět a po zvýraznění řekne proč. U každého modelu jsou uvedené kredity za 1M tokenů |
+| Výběr modelu | `/model`, `--model <model-id>`, `COPILOT_MODEL` nebo nastavení `model`. Které modely jdou vybrat, rozhoduje organizace (rodina Claude Fable je ve výchozím stavu vypnutá); model, který použít nemůžeš, je v `/model` pořád vidět a po zvýraznění řekne proč. U každého modelu jsou uvedené kredity za 1M tokenů |
 | Effort | Úrovně `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`; které existují, záleží na modelu; nenastaveno znamená výchozí hodnotu modelu, u většiny `medium`. Nastavíš ho šipkami vlevo / vpravo v `/model`, přes `--reasoning-effort <level>`, nastavením `effortLevel`, `reasoning-effort:` v `.agent.md` nebo v `/subagents` |
 | Plan režim | Vlastní model a effort: `/model plan`, `planModel`, `planEffortLevel`. Effort session se nedědí |
 | Auto | `auto` se zobrazuje jako Copilot Fusion a vybírá model pro každý prompt. `--auto-tier` / `autoTier`: `efficiency`, `balance`, `intelligence`. `fusionTier`: `standard`, `high`, `max`. V `/model` na řádku `Copilot Fusion` mění šipky vlevo / vpravo jeho `Tier` (`Standard`, `High`, `Max`) |
 | Kontextový tier | `--context default` nebo `long_context`, nastavení `contextTier` nebo výběr úrovně v `/model` |
 | Uvažování, cena | `Ctrl+T` zobrazí nebo skryje shrnutí uvažování. `/usage`: `↑ input (N cached, N written) • ↓ output (N reasoning)`; tokeny uvažování se účtují jako výstup |
 
-ID modelu nikdy necommituj: seznam 2N se liší od tvého. Bezpečně commitnout jde `effortLevel`.
+ID modelu nikdy necommituj: seznam povolených modelů kolegy se může lišit od tvého. Bezpečně commitnout jde `effortLevel`.
 
 > 🔷 **Jen Copilot:** jedno předplatné a jeden výběr pro modely od několika dodavatelů (Anthropic, OpenAI, Google, xAI, Microsoft, Moonshot AI). Claude Code běží jen na modelech Claude.
 

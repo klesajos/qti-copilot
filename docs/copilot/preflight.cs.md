@@ -2,25 +2,25 @@
 
 # Předletová kontrola pro lektora
 
-> ⏱ 1 hodina, před workshopem · Dokumentace: [Enterprise managed settings](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings) · [Administering Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/administer-copilot-cli-for-your-enterprise) · [Policies per surface](https://docs.github.com/en/copilot/reference/supported-surfaces-for-policies) · Část B ověřena na Copilot CLI 1.0.114, na účtu, který 2N nespravuje
+> ⏱ 1 hodina, před workshopem · Dokumentace: [Enterprise managed settings](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings) · [Administering Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/administer-copilot-cli-for-your-enterprise) · [Policies per surface](https://docs.github.com/en/copilot/reference/supported-surfaces-for-policies) · Část B ověřena na Copilot CLI 1.0.114, na účtu, který nespravuje žádná organizace
 
-Část A projdi s Copilot adminem 2N a část B na jednom účastnickém stroji, v síti 2N,
+Část A projdi se svým adminem Copilotu a část B na jednom účastnickém stroji, ve firemní síti,
 s účtem účastníka. Zablokované přizpůsobení nehlásí chybu: prostě se nenačte. Návody
 tyhle případy nevysvětlují; tahle stránka ano. Každá položka uvádí nastavení, co rozbije
 a jak to ověřit. ⚠️ značí kontrolu, která se v tomhle repu nespouštěla.
 
-## A. S Copilot adminem 2N
+## A. S adminem Copilotu
 
 ### Přístup
 
 - [ ] **Politika Copilot CLI** zapnutá pro každého účastníka. **Rozbije:** všechno. **Ověř:** část B vypíše řádek `cli`.
-- [ ] **Přístup k privátnímu repu `klesajos/qti-copilot`.** Enterprise Managed Users obecně nemůžou být spolupracovníky mimo své enterprise. **Rozbije:** klonování; cvičení 4. **Ověř:** `git ls-remote https://github.com/klesajos/qti-copilot` s účtem účastníka ⚠️. **Když je to blokované:** udělej mirror repa v organizaci 2N.
+- [ ] **Přístup k privátnímu repu `klesajos/qti-copilot`.** Enterprise Managed Users obecně nemůžou být spolupracovníky mimo své enterprise. **Rozbije:** klonování; cvičení 4. **Ověř:** `git ls-remote https://github.com/klesajos/qti-copilot` s účtem účastníka ⚠️. **Když je to blokované:** udělej mirror repa ve své organizaci.
 - [ ] **Issue pro cvičení 4** v repu (nebo v mirroru), které účastníci můžou číst. **Rozbije:** MCP demo. **Ověř:** otevři seznam issues v prohlížeči jako účastník. Text: [solutions/ex4-issue.md](solutions/ex4-issue.md).
-- [ ] **[Seznam modelů](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-default-models).** Které modely jsou zapnuté a je k dispozici `auto`? Rodina Claude Fable zůstává vypnutá. **Rozbije:** nepovolený model je chyba; vestavění agenti (`explore`, agent `code-review` za `/review`) používají vlastní výchozí model; `explore` selhal s `400 The requested model is not supported`, když jeho model nebyl zapnutý. **Ověř:** `/model` v session (model, který použít nemůžeš, je pořád v seznamu a po zvýraznění řekne proč); řádek `model` v části B. **Když je to omezené:** review dělej agentem `kotlin-reviewer`; do promptů pro `/fleet` přidej „Použij subagenty general-purpose“.
+- [ ] **[Seznam modelů](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-default-models).** Které modely jsou zapnuté a je k dispozici `auto`? Rodina Claude Fable je ve výchozím stavu vypnutá. **Rozbije:** nepovolený model je chyba; vestavění agenti (`explore`, agent `code-review` za `/review`) používají vlastní výchozí model; `explore` selhal s `400 The requested model is not supported`, když jeho model nebyl zapnutý. **Ověř:** `/model` v session (model, který použít nemůžeš, je pořád v seznamu a po zvýraznění řekne proč); řádek `model` v části B. **Když je to omezené:** review dělej agentem `kotlin-reviewer`; do promptů pro `/fleet` přidej „Použij subagenty general-purpose“.
 - [ ] **[Rozpočet](https://docs.github.com/en/copilot/concepts/billing-and-usage/organizations-and-enterprises/billing).** Kolik AI kreditů účastníkovi zbývá a je zapnutá dodatečná placená spotřeba? **Rozbije:** na 100 % selže každé volání modelu až do resetu; nejrychleji utrácejí evaly a `/fleet`. **Ověř:** `/usage`, řádek Plan.
-- [ ] **Obrazový vstup** je ve 2N vypnutý. **Rozbije:** nic: žádný návod ani cvičení obrázek nepoužívá. **Ověř:** potvrď si to a řekni účastníkům, ať nevkládají screenshoty.
+- [ ] **Obrazový vstup** může být vypnutý. **Rozbije:** nic: žádný návod ani cvičení obrázek nepoužívá. **Ověř:** potvrď si to a řekni účastníkům, ať nevkládají screenshoty.
 - [ ] **Stroje s Windows.** Hooky jsou bash skripty (klíč `bash` v `.github/hooks/hooks.json`) a potřebují `jq`. **Rozbije:** návod 04, cvičení 3, pojistku na `.env`. **Ověř:** část B spusť uvnitř WSL 2; nativní Windows ⚠️.
-- [ ] **Proxy nebo privátní certifikační autorita.** **Rozbije:** chyby TLS a timeouty; když platí politika registru, zablokuje nedostupný MCP registr každý MCP server kromě vestavěných. **Ověř:** část B v síti 2N; `copilot help network` vypíše nastavení.
+- [ ] **Proxy nebo privátní certifikační autorita.** **Rozbije:** chyby TLS a timeouty; když platí politika registru, zablokuje nedostupný MCP registr každý MCP server kromě vestavěných. **Ověř:** část B ve firemní síti; `copilot help network` vypíše nastavení.
 
 ### Politiky organizace
 
@@ -47,7 +47,7 @@ nastavení doručená ze serveru žádný soubor nezanechají ([umístění](htt
 
 - [ ] **Instalace Vally** (`@microsoft/vally-cli` 0.21.0 z npm, připnutý v `package.json`). **Rozbije:** návod 09, cvičení 8. **Ověř:** `npm ci && npm run eval:lint` vypíše dva řádky `is valid`. **Když je to blokované:** `evals/plugin-ab.sh` potřebuje jen `copilot` a `jq`.
 - [ ] **Instalace Conductoru** (`uv tool install "git+https://github.com/microsoft/conductor.git@v0.1.47"`). **Rozbije:** část o Conductoru v návodu 10 a ve cvičení 7. **Ověř:** `conductor validate conductor/test-coverage-audit.yaml` vypíše `Validation Successful`.
-- [ ] **[Pole v metrikách](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics).** Které pole čte 2N jako používání CLI: `totals_by_cli`, nebo `totals_by_client` s `copilot_cli`? Počítají se běhy Vally a Conductoru (Copilot SDK) a úlohy z `/delegate`? **Rozbije:** to, co návody 01 a 11 říkají účastníkům. **Ověř:** zeptej se. Plugin pro IntelliJ 1.15.0 až 1.19.x počítal některé sessions z IDE jako CLI; 1.20.0 to opravuje.
+- [ ] **[Pole v metrikách](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics).** Které pole čte organizace jako používání CLI: `totals_by_cli`, nebo `totals_by_client` s `copilot_cli`? Počítají se běhy Vally a Conductoru (Copilot SDK) a úlohy z `/delegate`? **Rozbije:** to, co návody 01 a 11 říkají účastníkům. **Ověř:** zeptej se. Plugin pro IntelliJ 1.15.0 až 1.19.x počítal některé sessions z IDE jako CLI; 1.20.0 to opravuje.
 
 ## B. Na jednom účastnickém stroji
 
@@ -96,4 +96,4 @@ skill	project	board-tests
 
 Počet u `mcp` je 6 s nainstalovaným `gh` a 24 bez něj. Mezi těmi 6 nejsou žádné nástroje pro issues:
 návod 05 startuje s `--add-github-mcp-tool list_issues --add-github-mcp-tool issue_read`, což těch 6
-nahradí těmihle dvěma. Řádek `model` je to, na co se `auto` ve 2N vyhodnotí: zapiš si ho. [Rozcestník](README.cs.md).
+nahradí těmihle dvěma. Řádek `model` je to, na co se `auto` ve tvé organizaci vyhodnotí: zapiš si ho. [Rozcestník](README.cs.md).

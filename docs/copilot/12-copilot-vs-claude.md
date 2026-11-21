@@ -12,13 +12,13 @@
 
 **Three uses that pay off most:**
 
-1. Know which Copilot-only features are worth using at 2N: the choice of models, the GitHub integration, the metrics.
+1. Know which Copilot-only features are worth using in a team: the choice of models, the GitHub integration, the metrics.
 2. Carry your Claude Code habits over with the name-mapping table.
 3. Stop a repo that both tools read from sending the same instructions twice.
 
 ## Only in Copilot
 
-Ordered by how much a 2N developer feels the difference. Where Claude Code has a partial
+Ordered by how much a developer feels the difference. Where Claude Code has a partial
 substitute, the middle column names only what is still missing. "—" = not part of the workshop.
 
 | Feature | What exactly Claude Code lacks | In this workshop |
@@ -108,7 +108,7 @@ Copilot CLI reads Claude Code's project files. Claude Code reads almost nothing 
 - **Add one hook:** a `preToolUse` deny for secrets or an `agentStop` test gate ([04](04-hooks.md)).
 - **Copy the launcher** `scripts/copilot-ws.sh` and put in your own build and test commands
   ([08](08-permissions-sandbox.md)).
-- **Write one eval** before you share a skill at a guild: same prompt, with and without the skill
+- **Write one eval** before you share a skill with other teams: same prompt, with and without the skill
   ([09](09-evals.md)).
 
 Back to the [README](README.md) · [exercises](exercises.md)

@@ -12,13 +12,13 @@
 
 **Tři nejužitečnější použití:**
 
-1. Zjisti, které funkce jen pro Copilot se na 2N vyplatí: výběr modelů, napojení na GitHub, metriky.
+1. Zjisti, které funkce jen pro Copilot se v týmu vyplatí: výběr modelů, napojení na GitHub, metriky.
 2. Přenes si zvyky z Claude Code pomocí tabulky s mapováním názvů.
 3. Zabraň tomu, aby repo, které čtou oba nástroje, posílalo stejné instrukce dvakrát.
 
 ## Jen v Copilotu
 
-Seřazeno podle toho, jak moc rozdíl pocítí vývojář ve 2N. Kde má Claude Code částečnou
+Seřazeno podle toho, jak moc rozdíl pocítí vývojář. Kde má Claude Code částečnou
 náhradu, prostřední sloupec uvádí jen to, co pořád chybí. „—“ = není součástí workshopu.
 
 | Featura | Co přesně Claude Code chybí | V tomhle workshopu |
@@ -108,7 +108,7 @@ Copilot CLI čte projektové soubory Claude Code. Claude Code z těch od Copilot
 - **Přidej jeden hook:** deny v `preToolUse` pro tajné údaje nebo testovou bránu v `agentStop` ([04](04-hooks.cs.md)).
 - **Zkopíruj si launcher** `scripts/copilot-ws.sh` a dej do něj vlastní příkazy pro build a testy
   ([08](08-permissions-sandbox.cs.md)).
-- **Napiš jeden eval**, než skill nasdílíš na guildě: stejný prompt, se skillem a bez něj
+- **Napiš jeden eval**, než skill nasdílíš dalším týmům: stejný prompt, se skillem a bez něj
   ([09](09-evals.cs.md)).
 
 Zpět na [README](README.cs.md) · [cvičení](exercises.cs.md)

@@ -4,8 +4,8 @@
 
 > Ověřeno na Copilot CLI 1.0.114 · Dokumentace: [Customizing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/overview) · [Comparing customization features](https://docs.github.com/en/copilot/concepts/customizations/comparing-customizations)
 
-Praktický workshop pro vývojáře Quanti ve 2N nad hrou 2048: `engine/` (pravidla v Kotlinu), `api/`
-(Spring Boot), `web/` (React). Nástrojem je Copilot CLI: metriky 2N počítají právě jeho používání.
+Praktický workshop pro vývojáře v Javě, Kotlinu, React/TypeScriptu, Androidu, iOS a automatizaci testů
+nad hrou 2048: `engine/` (pravidla v Kotlinu), `api/` (Spring Boot), `web/` (React). Nástrojem je Copilot CLI.
 Kód generuješ, nepíšeš: úroveň 5+ na [škále VisiData](https://www.visidata.org/blog/2026/ai/),
 kde kóduje Copilot a ty všemu rozumíš. Sesterský workshop k workshopu Claude Code (`dxc-ws`).
 
@@ -22,7 +22,7 @@ kde kóduje Copilot a ty všemu rozumíš. Sesterský workshop k workshopu Claud
 | **Přestávka** | 10 | | |
 | MCP pod allow-listem | 10 | [05 · MCP](05-mcp.cs.md) | demo (cvičení 4) |
 | Vlastní agenti | 25 | [06 · Vlastní agenti](06-agents.cs.md) | demo, cvičení 5 |
-| Pluginy a sdílení na guildách | 15 | [07 · Pluginy](07-plugins.cs.md) | demo, cvičení 6 |
+| Pluginy a sdílení mezi týmy | 15 | [07 · Pluginy](07-plugins.cs.md) | demo, cvičení 6 |
 | Oprávnění a sandbox | 15 | [08 · Oprávnění a sandbox](08-permissions-sandbox.cs.md) | demo, vyzkoušení |
 | **Přestávka** | 10 | | |
 | Evaly | 20 | [09 · Evaly](09-evals.cs.md) | demo, cvičení 8 |
@@ -41,14 +41,14 @@ nezávisí na jiném.
 
 - **Účastník:** udělej přípravu předem z [01 · Začínáme](01-getting-started.cs.md): nainstaluj
   Copilot CLI 1.0.114 nebo novější, přihlas se účtem, na kterém máš seat Copilot Business
-  (spravuje ho `2n-labs`), naklonuj repo a jednou ho sestav. Windows: použij WSL 2, hooky jsou v bashi.
-- **Lektor:** projdi [preflight.cs.md](preflight.cs.md) s adminem Copilotu ve 2N a na jednom
+  nebo Enterprise, naklonuj repo a jednou ho sestav. Windows: použij WSL 2, hooky jsou v bashi.
+- **Lektor:** projdi [preflight.cs.md](preflight.cs.md) s adminem Copilotu ve vaší organizaci a na jednom
   účastnickém stroji. Nastavení organizace umí vypnout skilly, hooky, pluginy nebo MCP
   bez chybové hlášky.
-- **Žádný obrazový vstup.** Ve 2N je vypnutý. Žádný návod ani cvičení nepoužívá screenshot. Dej agentovi
+- **Obrazový vstup není potřeba.** Některé organizace ho vypínají, proto žádný návod ani cvičení nepoužívá screenshot. Dej agentovi
   místo něj text: výstup padajícího testu, text DOMu z testu, log z konzole prohlížeče.
-- **Jen schválené MCP servery.** Workshop používá vestavěný GitHub server a ukazuje
-  vzor pro schválený Jira server 2N (`.mcp.json.example`).
+- **Není potřeba žádný MCP server třetí strany.** Workshop používá vestavěný GitHub server a ukazuje
+  vzor pro Jira server (`.mcp.json.example`), takže funguje i pod MCP allow-listem.
 
 ## Pětiminutové demo
 
@@ -72,12 +72,12 @@ oprávnění ([08](08-permissions-sandbox.cs.md)) a evaly ([09](09-evals.cs.md))
   nebo neupravuje odpovídající soubor.
 - **Skill:** Copilot má vědět, jak něco udělat po tvém. Kdy ho načíst, rozhoduje model.
 - **Hook:** něco se musí stát pokaždé, ať si model myslí cokoli: zablokovat, zformátovat, otestovat.
-- **MCP:** Copilot potřebuje schopnost, kterou nemá, třeba přečíst Jira issue. Ve 2N jen
-  servery ze schváleného seznamu.
+- **MCP:** Copilot potřebuje schopnost, kterou nemá, třeba přečíst Jira issue. Pod allow-listem
+  jen schválené servery.
 - **Agent:** jeden samostatný úkol ve vlastním kontextu s vlastními nástroji, třeba reviewer,
   který nemůže editovat.
-- **Plugin:** skill nebo agent se má sdílet mezi repozitáři jako jeden verzovaný balíček. Tohle
-  přineseš na guildu.
+- **Plugin:** skill nebo agent se má sdílet mezi repozitáři jako jeden verzovaný balíček. Tak
+  nástroj nasdílíš dalším týmům.
 - **Oprávnění:** předem schval rutinní příkazy repa pro jeden běh a zakaž, co nesmí běžet
   nikdy. Skutečná hranice je sandbox; pravidla a hooky jsou pojistky.
 - **Eval:** potřebuješ důkaz, že skill, agent nebo plugin mění výsledek, než požádáš tým,
@@ -92,7 +92,7 @@ oprávnění ([08](08-permissions-sandbox.cs.md)) a evaly ([09](09-evals.cs.md))
 | Instrukce | ✅ | ✅ | ✅ |
 | Skilly | ✅ | ⚠️ režim agenta, od pluginu 1.10.0; které projektové složky prohledává, není zdokumentované | ✅ |
 | Hooky | ✅ | ⚠️ zveřejněné jsou jen `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred`; tohle repo používá i `sessionStart` a `agentStop` | ⚠️ stejné soubory; z rozhodnutí `ask` se stane zamítnutí |
-| MCP (`.mcp.json`) | ✅ po udělení důvěry složce, v mezích politiky 2N | ⚠️ `.mcp.json` v kořenu od pluginu 1.19.0 | ⚠️ konfiguruje se pro každý repozitář na GitHub.com |
+| MCP (`.mcp.json`) | ✅ po udělení důvěry složce, v mezích politiky organizace | ⚠️ `.mcp.json` v kořenu od pluginu 1.19.0 | ⚠️ konfiguruje se pro každý repozitář na GitHub.com |
 | Vlastní agenti | ✅ | ⚠️ čte `.github/agents/`; které klíče frontmatteru respektuje, není zdokumentované | ✅ |
 | Plugin zapnutý nastavením repa | ✅ | ⚠️ oddělené úložiště pluginů; nainstaluj ho v IDE | ✅ čte oba klíče z commitnutého nastavení |
 | Oprávnění a sandbox | ✅ | ⚠️ přepínače při spuštění patří k terminálu; hooky repa se čtou | ⚠️ běží na GitHubu: žádný launcher, žádný lokální sandbox; hooky repa se načtou |
@@ -118,7 +118,7 @@ nepočítá jako používání CLI.
 ⚠️ v tomto repu nespuštěno; pravidlo se drží syntaxe `shell(command:*)` z
 `copilot help permissions`. Cloud agent běží jen na runnerech s Linuxem nebo Windows:
 [Customizing the agent environment](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment).
-Většina ze 170 repozitářů My2N už AI instrukce má: nejdřív spusť `copilot instruction list` ve svém
+Většina skutečných repozitářů už AI instrukce má: nejdřív spusť `copilot instruction list` ve svém
 repu a podívej se, co se načítá ([02](02-custom-instructions.cs.md)).
 
 ## Po workshopu

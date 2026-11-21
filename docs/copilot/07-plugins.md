@@ -1,18 +1,18 @@
 > 🌍 Read this in: **English** | [Česky](07-plugins.cs.md)
 
-# 07 · Plugins and guild sharing
+# 07 · Plugins and sharing across teams
 
 > ⏱ 15 min (7 demo + 8 exercise 6) · Docs: [Plugins for GitHub Copilot](https://docs.github.com/en/copilot/concepts/customizations/plugins) · [Creating a plugin](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-creating) · [Finding and installing plugins](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) · Verified on Copilot CLI 1.0.114
 
 ## In short
 
-**You need:** The CLI. To share a tool at a guild: a git repository that hosts the marketplace.
+**You need:** The CLI. To share a tool with other teams: a git repository that hosts the marketplace.
 
-**What it is for:** A plugin packs skills, agents, hooks and MCP servers into one bundle with a name and a version. It is how a tool you built in one repo reaches the other 170 My2N repos.
+**What it is for:** A plugin packs skills, agents, hooks and MCP servers into one bundle with a name and a version. It is how a tool you built in one repo reaches all the other repos of your company.
 
 **Three uses that pay off most:**
 
-1. Share a guild tool: colleagues install it by name instead of copying files.
+1. Share a team tool: colleagues install it by name instead of copying files.
 2. Switch a team toolset on for a whole repo with two settings keys; everyone gets it after trusting the folder.
 3. Version a tool, so a change can be rolled out and rolled back.
 
@@ -22,8 +22,8 @@ A **plugin** is a directory with a manifest, `plugin.json`, that bundles skills,
 servers and LSP servers under one name and version. A **marketplace** is a catalog file,
 `marketplace.json`, that lists plugins and says where to fetch each one.
 
-Guides 02 to 06 put everything into one repo's `.github/`. My2N has about 170 repos, six stacks and
-guilds that share tools. A plugin in a marketplace repo is how a guild tool reaches the other
+Guides 02 to 06 put everything into one repo's `.github/`. A company has dozens of repos, several stacks and
+teams that share tools. A plugin in a marketplace repo is how a shared tool reaches the other
 repos: versioned, installed by name, or switched on per repo with two settings keys.
 
 ## What this example does
@@ -97,19 +97,19 @@ plugins/2048-dev/                         ← the plugin
    copilot -p "Reply with OK" --trust-folder --no-ask-user --output-format json \
      | jq -c 'select(.type == "session.skills_loaded") | .data.skills[] | select(.source == "plugin") | .commandName' | sort -u
    ```
-4. Mount a plugin that no settings file enables yet (a new one, a guild repo). Nothing is installed:
+4. Mount a plugin that no settings file enables yet (a new one, a shared marketplace repo). Nothing is installed:
    ```bash
    copilot --plugin-dir ./plugins/2048-dev               # then /2048-dev:build-test
    copilot --plugin-dir ./plugins/2048-dev plugin list   # no model call; lists "2048-dev (v1.0.0)"
    ```
 
-## Share a tool at a guild
+## Share a tool across teams
 
-One marketplace repo that every guild member can read (the names are examples):
+One marketplace repo that every team member can read (the names are examples):
 
 ```
-2n-copilot-plugins/
-├── marketplace.json                      ← "name": "2n-guild", one entry per plugin
+team-copilot-plugins/
+├── marketplace.json                      ← "name": "team-tools", one entry per plugin
 └── plugins/kotlin-review/
     ├── plugin.json
     └── skills/review-pr/SKILL.md
@@ -119,10 +119,10 @@ One marketplace repo that every guild member can read (the names are examples):
    `name` values, or start from [github/plugin-marketplace-starter](https://github.com/github/plugin-marketplace-starter).
 2. Move a tool that has proved itself in one repo's `.github/` into `plugins/<plugin>/`: skills
    to `skills/<skill>/SKILL.md`, agents and hooks under `com.github.copilot/`. An MCP server in
-   a plugin must still pass 2N's MCP allow-list.
+   a plugin must still pass your organisation's MCP allow-list.
 3. List the plugin in `marketplace.json` with `"source": "./plugins/<plugin>"`.
 4. Mount it with `--plugin-dir`, try it, and validate the manifest (steps 2 and 4 above).
-5. Push. Give the guild read access to the repo; organisation membership alone is not enough.
+5. Push. Give the teams read access to the repo; organisation membership alone is not enough.
 6. Each colleague runs, once (⚠️ not run in this repo):
    `copilot plugin marketplace add <owner>/<repo>`, then `copilot plugin install <plugin>@<marketplace>`.
 7. Or a project enables it for its whole team: commit the two settings keys with the marketplace

@@ -95,7 +95,7 @@ suggests edits to `.github/copilot-instructions.md` from this repo's sessions âš
 
 ## A repo that already has AI instructions
 
-Most of the about 170 My2N repos have some. First list what Copilot loads there, outside a session:
+Most real repos already have some. First list what Copilot loads there, outside a session:
 
 ```bash
 copilot instruction list --json | jq -r '.[] | [.location, .sourcePath, ((.applyTo // ["every session"]) | join(","))] | @tsv'

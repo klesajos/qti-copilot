@@ -6,7 +6,7 @@
 
 ## In short
 
-**You need:** IntelliJ IDEA with the GitHub Copilot plugin, 1.20.0 or later. For `/delegate`: the Copilot cloud agent enabled for the repo. For Coder: a workspace from 2N.
+**You need:** IntelliJ IDEA with the GitHub Copilot plugin, 1.20.0 or later. For `/delegate`: the Copilot cloud agent enabled for the repo. For Coder: a Coder deployment with a workspace for you.
 
 **What it is for:** The same Copilot outside your terminal: inside the IDE, in the cloud on GitHub, or on a remote machine that keeps working while your laptop is closed.
 
@@ -18,8 +18,8 @@
 
 ## IntelliJ IDEA plugin
 
-IntelliJ IDEA is allowed at 2N. The plugin's chat agent reads most of this repo's files, but not
-all of them in the same way, and it is not what 2N's metrics count. Android Studio and Xcode
+The IntelliJ IDEA plugin's chat agent reads most of this repo's files, but not all of them in
+the same way, and it is not counted as CLI usage. Android Studio and Xcode
 users: this section covers IntelliJ IDEA only; the terminal CLI is the tool all six stacks share.
 
 | File in this repo | In the plugin | Note |
@@ -44,18 +44,18 @@ current runtime, counted as CLI. Keep the plugin for completions and next edit s
 > 🔷 **Copilot only:** `copilot --acp` is a built-in ACP server mode; Claude Code has none and
 > reaches ACP editors only through a third-party adapter.
 
-**How usage is attributed in 2N's metrics.** The CLI has its own counters: `totals_by_cli`
+**How usage is attributed in the metrics.** The CLI has its own counters: `totals_by_cli`
 (sessions, requests, prompts, tokens) and a daily `used_cli` flag per user.¹
 
 | What you run | Reported as |
 |--------------|-------------|
 | `copilot` in a terminal, the IDE's terminal included | ✅ CLI |
 | The plugin's chat agent, completions, next edit suggestions | ❌ JetBrains (plugin 1.20.0 or later) |
-| Vally evals and Conductor (Copilot SDK), `/delegate` (cloud agent) | ⚠️ Assume not CLI until 2N confirms |
+| Vally evals and Conductor (Copilot SDK), `/delegate` (cloud agent) | ⚠️ Assume not CLI until your administrator confirms |
 
 Plugin 1.15.0–1.19.x counted some IDE agent sessions as CLI activity
 ([fixed in 1.20.0, not backfilled](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/usage-metrics-coverage)):
-upgrade the plugin. Which field 2N reads is a question in [preflight.md](preflight.md).
+upgrade the plugin. Which field your organisation reads is a question in [preflight.md](preflight.md).
 
 ¹ The docs page contradicts itself on `totals_by_feature`: one section says CLI usage is not
 reflected there, the feature table lists `copilot_cli`. Ask which field a number comes from.
@@ -83,7 +83,7 @@ When you leave, nobody answers prompts (a request that would ask is denied) or n
 |-----|----------------|-------|-------------|
 | `/delegate` | On GitHub, as the Copilot cloud agent | The Copilot CLI and cloud agent policies; the repo on GitHub | The task is well specified and the laptop may close |
 | `/remote on` | On your machine | The policy "Store local sessions in the Cloud" set to "View and control"; the machine on and online | The task needs your local setup or unpushed files |
-| Coder Workspaces | On 2N's infrastructure | A Coder template with Copilot CLI and a GitHub login in the workspace | The job outlives a night. Planned at 2N |
+| Coder Workspaces | On your own infrastructure | A Coder template with Copilot CLI and a GitHub login in the workspace | The job outlives a night |
 
 **`/delegate` to the cloud agent.** Type `/delegate <prompt>`, or start a prompt with `&`.
 Copilot offers to commit your unstaged changes as a checkpoint on a new branch. The cloud agent

@@ -24,7 +24,7 @@ Guides 02–09 shape one agent in one session. Four ways to go past that:
 |-----|------|-----------------------|----------|
 | `/fleet` | Inside a session: a one-off job with independent parts | The model, again on every run | A prompt |
 | `copilot -p` | Scripts and CI: one prompt, no UI, output a script can read | Your script | Shell, a CI job |
-| Microsoft Conductor | Central, versioned multi-agent flows. 2N has selected it; not rolled out yet | A YAML file | `conductor/*.yaml` |
+| Microsoft Conductor | Central, versioned multi-agent flows. Open source from Microsoft, early releases | A YAML file | `conductor/*.yaml` |
 | Dynamic workflows | The same fixed pipeline inside Copilot. Public preview | Extension code | `.github/extensions/` |
 
 ## /fleet

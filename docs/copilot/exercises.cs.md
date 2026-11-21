@@ -410,7 +410,7 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex4.patch`
 - **Webová vrstva.** Založ druhé issue, „Show `best: N` in the header“, a zopakuj kroky 2 až 5:
   `bestScore: number` ve `web/src/api.ts`, jedno `<p>` v `App.tsx`, test s mockovaným `./api`.
 - **Varianta s Jirou** (⚠️ v tomto repu nespuštěno). `cp .mcp.json.example .mcp.json`, místo
-  zástupné hodnoty dej URL Jira MCP serveru schváleného ve 2N a restartuj session. `/mcp list` ukáže
+  zástupné hodnoty dej URL svého Jira MCP serveru a restartuj session. `/mcp list` ukáže
   `jira` jako připojený; když chce přihlášení, spusť `/mcp auth jira`. Použij stejné dva prompty,
   jen místo GitHub issue *„Přečti Jira issue <KEY> přes server jira“*.
 
@@ -516,7 +516,7 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex5.patch`
 **Cíl.** Plugin `2048-dev` dodává druhý skill, `run-local` (spusť API a webové UI,
 udělej smoke test), ve verzi 1.1.0 a session ho nabízí jako `/2048-dev:run-local`.
 
-**Proč tento mechanismus.** Plugin je to, co předáš guildě: skill nese jedna verzovaná jednotka.
+**Proč tento mechanismus.** Plugin je to, co předáš dalším týmům: skill nese jedna verzovaná jednotka.
 
 ### Kroky
 

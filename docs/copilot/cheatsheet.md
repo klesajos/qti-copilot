@@ -60,14 +60,14 @@ Autopilot, `Ctrl+O` expands the timeline entries, `?` on an empty prompt lists a
 
 | Topic | How |
 |-------|-----|
-| Pick a model | `/model`, `--model <model-id>`, `COPILOT_MODEL`, or the `model` setting. At 2N every model except the Claude Fable family can be selected; one you cannot use is still listed in `/model` and says why when highlighted. Each model lists its credits per 1M tokens |
+| Pick a model | `/model`, `--model <model-id>`, `COPILOT_MODEL`, or the `model` setting. Your organisation decides which models can be selected (the Claude Fable family is off by default); one you cannot use is still listed in `/model` and says why when highlighted. Each model lists its credits per 1M tokens |
 | Effort | Levels `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`; which exist depends on the model; unset is the model's default, `medium` for most. Set it with left / right arrows in `/model`, `--reasoning-effort <level>`, the `effortLevel` setting, `reasoning-effort:` in an `.agent.md`, or `/subagents` |
 | Plan mode | Own model and effort: `/model plan`, `planModel`, `planEffortLevel`. The session effort is not inherited |
 | Auto | `auto` is shown as Copilot Fusion and picks a model per prompt. `--auto-tier` / `autoTier`: `efficiency`, `balance`, `intelligence`. `fusionTier`: `standard`, `high`, `max`. In `/model`, left / right on the `Copilot Fusion` row step its `Tier` (`Standard`, `High`, `Max`) |
 | Context tier | `--context default` or `long_context`, the `contextTier` setting, or the tier picker in `/model` |
 | Reasoning, cost | `Ctrl+T` shows or hides reasoning summaries. `/usage`: `↑ input (N cached, N written) • ↓ output (N reasoning)`; reasoning tokens are billed as output |
 
-Never commit a model id: 2N's list differs from yours. `effortLevel` is the safe one to commit.
+Never commit a model id: a colleague's allowed list may differ from yours. `effortLevel` is the safe one to commit.
 
 > 🔷 **Copilot only:** one subscription and one picker for models from several vendors (Anthropic, OpenAI, Google, xAI, Microsoft, Moonshot AI). Claude Code runs Claude models only.
 

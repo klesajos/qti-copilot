@@ -4,8 +4,8 @@
 
 > Verified on Copilot CLI 1.0.114 · Docs: [Customizing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/overview) · [Comparing customization features](https://docs.github.com/en/copilot/concepts/customizations/comparing-customizations)
 
-A hands-on workshop for Quanti developers at 2N on a 2048 game: `engine/` (Kotlin rules), `api/`
-(Spring Boot), `web/` (React). The tool is Copilot CLI: its usage is what 2N's metrics count. You
+A hands-on workshop for Java, Kotlin, React/TypeScript, Android, iOS and test-automation developers
+on a 2048 game: `engine/` (Kotlin rules), `api/` (Spring Boot), `web/` (React). The tool is Copilot CLI. You
 generate code, you do not write it: level 5+ on the [VisiData scale](https://www.visidata.org/blog/2026/ai/),
 where Copilot codes and you understand all of it. Sibling of the Claude Code workshop (`dxc-ws`).
 
@@ -22,7 +22,7 @@ where Copilot codes and you understand all of it. Sibling of the Claude Code wor
 | **Break** | 10 | | |
 | MCP under an allow-list | 10 | [05 · MCP](05-mcp.md) | demo (exercise 4) |
 | Custom agents | 25 | [06 · Agents](06-agents.md) | demo, exercise 5 |
-| Plugins and guild sharing | 15 | [07 · Plugins](07-plugins.md) | demo, exercise 6 |
+| Plugins and sharing across teams | 15 | [07 · Plugins](07-plugins.md) | demo, exercise 6 |
 | Permissions and sandbox | 15 | [08 · Permissions and sandbox](08-permissions-sandbox.md) | demo, try |
 | **Break** | 10 | | |
 | Evals | 20 | [09 · Evals](09-evals.md) | demo, exercise 8 |
@@ -40,15 +40,15 @@ depends on another.
 ## Before the day
 
 - **Participants:** do the pre-work in [01 · Getting started](01-getting-started.md): install
-  Copilot CLI 1.0.114 or later, log in with the account that holds your Copilot Business seat
-  (managed by `2n-labs`), clone the repo, build it once. Windows: use WSL 2, the hooks are bash.
-- **Facilitator:** run [preflight.md](preflight.md) with the 2N Copilot admin and on one
+  Copilot CLI 1.0.114 or later, log in with the account that holds your Copilot Business or
+  Enterprise seat, clone the repo, build it once. Windows: use WSL 2, the hooks are bash.
+- **Facilitator:** run [preflight.md](preflight.md) with your Copilot admin and on one
   participant machine. Organisation settings can switch off skills, hooks, plugins or MCP
   without an error message.
-- **No image input.** It is disabled at 2N. No guide or exercise uses a screenshot. Give the agent
+- **No image input needed.** Some organisations disable it, so no guide or exercise uses a screenshot. Give the agent
   text instead: the failing test output, the DOM text from a test, the browser console log.
-- **Approved MCP servers only.** The workshop uses the built-in GitHub server and shows the
-  pattern for 2N's approved Jira server (`.mcp.json.example`).
+- **No third-party MCP server needed.** The workshop uses the built-in GitHub server and shows the
+  pattern for a Jira server (`.mcp.json.example`), so it also works under an MCP allow-list.
 
 ## Five-minute demo
 
@@ -72,12 +72,12 @@ permissions ([08](08-permissions-sandbox.md)) and evals ([09](09-evals.md)).
   is read or edited.
 - **Skill:** Copilot should know how to do something your way. The model decides when to load it.
 - **Hook:** something must happen every time, whatever the model thinks: block, format, test.
-- **MCP:** Copilot needs a capability it does not have, such as reading a Jira issue. At 2N only
-  servers on the approved list.
+- **MCP:** Copilot needs a capability it does not have, such as reading a Jira issue. Under an
+  allow-list only approved servers.
 - **Agent:** one self-contained task in its own context with its own tools, such as a reviewer
   that cannot edit.
 - **Plugin:** a skill or agent should be shared across repos as one versioned package. This is
-  what you bring to a guild.
+  how you share a tool with other teams.
 - **Permissions:** pre-approve a repo's routine commands for one run and deny what must never
   run. The sandbox is the real boundary; rules and hooks are guard rails.
 - **Eval:** you need evidence that a skill, agent or plugin changes the outcome before you ask a
@@ -92,7 +92,7 @@ permissions ([08](08-permissions-sandbox.md)) and evals ([09](09-evals.md)).
 | Instructions | ✅ | ✅ | ✅ |
 | Skills | ✅ | ⚠️ agent mode, since plugin 1.10.0; which project folders it scans is not documented | ✅ |
 | Hooks | ✅ | ⚠️ only `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred` are published; this repo also uses `sessionStart` and `agentStop` | ⚠️ same files; an `ask` decision becomes a deny |
-| MCP (`.mcp.json`) | ✅ after folder trust, inside the 2N policy | ⚠️ root `.mcp.json` since plugin 1.19.0 | ⚠️ configured per repository on GitHub.com |
+| MCP (`.mcp.json`) | ✅ after folder trust, inside the organisation's policy | ⚠️ root `.mcp.json` since plugin 1.19.0 | ⚠️ configured per repository on GitHub.com |
 | Custom agents | ✅ | ⚠️ reads `.github/agents/`; which frontmatter keys it honours is not documented | ✅ |
 | Plugin enabled by repo settings | ✅ | ⚠️ separate plugin store; install it in the IDE | ✅ reads both keys from the committed settings |
 | Permissions and sandbox | ✅ | ⚠️ launch flags belong to the terminal; the repo hooks are read | ⚠️ runs on GitHub: no launcher, no local sandbox; the repo hooks load |
@@ -118,7 +118,7 @@ counted as CLI usage.
 ⚠️ not run in this repo; the rule follows the `shell(command:*)` syntax of
 `copilot help permissions`. The cloud agent runs on Linux or Windows runners only:
 [Customizing the agent environment](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment).
-Most of My2N's 170 repos already carry AI instructions: run `copilot instruction list` in yours
+Most real repos already carry AI instructions: run `copilot instruction list` in yours
 first and see what loads ([02](02-custom-instructions.md)).
 
 ## After the workshop

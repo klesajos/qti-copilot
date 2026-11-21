@@ -406,8 +406,8 @@ Apply the whole solution: `git apply docs/copilot/solutions/ex4.patch`
 
 - **Web layer.** File a second issue, "Show `best: N` in the header", and repeat steps 2 to 5:
   `bestScore: number` in `web/src/api.ts`, one `<p>` in `App.tsx`, a test with a mocked `./api`.
-- **Jira variant** (⚠️ not run in this repo). `cp .mcp.json.example .mcp.json`, put the URL of 2N's
-  approved Jira MCP server in place of the placeholder and restart the session. `/mcp list` shows
+- **Jira variant** (⚠️ not run in this repo). `cp .mcp.json.example .mcp.json`, put the URL of your
+  Jira MCP server in place of the placeholder and restart the session. `/mcp list` shows
   `jira` as connected; run `/mcp auth jira` if it asks you to sign in. Use the same two prompts
   with *"Read Jira issue <KEY> with the jira server"* in place of the GitHub issue.
 
@@ -512,7 +512,7 @@ Apply the whole solution: `git apply docs/copilot/solutions/ex5.patch`
 **Goal.** The `2048-dev` plugin ships a second skill, `run-local` (start the API and the web UI,
 smoke-test them), at version 1.1.0, and a session offers it as `/2048-dev:run-local`.
 
-**Why this mechanism.** A plugin is what you hand to a guild: one versioned unit carries the skill.
+**Why this mechanism.** A plugin is what you hand to other teams: one versioned unit carries the skill.
 
 ### Steps
 

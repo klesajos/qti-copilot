@@ -12,7 +12,7 @@
 
 **Tři nejužitečnější použití:**
 
-1. Dokaž, že si skill své místo zaslouží, dřív než ho nasdílíš na guildě.
+1. Dokaž, že si skill své místo zaslouží, dřív než ho nasdílíš dalším týmům.
 2. Zachyť regresi, když skill upravíš nebo přejdeš na jiný model.
 3. Porovnej dvě verze instrukce podle čísel, ne podle jednoho šťastného běhu.
 
@@ -26,7 +26,7 @@ trial je skutečná, účtovaná Copilot session. Práci odvedou tři nástroje:
 | Nástroj | Co to je | V tomto repu |
 |---|---|---|
 | **Vally CLI** (`@microsoft/vally-cli`, MIT) | Engine: pustí stimulus přes session Copilot SDK a ohodnotí výsledek | Používá se. Připnutý na `0.21.0` v `package.json` |
-| **GitHub Copilot Evals** (`eval@github-copilot-evals`) | Plugin s příkazy `/eval` a skilly jako frontend k Vally. [Public preview](https://github.blog/changelog/2026-11-17-github-copilot-evals-is-now-in-public-preview/) od 2026-11-17 | Není přibalený v repu (licence source-available); nainstaluj z [github/evals](https://github.com/github/evals). `/eval` potřebuje experimentální režim. Přináší vlastní MCP server `copilot-evals`: počítej s tím, že ve 2N bude blokovaný, dokud nebude na seznamu schválených |
+| **GitHub Copilot Evals** (`eval@github-copilot-evals`) | Plugin s příkazy `/eval` a skilly jako frontend k Vally. [Public preview](https://github.blog/changelog/2026-11-17-github-copilot-evals-is-now-in-public-preview/) od 2026-11-17 | Není přibalený v repu (licence source-available); nainstaluj z [github/evals](https://github.com/github/evals). `/eval` potřebuje experimentální režim. Přináší vlastní MCP server `copilot-evals`: pod MCP allow-listem zůstane blokovaný, dokud ho neschválí |
 | **Obyčejný skript s `copilot -p`** (`evals/plugin-ab.sh`) | 73 řádků bashe a `jq` | Používá se na to, co Vally nepokrývá: celý plugin jako jeden celek |
 
 ## Co dělá tahle ukázka

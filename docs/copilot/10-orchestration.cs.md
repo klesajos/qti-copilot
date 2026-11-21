@@ -24,7 +24,7 @@ Návody 02–09 ladí jednoho agenta v jedné session. Čtyři způsoby, jak jí
 |-----|------|-----------------------|----------|
 | `/fleet` | Uvnitř session: jednorázová práce s nezávislými částmi | Model, při každém běhu znovu | Prompt |
 | `copilot -p` | Skripty a CI: jeden prompt, žádné UI, výstup čitelný pro skript | Tvůj skript | Shell, CI job |
-| Microsoft Conductor | Centrální, verzovaná multiagentní flow. 2N si ho vybralo; zatím není nasazený | YAML soubor | `conductor/*.yaml` |
+| Microsoft Conductor | Centrální, verzovaná multiagentní flow. Open source od Microsoftu, rané verze | YAML soubor | `conductor/*.yaml` |
 | Dynamická workflow | Stejná pevná pipeline uvnitř Copilota. Public preview | Kód rozšíření | `.github/extensions/` |
 
 ## /fleet

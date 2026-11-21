@@ -6,7 +6,7 @@
 
 ## Ve zkratce
 
-**Potřebuješ:** CLI, přihlášené: server pro GitHub je vestavěný. `gh` je volitelný. Pro jakýkoli jiný server: místo na schváleném seznamu 2N, jako má Jira MCP se svou URL.
+**Potřebuješ:** CLI, přihlášené: server pro GitHub je vestavěný. `gh` je volitelný. Pro jakýkoli jiný server: jeho URL a místo na allow-listu organizace, pokud nějaký má.
 
 **K čemu to je:** MCP připojí k agentovi vnější systémy jako nástroje: GitHub, Jiru, databázi. Copilot si pak issue nebo tiket přečte sám a ty ho nemusíš kopírovat.
 
@@ -26,12 +26,12 @@ nástrojů do kontextu modelu. V pravidlech oprávnění vystupuje jako `name` n
 
 ```
 (inside the CLI)      ← github-mcp-server: built in, starts at sign-in, nothing to configure
-.mcp.json.example     ← the file format, with the approved 2N Jira MCP as the pattern
+.mcp.json.example     ← the file format, with a Jira MCP server as the pattern
 .mcp.json             ← your copy with the real URL; gitignored
 ```
 
-2N povoluje MCP servery jen ze schváleného seznamu a provozuje vlastní Jira MCP. Repo proto
-záměrně neobsahuje žádný živý server třetí strany: na tvém stroji by byl zablokovaný.
+Mnoho organizací povoluje MCP servery jen ze schváleného seznamu. Repo proto záměrně neobsahuje
+žádný živý server třetí strany: na tvém stroji by mohl být zablokovaný.
 
 ## Vestavěný GitHub MCP server
 
@@ -75,7 +75,7 @@ CLI čte `.mcp.json` z kořene repa, jakmile je složka důvěryhodná. `.mcp.js
 - `mcpServers`: klíč nejvyšší úrovně. S klíčem `servers` z VS Code nenačte CLI nic.
 - `jira`: jméno serveru. Je prefixem názvů nástrojů, objevuje se v pravidlech oprávnění
   (`jira(tool)`) a allow-list založený na jménech hledá shodu právě podle něj. Použij přesně to
-  jméno, které ti dá 2N.
+  jméno, které ti dá administrátor.
 - `type`, `url`: `http` je vzdálený server; lokální používá `"type": "local"` s `command` a
   `args`. URL napiš doslovně: allow-list zablokuje server s nevyhodnoceným `${VAR}`.
 - `"tools": ["*"]`: zpřístupní všechny nástroje; vyjmenuj názvy, ať nepoužité definice nezabírají kontext.
@@ -83,7 +83,7 @@ CLI čte `.mcp.json` z kořene repa, jakmile je složka důvěryhodná. `.mcp.js
 
 ## Vytvoř si vlastní, krok za krokem
 
-1. `cp .mcp.json.example .mcp.json`, doplň jméno a URL od 2N, spusť `jq . .mcp.json`.
+1. `cp .mcp.json.example .mcp.json`, doplň jméno a URL svého serveru, spusť `jq . .mcp.json`.
 2. Spusť `copilot` a dej složce důvěru, nebo v otevřené session spusť `/mcp reload`. `/mcp list`
    ukáže `jira` jako `connected`; `/mcp auth jira` tě přihlásí. ⚠️ v tomto repu nespuštěno
 
@@ -101,7 +101,7 @@ CLI čte `.mcp.json` z kořene repa, jakmile je složka důvěryhodná. `.mcp.js
 - `N MCP servers were blocked by policy: 'name' (reason)`, např. `Not found in registry <url>`.
 - `MCP server "SERVER-NAME" was blocked by your enterprise "ENTERPRISE-NAME".`
 
-Konfigurace je v pořádku: pošli jméno a URL serveru administrátorovi 2N. Když se politiku
+Konfigurace je v pořádku: pošli jméno a URL serveru svému administrátorovi Copilotu. Když se politiku
 nepodaří stáhnout, zablokuje se každý server kromě vestavěných, takže nejdřív zkontroluj VPN a proxy.
 
 ## Volitelné parametry

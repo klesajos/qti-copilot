@@ -76,8 +76,8 @@ default tier. Several prices are promotional and end. `/model` lists each model'
 | xAI | Grok 4.5, 4.6, 4.7 | Versatile | General-purpose coding and agent tasks | 2.00 / 6.00 |
 | Moonshot AI | Kimi K3 | Powerful | Agentic coding and long-context work. **Off by default** | 3.00 / 15.00 |
 
-- **At 2N:** Copilot Business managed by `2n-labs`, every model except the Claude Fable family
-  (5, 5.1, 5.2). GitHub keeps Fable disabled until an organisation owner enables each model under
+- **Your organisation decides** which models you can pick. The Claude Fable family (5, 5.1,
+  5.2) is off by default: GitHub keeps Fable disabled until an organisation owner enables each model under
   Settings → Copilot → Models ([docs](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-default-models)),
   because it is not covered by GitHub's data retention agreement (Anthropic retains prompts and
   outputs by default to run safety classifiers). Auto never routes to it.

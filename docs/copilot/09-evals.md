@@ -12,7 +12,7 @@
 
 **Three uses that pay off most:**
 
-1. Prove a skill earns its place before you share it at a guild.
+1. Prove a skill earns its place before you share it with other teams.
 2. Catch a regression when you edit a skill or switch to another model.
 3. Compare two versions of an instruction on numbers, not on one lucky run.
 
@@ -26,7 +26,7 @@ difference is the proof. Every trial is a real, billed Copilot session. Three to
 | Tool | What it is | In this repo |
 |---|---|---|
 | **Vally CLI** (`@microsoft/vally-cli`, MIT) | The engine: runs a stimulus through a Copilot SDK session and grades the result | Used. Pinned to `0.21.0` in `package.json` |
-| **GitHub Copilot Evals** (`eval@github-copilot-evals`) | A plugin with `/eval` commands and skills in front of Vally. [Public preview](https://github.blog/changelog/2026-11-17-github-copilot-evals-is-now-in-public-preview/) since 2026-11-17 | Not vendored (source-available licence); install from [github/evals](https://github.com/github/evals). `/eval` needs experimental mode. It ships its own `copilot-evals` MCP server: expect it blocked at 2N until it is on the approved list |
+| **GitHub Copilot Evals** (`eval@github-copilot-evals`) | A plugin with `/eval` commands and skills in front of Vally. [Public preview](https://github.blog/changelog/2026-11-17-github-copilot-evals-is-now-in-public-preview/) since 2026-11-17 | Not vendored (source-available licence); install from [github/evals](https://github.com/github/evals). `/eval` needs experimental mode. It ships its own `copilot-evals` MCP server: under an MCP allow-list it stays blocked until it is approved |
 | **Plain `copilot -p` script** (`evals/plugin-ab.sh`) | 73 lines of bash and `jq` | Used for what Vally does not cover: a whole plugin as one unit |
 
 ## What this example does

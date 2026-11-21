@@ -152,7 +152,7 @@ Claude Code: `permissions.allow` / `ask` / `deny` in a committed `.claude/settin
 Bash sandbox. Copilot has no committed rule file, so the repo ships a launcher and hooks.
 `--assisted-approval` (an LLM judge, not a security boundary) matches Claude Code's Auto mode.
 
-> 🔷 **Copilot only:** an organisation (here `2n-labs`, see [preflight](preflight.md)) can switch the CLI off as a whole and apply GitHub [content exclusion](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/content-exclusion) to it. Claude Code has neither; its nearest control is a managed deny rule.
+> 🔷 **Copilot only:** an organisation (see [preflight](preflight.md)) can switch the CLI off as a whole and apply GitHub [content exclusion](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/content-exclusion) to it. Claude Code has neither; its nearest control is a managed deny rule.
 
 ## Troubleshooting
 

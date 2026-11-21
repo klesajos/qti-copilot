@@ -145,7 +145,7 @@ Model může první nadpis přejmenovat (`What I found`) nebo do něj důvod zah
 
 | Klíč | Co dělá |
 |-----|--------------|
-| `model`, `models` | Model, nebo modely v pořadí priority. Žádný agent ho tady nenastavuje: povolené modely se liší podle organizace (2N: všechny kromě Fable) a subagent dědí model session. Ignoruje se, když je model session Auto. Přepsání pro jednoho uživatele: `/subagents` |
+| `model`, `models` | Model, nebo modely v pořadí priority. Žádný agent ho tady nenastavuje: povolené modely se liší podle organizace a subagent dědí model session. Ignoruje se, když je model session Auto. Přepsání pro jednoho uživatele: `/subagents` |
 | `model-policy` | `preferred` (výchozí), nebo `required`: delegování odmítne, místo aby použil jiný model |
 | `reasoning-effort` | Úroveň úsilí při uvažování (reasoning effort) pro tohoto agenta |
 | `mcp-servers` | MCP servery jen pro tohoto agenta. V `tools` se MCP nástroje píšou `server/tool` nebo `server/*` |
@@ -179,4 +179,4 @@ Claude Code tomu říká **subagenti**: `.claude/agents/*.md`, stejný vlastní 
 - **Agent „jen pro čtení“ změnil soubor** → má `execute`, nebo nemá klíč `tools`. Odeber `execute`.
 - **Běh `-p` skončí hláškou „Permission denied ...“** → schval nástroj předem: `--allow-tool='shell(git:*)'`.
 
-Dál: [07 · Pluginy a sdílení na guildách](07-plugins.cs.md)
+Dál: [07 · Pluginy a sdílení mezi týmy](07-plugins.cs.md)

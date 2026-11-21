@@ -2,25 +2,25 @@
 
 # Preflight checklist for the facilitator
 
-> ⏱ 1 hour, before the day · Docs: [Enterprise managed settings](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings) · [Administering Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/administer-copilot-cli-for-your-enterprise) · [Policies per surface](https://docs.github.com/en/copilot/reference/supported-surfaces-for-policies) · Part B verified on Copilot CLI 1.0.114, on an account 2N does not manage
+> ⏱ 1 hour, before the day · Docs: [Enterprise managed settings](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings) · [Administering Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/administer-copilot-cli-for-your-enterprise) · [Policies per surface](https://docs.github.com/en/copilot/reference/supported-surfaces-for-policies) · Part B verified on Copilot CLI 1.0.114, on an account no organisation manages
 
-Run part A with the 2N Copilot admin and part B on one participant machine, on the 2N network,
+Run part A with your Copilot admin and part B on one participant machine, on the company network,
 with a participant's account. A blocked customization gives no error: it does not load. The
 guides do not explain these cases; this page does. Each item names the setting, what it breaks
 and how to check. ⚠️ marks a check that was not run in this repo.
 
-## A. With the 2N Copilot admin
+## A. With your Copilot admin
 
 ### Access
 
 - [ ] **Copilot CLI policy** on for every participant. **Breaks:** everything. **Check:** part B prints a `cli` line.
-- [ ] **Access to the private repo `klesajos/qti-copilot`.** Enterprise Managed Users generally cannot be collaborators outside their enterprise. **Breaks:** cloning; exercise 4. **Check:** `git ls-remote https://github.com/klesajos/qti-copilot` with a participant's account ⚠️. **If blocked:** mirror the repo into the 2N organisation.
+- [ ] **Access to the private repo `klesajos/qti-copilot`.** Enterprise Managed Users generally cannot be collaborators outside their enterprise. **Breaks:** cloning; exercise 4. **Check:** `git ls-remote https://github.com/klesajos/qti-copilot` with a participant's account ⚠️. **If blocked:** mirror the repo into your organisation.
 - [ ] **An issue for exercise 4** in the repo (or the mirror) that participants can read. **Breaks:** the MCP demo. **Check:** open the issue list in the browser as a participant. Text: [solutions/ex4-issue.md](solutions/ex4-issue.md).
-- [ ] **[Model list](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-default-models).** Which models are enabled, and is `auto` available? The Claude Fable family stays off. **Breaks:** a model that is not allowed is an error; built-in agents (`explore`, the `code-review` agent behind `/review`) use their own default model; `explore` failed with `400 The requested model is not supported` when its model was not enabled. **Check:** `/model` in a session (a model you cannot use is still listed and says why when highlighted); the `model` line in part B. **If restricted:** review with the `kotlin-reviewer` agent; add "Use general-purpose subagents" to `/fleet` prompts.
+- [ ] **[Model list](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-default-models).** Which models are enabled, and is `auto` available? The Claude Fable family is off by default. **Breaks:** a model that is not allowed is an error; built-in agents (`explore`, the `code-review` agent behind `/review`) use their own default model; `explore` failed with `400 The requested model is not supported` when its model was not enabled. **Check:** `/model` in a session (a model you cannot use is still listed and says why when highlighted); the `model` line in part B. **If restricted:** review with the `kotlin-reviewer` agent; add "Use general-purpose subagents" to `/fleet` prompts.
 - [ ] **[Budget](https://docs.github.com/en/copilot/concepts/billing-and-usage/organizations-and-enterprises/billing).** How many AI credits does a participant have left, and is additional paid usage enabled? **Breaks:** at 100 % every model call fails until the reset; evals and `/fleet` spend fastest. **Check:** `/usage`, row Plan.
-- [ ] **Image input** is disabled at 2N. **Breaks:** nothing: no guide or exercise uses an image. **Check:** confirm it, and tell participants not to paste screenshots.
+- [ ] **Image input** may be disabled. **Breaks:** nothing: no guide or exercise uses an image. **Check:** confirm it, and tell participants not to paste screenshots.
 - [ ] **Windows machines.** The hooks are bash scripts (the `bash` key in `.github/hooks/hooks.json`) and need `jq`. **Breaks:** guide 04, exercise 3, the `.env` guard. **Check:** run part B inside WSL 2; native Windows ⚠️.
-- [ ] **Proxy or private certificate authority.** **Breaks:** TLS errors and timeouts; under a registry policy an unreachable MCP registry blocks every MCP server except the built-in ones. **Check:** part B on the 2N network; `copilot help network` lists the settings.
+- [ ] **Proxy or private certificate authority.** **Breaks:** TLS errors and timeouts; under a registry policy an unreachable MCP registry blocks every MCP server except the built-in ones. **Check:** part B on the company network; `copilot help network` lists the settings.
 
 ### Organisation policies
 
@@ -47,7 +47,7 @@ shows a local one; server-delivered settings leave no file ([locations](https://
 
 - [ ] **Vally install** (`@microsoft/vally-cli` 0.21.0 from npm, pinned in `package.json`). **Breaks:** guide 09, exercise 8. **Check:** `npm ci && npm run eval:lint` prints two `is valid` lines. **If blocked:** `evals/plugin-ab.sh` needs only `copilot` and `jq`.
 - [ ] **Conductor install** (`uv tool install "git+https://github.com/microsoft/conductor.git@v0.1.47"`). **Breaks:** the Conductor part of guide 10 and of exercise 7. **Check:** `conductor validate conductor/test-coverage-audit.yaml` prints `Validation Successful`.
-- [ ] **[Metrics field](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics).** Which field does 2N read as CLI usage: `totals_by_cli`, or `totals_by_client` with `copilot_cli`? Do Vally and Conductor runs (Copilot SDK) and `/delegate` jobs count? **Breaks:** what guides 01 and 11 tell participants. **Check:** ask. IntelliJ plugin 1.15.0 to 1.19.x counted some IDE sessions as CLI; 1.20.0 fixes it.
+- [ ] **[Metrics field](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics).** Which field does your organisation read as CLI usage: `totals_by_cli`, or `totals_by_client` with `copilot_cli`? Do Vally and Conductor runs (Copilot SDK) and `/delegate` jobs count? **Breaks:** what guides 01 and 11 tell participants. **Check:** ask. IntelliJ plugin 1.15.0 to 1.19.x counted some IDE sessions as CLI; 1.20.0 fixes it.
 
 ## B. On one participant machine
 
@@ -96,4 +96,4 @@ skill	project	board-tests
 
 The `mcp` count is 6 with `gh` installed and 24 without. The 6 include no issue tools: guide 05
 starts with `--add-github-mcp-tool list_issues --add-github-mcp-tool issue_read`, which replaces
-the 6 with these two. The `model` line is what `auto` resolves to at 2N: write it down. [Index](README.md).
+the 6 with these two. The `model` line is what `auto` resolves to in your organisation: write it down. [Index](README.md).

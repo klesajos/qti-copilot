@@ -158,7 +158,7 @@ Claude Code: `permissions.allow` / `ask` / `deny` v commitnutém `.claude/settin
 sandbox pro Bash. Copilot žádný commitnutý soubor s pravidly nemá, takže repo dodává launcher a
 hooky. `--assisted-approval` (LLM soudce, ne bezpečnostní hranice) odpovídá režimu Auto v Claude Code.
 
-> 🔷 **Jen Copilot:** organizace (tady `2n-labs`, viz [předletová kontrola](preflight.cs.md)) může CLI vypnout jako celek a uplatnit na něj [content exclusion](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/content-exclusion) z GitHubu.
+> 🔷 **Jen Copilot:** organizace (viz [předletová kontrola](preflight.cs.md)) může CLI vypnout jako celek a uplatnit na něj [content exclusion](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/content-exclusion) z GitHubu.
 > Claude Code nemá ani jedno; nejbližší obdobou je spravované pravidlo deny.
 
 ## Když něco nefunguje

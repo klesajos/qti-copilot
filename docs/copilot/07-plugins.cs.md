@@ -1,18 +1,18 @@
 > 🌍 Číst v jazyce: [English](07-plugins.md) | **Česky**
 
-# 07 · Pluginy a sdílení na guildách
+# 07 · Pluginy a sdílení mezi týmy
 
 > ⏱ 15 min (7 demo + 8 cvičení 6) · Dokumentace: [Plugins for GitHub Copilot](https://docs.github.com/en/copilot/concepts/customizations/plugins) · [Creating a plugin](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-creating) · [Finding and installing plugins](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) · Ověřeno na Copilot CLI 1.0.114
 
 ## Ve zkratce
 
-**Potřebuješ:** CLI. Na sdílení nástroje na guildě: git repozitář, ve kterém marketplace žije.
+**Potřebuješ:** CLI. Na sdílení nástroje s dalšími týmy: git repozitář, ve kterém marketplace žije.
 
-**K čemu to je:** Plugin zabalí skilly, agenty, hooky a MCP servery do jednoho balíku se jménem a verzí. Tak se nástroj, který jsi postavil v jednom repu, dostane do dalších 170 rep My2N.
+**K čemu to je:** Plugin zabalí skilly, agenty, hooky a MCP servery do jednoho balíku se jménem a verzí. Tak se nástroj, který jsi postavil v jednom repu, dostane do všech ostatních repozitářů firmy.
 
 **Tři nejužitečnější použití:**
 
-1. Sdílej nástroj z guildy: kolegové si ho nainstalují jménem, místo aby kopírovali soubory.
+1. Sdílej týmový nástroj: kolegové si ho nainstalují jménem, místo aby kopírovali soubory.
 2. Zapni týmovou sadu nástrojů pro celé repo dvěma klíči v nastavení; každý ji dostane, jakmile složce udělí důvěru.
 3. Verzuj nástroj, aby šla změna nasadit i vrátit.
 
@@ -22,8 +22,8 @@
 agenty, hooky, MCP servery a LSP servery. **Marketplace** je katalogový soubor
 `marketplace.json`, který vyjmenovává pluginy a říká, odkud se má každý stáhnout.
 
-Návody 02 až 06 dávají všechno do `.github/` jednoho repa. My2N má asi 170 repozitářů, šest stacků a
-guildy, které sdílejí nástroje. Plugin v marketplace repu je cesta, jak se nástroj guildy dostane
+Návody 02 až 06 dávají všechno do `.github/` jednoho repa. Firma má desítky repozitářů, několik stacků a
+týmy, které sdílejí nástroje. Plugin v marketplace repu je cesta, jak se sdílený nástroj dostane
 do ostatních repozitářů: verzovaný, instalovaný podle jména nebo zapnutý pro repo dvěma klíči v nastavení.
 
 ## Co dělá tahle ukázka
@@ -97,19 +97,19 @@ plugins/2048-dev/                         ← the plugin
    copilot -p "Reply with OK" --trust-folder --no-ask-user --output-format json \
      | jq -c 'select(.type == "session.skills_loaded") | .data.skills[] | select(.source == "plugin") | .commandName' | sort -u
    ```
-4. Připoj plugin, který zatím není zapnutý žádným souborem s nastavením (nový, z repa guildy). Nic se neinstaluje:
+4. Připoj plugin, který zatím není zapnutý žádným souborem s nastavením (nový, ze sdíleného marketplace repa). Nic se neinstaluje:
    ```bash
    copilot --plugin-dir ./plugins/2048-dev               # then /2048-dev:build-test
    copilot --plugin-dir ./plugins/2048-dev plugin list   # no model call; lists "2048-dev (v1.0.0)"
    ```
 
-## Sdílej nástroj na guildě
+## Sdílej nástroj mezi týmy
 
-Jedno marketplace repo, které může číst každý člen guildy (jména jsou příklady):
+Jedno marketplace repo, které může číst každý člen týmů (jména jsou příklady):
 
 ```
-2n-copilot-plugins/
-├── marketplace.json                      ← "name": "2n-guild", one entry per plugin
+team-copilot-plugins/
+├── marketplace.json                      ← "name": "team-tools", one entry per plugin
 └── plugins/kotlin-review/
     ├── plugin.json
     └── skills/review-pr/SKILL.md
@@ -119,10 +119,10 @@ Jedno marketplace repo, které může číst každý člen guildy (jména jsou p
    `name`, nebo vyjdi z [github/plugin-marketplace-starter](https://github.com/github/plugin-marketplace-starter).
 2. Nástroj, který se osvědčil v `.github/` jednoho repa, přesuň do `plugins/<plugin>/`: skilly
    do `skills/<skill>/SKILL.md`, agenty a hooky pod `com.github.copilot/`. MCP server
-   v pluginu musí i tak projít MCP allow-listem 2N.
+   v pluginu musí i tak projít MCP allow-listem organizace.
 3. Uveď plugin v `marketplace.json` s `"source": "./plugins/<plugin>"`.
 4. Připoj ho přes `--plugin-dir`, vyzkoušej a zvaliduj manifest (kroky 2 a 4 výše).
-5. Pushni. Dej guildě k repu přístup pro čtení; samotné členství v organizaci nestačí.
+5. Pushni. Dej týmům k repu přístup pro čtení; samotné členství v organizaci nestačí.
 6. Každý kolega jednou spustí (⚠️ v tomto repu nespuštěno):
    `copilot plugin marketplace add <owner>/<repo>`, potom `copilot plugin install <plugin>@<marketplace>`.
 7. Nebo ho projekt zapne celému svému týmu: commitni ty dva klíče nastavení se zdrojem

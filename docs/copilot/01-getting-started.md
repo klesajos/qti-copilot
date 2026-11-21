@@ -6,7 +6,7 @@
 
 ## In short
 
-**You need:** A Copilot Business seat from `2n-labs`, JDK 17–27, Node.js 24.15+ or 26, `git` and `jq`. On Windows: WSL 2.
+**You need:** A Copilot Business or Enterprise seat, JDK 17–27, Node.js 24.15+ or 26, `git` and `jq`. On Windows: WSL 2.
 
 **What it is for:** Gets Copilot CLI running in this repo and teaches the one loop every later exercise repeats: plan, failing test, fix, evidence. That loop is how you work at level 5, where Copilot writes the code and you check it.
 
@@ -18,7 +18,7 @@
 
 ## Before the workshop day (pre-work, 15 min)
 
-You need a Copilot Business seat from `2n-labs` with the Copilot CLI policy enabled, any JDK
+You need a Copilot Business or Enterprise seat with the Copilot CLI policy enabled, any JDK
 17–27 (Gradle fetches the JDK 21 toolchain itself), Node.js 24.15+ or 26, `jq` and `git`. On
 Windows use WSL 2: the hooks are bash scripts.
 
@@ -28,7 +28,7 @@ Windows use WSL 2: the hooks are bash scripts.
    npm install -g @github/copilot
    copilot --version                 # GitHub Copilot CLI 1.0.114.   (or newer)
    ```
-2. **Log in** with the account that holds the 2N seat ([authentication](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli)).
+2. **Log in** with the account that holds the Copilot seat ([authentication](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/authenticate-copilot-cli)).
    An exported `COPILOT_GITHUB_TOKEN`, `GH_TOKEN` or `GITHUB_TOKEN` overrides the stored login.
    ```bash
    copilot login                                        # browser flow; over SSH: --device-code
@@ -74,7 +74,7 @@ load?" `/env` prints to the timeline (PgUp scrolls); the others open a screen th
 
 ## The level-5 loop
 
-At 2N you generate code, you do not type it, and you still vouch for it: level 5 or higher on
+In this workshop you generate code, you do not type it, and you still vouch for it: level 5 or higher on
 the scale in [Using AI to Contribute to Open Source](https://www.visidata.org/blog/2026/ai/).
 
 | Level | Name in the post | You read | You take on evidence |
@@ -150,9 +150,9 @@ wanted the rule in `engine/`. Answer with the repo's rule: `api` decides what ha
 Reference diff: [solutions/ex0.patch](solutions/ex0.patch). Now do it yourself: exercise 0 in
 [exercises.md](exercises.md). Read every changed line and you worked at level 5.
 
-## What 2N's metrics count
+## What the usage metrics count
 
-2N measures Copilot **CLI** usage. The CLI fields in the
+An organisation can see Copilot **CLI** usage per user. The CLI fields in the
 [usage metrics reference](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics#copilot-cli-metrics-fields):
 
 - `totals_by_cli`, per day: `session_count` (distinct CLI sessions started), `request_count`
