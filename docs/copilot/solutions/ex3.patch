@@ -1,0 +1,69 @@
+diff --git a/.github/hooks/scripts/run-tests.sh b/.github/hooks/scripts/run-tests.sh
+index 0c076dc..57ab43e 100755
+--- a/.github/hooks/scripts/run-tests.sh
++++ b/.github/hooks/scripts/run-tests.sh
+@@ -1,33 +1,53 @@
+ #!/usr/bin/env bash
+ # agentStop hook: when Copilot finishes a turn, run the tests for the parts of
+-# the tree that have uncommitted changes and show a one-line result.
++# the tree that have uncommitted changes. If they fail, send Copilot back to
++# work once. If they still fail after that, let the turn end with a warning.
+ #
+-# Advisory by design: it never sends Copilot back to work, so a live workshop
+-# session cannot get stuck in a fix-the-tests loop. Exercise 3 turns it into a
+-# blocking gate.
++# An agentStop hook cannot block with an exit code: exit 2 is only a warning.
++# It blocks by printing one JSON object, {"decision":"block","reason":"..."},
++# and exiting 0. Copilot receives `reason` as its next prompt.
+ set -uo pipefail
+ 
+-# Drain the event JSON on stdin; this hook needs none of its fields.
+-cat >/dev/null
++input=$(cat)
+ 
+ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
+ 
+ # agentStop fires after every turn, including plain questions. Only test what changed.
+ changed=$(git status --porcelain 2>/dev/null | awk '{print $NF}')
+ failed=""
++output=""
+ 
+ if printf '%s\n' "$changed" | grep -Eq '^(engine|api)/'; then
+-    ./gradlew test --quiet >/dev/null 2>&1 || failed="$failed gradle"
++    # Not --quiet: that would drop the line that names the failing test.
++    if ! result=$(./gradlew test 2>&1); then
++        failed="$failed gradle (./gradlew test)"
++        output="$output$result"$'\n'
++    fi
+ fi
+ 
+ if printf '%s\n' "$changed" | grep -Eq '^web/src/' && [ -d web/node_modules ]; then
+-    (cd web && npm test --silent >/dev/null 2>&1) || failed="$failed web"
++    if ! result=$(cd web && npm test --silent 2>&1); then
++        failed="$failed web (cd web && npm test)"
++        output="$output$result"$'\n'
++    fi
+ fi
+ 
+-if [ -n "$failed" ]; then
+-    # Exit code 2 shows stderr to the user as a warning without blocking the turn.
+-    echo "run-tests hook: tests are failing in:$failed" >&2
++[ -n "$failed" ] || exit 0
++
++# stop_hook_active is true when a block already forced this turn to continue.
++# Blocking again could loop until the CLI's own cap, so the second failure only
++# warns. Without jq the payload cannot be read and the hook stays advisory.
++already_blocked=$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)
++if [ "$already_blocked" != "false" ]; then
++    echo "run-tests hook: tests are failing in:$failed. Not sent back: this turn was already sent back once, or jq is missing." >&2
+     exit 2
+ fi
+ 
++reason="run-tests hook: tests are failing in:$failed."
++reason="$reason Find the cause, fix it, run the suite yourself and finish only when it passes."
++reason="$reason Do not weaken or delete a test to get there. End of the test output:"
++# The end of the test output is where both runners name the failing test.
++reason="$reason"$'\n'"$(printf '%s' "$output" | tail -n 30)"
++
++jq -cn --arg reason "$reason" '{decision: "block", reason: $reason}'
+ exit 0

@@ -1,0 +1,45 @@
+diff --git a/evals/board-tests/eval.yaml b/evals/board-tests/eval.yaml
+index ba66da3..dfbabe7 100644
+--- a/evals/board-tests/eval.yaml
++++ b/evals/board-tests/eval.yaml
+@@ -43,6 +43,40 @@ stimuli:
+         config:
+           path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+           pattern: 'assertFalse\('
++  - name: cascade-merge-line
++    prompt: >-
++      Write a unit test for the 2048 merge rule: moving the row 4, 4, 8, 0 to the left must
++      give 8, 8, 0, 0 and add 8 to the score, because a tile merges at most once per move.
++      Follow this project's test conventions. This workspace has no build tool, so do not
++      try to compile or run anything.
++    tags:
++      control: positive
++      suite: smoke
++    graders:
++      - type: completed
++      - type: file-exists
++        config:
++          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
++      # Test name is a plain-English sentence in backticks.
++      - type: file-matches
++        config:
++          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
++          pattern: 'fun `[^`]+`\(\)'
++      # Merge rules are tested through the top-level function, not through Board.move.
++      - type: file-matches
++        config:
++          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
++          pattern: 'slideLineLeft\('
++      # The score gained is asserted, expected value first.
++      - type: file-matches
++        config:
++          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
++          pattern: 'assertEquals\(\s*8\s*,'
++      # The correct line is kept, even though the current code returns 16, 0, 0, 0.
++      - type: file-matches
++        config:
++          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
++          pattern: '8,\s*8,\s*0,\s*0'
+   - name: unrelated-question
+     prompt: >-
+       In two sentences, what does slideLineLeft return and what does it do to its argument?

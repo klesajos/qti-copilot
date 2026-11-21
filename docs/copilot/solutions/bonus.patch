@@ -1,0 +1,82 @@
+diff --git a/web/src/App.test.tsx b/web/src/App.test.tsx
+new file mode 100644
+index 0000000..50b0fef
+--- /dev/null
++++ b/web/src/App.test.tsx
+@@ -0,0 +1,40 @@
++import { act, fireEvent, render } from '@testing-library/react'
++import { beforeEach, describe, expect, it, vi } from 'vitest'
++import { createGame, move } from './api'
++import type { Game } from './api'
++import { App } from './App'
++
++vi.mock('./api')
++
++const GAME: Game = {
++  id: 'game-1',
++  grid: [
++    [2, 0, 0, 0],
++    [0, 0, 0, 0],
++    [0, 0, 0, 0],
++    [0, 0, 0, 0],
++  ],
++  score: 0,
++  status: 'IN_PROGRESS',
++}
++
++describe('App', () => {
++  beforeEach(() => {
++    vi.mocked(createGame).mockResolvedValue(GAME)
++    // Never resolves: the first move stays in flight for the whole test.
++    vi.mocked(move).mockReturnValue(new Promise<Game>(() => {}))
++  })
++
++  it('ignores a key press while the previous move is still in flight', async () => {
++    // Async act() returns only after the game has loaded and the effect that registers the
++    // key listener has run. Waiting for the grid alone can return before that effect.
++    await act(async () => {
++      render(<App />)
++    })
++
++    fireEvent.keyDown(window, { key: 'ArrowLeft' })
++    fireEvent.keyDown(window, { key: 'ArrowDown' })
++
++    expect(move).toHaveBeenCalledTimes(1)
++  })
++})
+diff --git a/web/src/App.tsx b/web/src/App.tsx
+index effebac..a33f85e 100644
+--- a/web/src/App.tsx
++++ b/web/src/App.tsx
+@@ -1,4 +1,4 @@
+-import { useCallback, useEffect, useState } from 'react'
++import { useCallback, useEffect, useRef, useState } from 'react'
+ import { createGame, move } from './api'
+ import type { Game } from './api'
+ import { Board } from './Board'
+@@ -17,6 +17,8 @@ function messageOf(error: unknown): string {
+ export function App() {
+   const [game, setGame] = useState<Game | null>(null)
+   const [error, setError] = useState<string | null>(null)
++  // Responses can arrive out of order, so only one move is in flight at a time.
++  const isMoveInFlight = useRef(false)
+ 
+   const startGame = useCallback(() => {
+     createGame()
+@@ -43,9 +45,16 @@ export function App() {
+       }
+       // Arrow keys would otherwise scroll the page.
+       event.preventDefault()
++      if (isMoveInFlight.current) {
++        return
++      }
++      isMoveInFlight.current = true
+       move(game.id, direction)
+         .then(setGame)
+         .catch((cause: unknown) => setError(messageOf(cause)))
++        .finally(() => {
++          isMoveInFlight.current = false
++        })
+     }
+ 
+     window.addEventListener('keydown', onKeyDown)

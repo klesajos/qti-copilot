@@ -1,0 +1,172 @@
+diff --git a/.github/skills/api-endpoint/SKILL.md b/.github/skills/api-endpoint/SKILL.md
+new file mode 100644
+index 0000000..fd1129f
+--- /dev/null
++++ b/.github/skills/api-endpoint/SKILL.md
+@@ -0,0 +1,85 @@
++---
++name: api-endpoint
++description: Use when adding or changing a REST endpoint, a request body or a response field in the 2048 API (api/ module - GameController, GameService, ApiExceptionHandler). Covers the order of work, the response envelope, error handling and the controller test.
++---
++
++# Adding or changing an API endpoint
++
++The API lives in `api/src/main/kotlin/com/quanti/g2048/api/`. It is Spring Boot 4 (Spring MVC,
++Jackson 3). Work in this order; each step has one home.
++
++## Order of work
++
++1. **Rule first.** If the change needs a new game rule (which values are legal, what a move
++   does), add it to `Board` in `engine/` with a deterministic test. The API asks the engine;
++   it never decides a rule itself.
++2. **Service method.** Add or extend a method on `GameService`. It takes plain values (`UUID`,
++   an enum, an `Int`), never a request class, and returns `GameState`. Anything that changes a
++   board runs inside `synchronized(board)`.
++3. **Failure cases.** Each new way to fail gets its own exception class next to
++   `GameNotFoundException` in `GameService.kt`. The service throws it; the controller does not
++   validate.
++4. **Handler.** One `@ExceptionHandler` per exception in `ApiExceptionHandler`, with
++   `@ResponseStatus` and a stable `UPPER_SNAKE` code. Write the message by hand. Never pass
++   `exception.message` of a framework exception to the client.
++5. **Controller.** One function in `GameController` that maps HTTP to the service call and wraps
++   the result: `ApiResponse(games.someMethod(...))`. A request body is a data class next to
++   `MoveRequest`. An optional field is nullable with a `null` default; an optional body is
++   `@RequestBody(required = false)`.
++6. **Test.** Add cases to `GameControllerTest` (`@WebMvcTest(GameController::class)`,
++   `@Import(GameService::class)`, `MockMvcTester`). One test for the success path and one per
++   failure case. Assert on the status and on a JSON path, not on Kotlin objects.
++   Tests live in `api/src/test/kotlin/com/quanti/g2048/api/<Controller>Test.kt`; create it if missing.
++   Name each test as a plain-English sentence in backticks, one behaviour per test.
++7. **Run** `./gradlew :api:test` (and `./gradlew :engine:test` if step 1 applied) and report the
++   pass and fail counts.
++
++## Contract
++
++- URLs: resources under `/api/v1`, plural nouns, no verbs (`/games/{id}/moves`).
++- Success body: `{ "data": ... }`. Error body: `{ "error": { "code": "...", "message": "..." } }`.
++- Status: 201 for a create, 200 for a read or a move, 400 for input that cannot be parsed or is
++  not allowed, 404 for an unknown game. Never 200 with an error inside, never 500 for bad input.
++- A delete answers 204 with no body: `@ResponseStatus(HttpStatus.NO_CONTENT)`, no return value.
++- A new field on `GameState` is additive. If the web client should show it, add it to the `Game`
++  interface in `web/src/api.ts` in the same change.
++
++## Shapes to copy
++
++```kotlin
++// GameService.kt
++class GameNotFoundException(id: UUID) : RuntimeException("Game $id does not exist")
++
++// ApiExceptionHandler.kt
++@ExceptionHandler(GameNotFoundException::class)
++@ResponseStatus(HttpStatus.NOT_FOUND)
++fun gameNotFound(exception: GameNotFoundException): ErrorResponse =
++    ErrorResponse(ErrorBody("GAME_NOT_FOUND", exception.message ?: "Game does not exist"))
++
++// GameController.kt
++@PostMapping("/{id}/moves")
++fun move(
++    @PathVariable id: UUID,
++    @RequestBody request: MoveRequest,
++): ApiResponse<GameState> = ApiResponse(games.move(id, request.direction))
++
++// GameControllerTest.kt
++@Test
++fun `moving in an unknown game returns a structured 404`() {
++    val result = mvc.post().uri("/api/v1/games/${UUID.randomUUID()}/moves")
++        .contentType(MediaType.APPLICATION_JSON)
++        .content("""{"direction":"LEFT"}""")
++
++    assertThat(result)
++        .hasStatus(HttpStatus.NOT_FOUND)
++        .bodyJson()
++        .extractingPath("$.error.code")
++        .isEqualTo("GAME_NOT_FOUND")
++}
++```
++
++## Boot 4, not Boot 3
++
++Use `org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest`, `MockMvcTester`,
++`@MockitoBean` and `tools.jackson.*`. Do not write `@MockBean`, `com.fasterxml.jackson.*`
++imports or `TestRestTemplate`.
+diff --git a/api/src/main/kotlin/com/quanti/g2048/api/GameController.kt b/api/src/main/kotlin/com/quanti/g2048/api/GameController.kt
+index c0c3a58..01c3526 100644
+--- a/api/src/main/kotlin/com/quanti/g2048/api/GameController.kt
++++ b/api/src/main/kotlin/com/quanti/g2048/api/GameController.kt
+@@ -3,6 +3,7 @@ package com.quanti.g2048.api
+ import com.quanti.g2048.engine.Direction
+ import java.util.UUID
+ import org.springframework.http.HttpStatus
++import org.springframework.web.bind.annotation.DeleteMapping
+ import org.springframework.web.bind.annotation.GetMapping
+ import org.springframework.web.bind.annotation.PathVariable
+ import org.springframework.web.bind.annotation.PostMapping
+@@ -31,4 +32,10 @@ class GameController(private val games: GameService) {
+         @PathVariable id: UUID,
+         @RequestBody request: MoveRequest,
+     ): ApiResponse<GameState> = ApiResponse(games.move(id, request.direction))
++
++    @DeleteMapping("/{id}")
++    @ResponseStatus(HttpStatus.NO_CONTENT)
++    fun delete(@PathVariable id: UUID) {
++        games.delete(id)
++    }
+ }
+diff --git a/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt b/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+index 245db7c..1684b1f 100644
+--- a/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
++++ b/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+@@ -48,6 +48,10 @@ class GameService {
+         }
+     }
+ 
++    fun delete(id: UUID) {
++        boards.remove(id) ?: throw GameNotFoundException(id)
++    }
++
+     private fun boardFor(id: UUID): Board = boards[id] ?: throw GameNotFoundException(id)
+ 
+     private fun stateOf(id: UUID, board: Board): GameState {
+diff --git a/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt b/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
+index c7cdfe1..2dfb6be 100644
+--- a/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
++++ b/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
+@@ -69,4 +69,38 @@ class GameControllerTest(@Autowired private val mvc: MockMvcTester) {
+             .extractingPath("$.error.code")
+             .isEqualTo("INVALID_REQUEST")
+     }
++
++    @Test
++    fun `deleting a game returns 204 with no body`() {
++        val id = createGameId()
++
++        val result = mvc.delete().uri("/api/v1/games/$id")
++
++        assertThat(result).hasStatus(HttpStatus.NO_CONTENT).hasBodyTextEqualTo("")
++    }
++
++    @Test
++    fun `a deleted game can no longer be found`() {
++        val id = createGameId()
++        mvc.delete().uri("/api/v1/games/$id").exchange()
++
++        val result = mvc.get().uri("/api/v1/games/$id")
++
++        assertThat(result)
++            .hasStatus(HttpStatus.NOT_FOUND)
++            .bodyJson()
++            .extractingPath("$.error.code")
++            .isEqualTo("GAME_NOT_FOUND")
++    }
++
++    @Test
++    fun `deleting an unknown game returns a structured 404`() {
++        val result = mvc.delete().uri("/api/v1/games/${UUID.randomUUID()}")
++
++        assertThat(result)
++            .hasStatus(HttpStatus.NOT_FOUND)
++            .bodyJson()
++            .extractingPath("$.error.code")
++            .isEqualTo("GAME_NOT_FOUND")
++    }
+ }

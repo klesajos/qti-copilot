@@ -1,0 +1,81 @@
+diff --git a/engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt b/engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+index 2e9aa33..f6b4505 100644
+--- a/engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
++++ b/engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+@@ -36,10 +36,9 @@ fun slideLineLeft(line: IntArray): Int {
+             }
+             out[count - 1] = 0
+             count--
+-            // NOTE: index `i` is intentionally not advanced here.
+-        } else {
+-            i++
+         }
++        // A tile merges at most once per move, so step past it even when it has just merged.
++        i++
+     }
+ 
+     out.copyInto(line)
+@@ -157,12 +156,19 @@ class Board(
+         return true
+     }
+ 
++    /** True when no move is possible: the board is full and no two neighbours are equal. */
+     fun isGameOver(): Boolean {
+-        // A board is "over" only when no move is possible. For now we just look
+-        // for an empty cell.
+         for (row in 0 until SIZE) {
+             for (col in 0 until SIZE) {
+-                if (cells[row][col] == 0) {
++                val value = cells[row][col]
++                if (value == 0) {
++                    return false
++                }
++                // Looking right and down covers every neighbouring pair exactly once.
++                if (col + 1 < SIZE && cells[row][col + 1] == value) {
++                    return false
++                }
++                if (row + 1 < SIZE && cells[row + 1][col] == value) {
+                     return false
+                 }
+             }
+diff --git a/engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt b/engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+index db5c877..c6b6389 100644
+--- a/engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
++++ b/engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+@@ -56,8 +56,15 @@ class BoardTest {
+         assertEquals(listOf(4, 4, 0, 0), slid(4, 2, 2, 0))
+     }
+ 
+-    // TODO (participants): add a test for the line {4, 4, 8, 0}.
+-    //   What *should* the result be? Run it and see what actually happens.
++    @Test
++    fun `a merged tile does not merge again in the same move`() {
++        val line = intArrayOf(4, 4, 8, 0)
++
++        val gained = slideLineLeft(line)
++
++        assertEquals(listOf(8, 8, 0, 0), line.toList())
++        assertEquals(8, gained)
++    }
+ 
+     // -----------------------------------------------------------------------
+     // Board.move — directions.
+@@ -180,7 +187,15 @@ class BoardTest {
+         assertTrue(board.isGameOver())
+     }
+ 
+-    // TODO (participants): a *full* board can still be playable if it has two
+-    //   equal neighbours. Write a test for a full board that contains a mergeable
+-    //   pair and assert that isGameOver() returns false.
++    @Test
++    fun `a full board with a mergeable pair is not game over`() {
++        val board = boardOf(
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 2, 4),
++        )
++
++        assertFalse(board.isGameOver())
++    }
+ }

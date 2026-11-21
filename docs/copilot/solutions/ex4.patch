@@ -1,0 +1,135 @@
+diff --git a/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt b/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+index 245db7c..2c11297 100644
+--- a/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
++++ b/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+@@ -4,6 +4,7 @@ import com.quanti.g2048.engine.Board
+ import com.quanti.g2048.engine.Direction
+ import java.util.UUID
+ import java.util.concurrent.ConcurrentHashMap
++import java.util.concurrent.atomic.AtomicInteger
+ import org.springframework.stereotype.Service
+ 
+ enum class GameStatus { IN_PROGRESS, WON, OVER }
+@@ -13,6 +14,7 @@ data class GameState(
+     val grid: List<List<Int>>,
+     val score: Int,
+     val status: GameStatus,
++    val bestScore: Int,
+ )
+ 
+ class GameNotFoundException(id: UUID) : RuntimeException("Game $id does not exist")
+@@ -26,9 +28,15 @@ class GameService {
+     // Demo storage: games live in memory only and are lost on restart.
+     private val boards = ConcurrentHashMap<UUID, Board>()
+ 
+-    fun create(): GameState {
++    // Highest score any game has reached since the server started. Lost on restart, like the games.
++    // Atomic because games move in parallel; the lock in move() guards one board only.
++    private val bestScore = AtomicInteger(0)
++
++    fun create(): GameState = start(Board.newGame())
++
++    /** Starts a game on the given board. Tests use it to begin from a known position. */
++    internal fun start(board: Board): GameState {
+         val id = UUID.randomUUID()
+-        val board = Board.newGame()
+         boards[id] = board
+         return stateOf(id, board)
+     }
+@@ -44,6 +52,7 @@ class GameService {
+             // Place a new tile.
+             board.spawnRandom()
+ 
++            bestScore.updateAndGet { best -> maxOf(best, board.score) }
+             return stateOf(id, board)
+         }
+     }
+@@ -56,6 +65,6 @@ class GameService {
+             board.hasWon() -> GameStatus.WON
+             else -> GameStatus.IN_PROGRESS
+         }
+-        return GameState(id, board.grid, board.score, status)
++        return GameState(id, board.grid, board.score, status, bestScore.get())
+     }
+ }
+diff --git a/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt b/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
+index c7cdfe1..6e12dcd 100644
+--- a/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
++++ b/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
+@@ -31,6 +31,11 @@ class GameControllerTest(@Autowired private val mvc: MockMvcTester) {
+             .isLenientlyEqualTo("""{"data":{"score":0,"status":"IN_PROGRESS"}}""")
+     }
+ 
++    @Test
++    fun `a game state carries the best score`() {
++        assertThat(mvc.post().uri("/api/v1/games")).bodyJson().hasPath("$.data.bestScore")
++    }
++
+     @Test
+     fun `a move returns the game with its four rows`() {
+         val id = createGameId()
+diff --git a/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt b/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt
+new file mode 100644
+index 0000000..0fabfc3
+--- /dev/null
++++ b/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt
+@@ -0,0 +1,59 @@
++package com.quanti.g2048.api
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import org.assertj.core.api.Assertions.assertThat
++import org.junit.jupiter.api.Test
++
++class GameServiceTest {
++
++    // A fresh service per test: the best score is shared by every game of one service.
++    private val games = GameService()
++
++    /** A board whose move to the left merges one pair and scores twice the tile value. */
++    private fun boardWithPairOf(tile: Int): Board = Board(
++        listOf(
++            listOf(tile, tile, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        ),
++    )
++
++    @Test
++    fun `the best score starts at zero`() {
++        val game = games.create()
++
++        assertThat(game.bestScore).isEqualTo(0)
++    }
++
++    @Test
++    fun `a move that beats the best score raises it`() {
++        val game = games.start(boardWithPairOf(2))
++
++        val moved = games.move(game.id, Direction.LEFT)
++
++        assertThat(moved.bestScore).isEqualTo(4)
++    }
++
++    @Test
++    fun `a new game reports the best score of an earlier game`() {
++        val earlier = games.start(boardWithPairOf(2))
++        games.move(earlier.id, Direction.LEFT)
++
++        val later = games.create()
++
++        assertThat(later.bestScore).isEqualTo(4)
++    }
++
++    @Test
++    fun `a lower score in a later game does not lower the best score`() {
++        val earlier = games.start(boardWithPairOf(4))
++        games.move(earlier.id, Direction.LEFT)
++        val later = games.start(boardWithPairOf(2))
++
++        val moved = games.move(later.id, Direction.LEFT)
++
++        assertThat(moved.bestScore).isEqualTo(8)
++    }
++}

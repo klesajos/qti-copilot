@@ -1,0 +1,174 @@
+diff --git a/.github/instructions/web.instructions.md b/.github/instructions/web.instructions.md
+new file mode 100644
+index 0000000..26c4888
+--- /dev/null
++++ b/.github/instructions/web.instructions.md
+@@ -0,0 +1,18 @@
++---
++applyTo: "web/src/**/*.ts,web/src/**/*.tsx,web/src/**/*.css"
++---
++
++# Web rules
++
++- Named exports only. No default exports, not even for components.
++- Strict TypeScript: no `any`, no non-null `!`. Import types with `import type`.
++- Function components with hooks. Props get an interface named `<Component>Props` in the same file.
++- A component file exports components only. Pure helpers go in their own module (like `keys.ts`)
++  so they can be tested without rendering.
++- Styling lives in `web/src/index.css` as plain classes. No inline `style`, no CSS modules, no
++  CSS-in-JS.
++- HTTP goes through `web/src/api.ts`. Components never call `fetch` themselves.
++- Tests sit next to the source as `<name>.test.ts(x)` and use Vitest with Testing Library. Query by
++  role or visible text (`getByRole('gridcell')`), never by class name or test id.
++- One behaviour per `it`, named as a sentence, Arrange-Act-Assert separated by blank lines.
++- Run `npm test` and `npm run lint` in `web/` after the change and report the pass and fail counts.
+diff --git a/web/src/Board.test.tsx b/web/src/Board.test.tsx
+index 8dc75b9..f67b2f2 100644
+--- a/web/src/Board.test.tsx
++++ b/web/src/Board.test.tsx
+@@ -27,4 +27,10 @@ describe('Board', () => {
+ 
+     expect(screen.getAllByRole('gridcell')[1]).toBeEmptyDOMElement()
+   })
++
++  it('colours a tile by its value', () => {
++    render(<Board grid={GRID} />)
++
++    expect(screen.getAllByRole('gridcell')[0]).toHaveClass('tile-2')
++  })
+ })
+diff --git a/web/src/Board.tsx b/web/src/Board.tsx
+index e6a61d1..2a631f9 100644
+--- a/web/src/Board.tsx
++++ b/web/src/Board.tsx
+@@ -1,3 +1,5 @@
++import { tileClassName } from './tiles'
++
+ interface BoardProps {
+   grid: number[][]
+ }
+@@ -8,7 +10,11 @@ export function Board({ grid }: BoardProps) {
+       {grid.map((row, rowIndex) => (
+         <div className="board-row" role="row" key={rowIndex}>
+           {row.map((value, colIndex) => (
+-            <div className="tile" role="gridcell" key={colIndex}>
++            <div
++              className={tileClassName(value)}
++              role="gridcell"
++              key={colIndex}
++            >
+               {value === 0 ? '' : value}
+             </div>
+           ))}
+diff --git a/web/src/index.css b/web/src/index.css
+index 6f24403..0f240a7 100644
+--- a/web/src/index.css
++++ b/web/src/index.css
+@@ -50,6 +50,67 @@ body {
+   background: #cdc1b4;
+ }
+ 
++.tile-2 {
++  background: #eee4da;
++}
++
++.tile-4 {
++  background: #ede0c8;
++}
++
++.tile-8 {
++  color: #f9f6f2;
++  background: #f2b179;
++}
++
++.tile-16 {
++  color: #f9f6f2;
++  background: #f59563;
++}
++
++.tile-32 {
++  color: #f9f6f2;
++  background: #f67c5f;
++}
++
++.tile-64 {
++  color: #f9f6f2;
++  background: #f65e3b;
++}
++
++.tile-128 {
++  color: #f9f6f2;
++  background: #edcf72;
++}
++
++.tile-256 {
++  color: #f9f6f2;
++  background: #edcc61;
++}
++
++.tile-512 {
++  color: #f9f6f2;
++  background: #edc850;
++}
++
++.tile-1024 {
++  color: #f9f6f2;
++  background: #edc53f;
++  font-size: 1.25rem;
++}
++
++.tile-2048 {
++  color: #f9f6f2;
++  background: #edc22e;
++  font-size: 1.25rem;
++}
++
++.tile-super {
++  color: #f9f6f2;
++  background: #3c3a32;
++  font-size: 1.25rem;
++}
++
+ .error {
+   color: #b00020;
+ }
+diff --git a/web/src/tiles.test.ts b/web/src/tiles.test.ts
+new file mode 100644
+index 0000000..d56c85f
+--- /dev/null
++++ b/web/src/tiles.test.ts
+@@ -0,0 +1,16 @@
++import { describe, expect, it } from 'vitest'
++import { tileClassName } from './tiles'
++
++describe('tileClassName', () => {
++  it('gives an empty cell the base class only', () => {
++    expect(tileClassName(0)).toBe('tile')
++  })
++
++  it('adds a class named after the tile value', () => {
++    expect(tileClassName(64)).toBe('tile tile-64')
++  })
++
++  it('uses the shared class for a value above 2048', () => {
++    expect(tileClassName(4096)).toBe('tile tile-super')
++  })
++})
+diff --git a/web/src/tiles.ts b/web/src/tiles.ts
+new file mode 100644
+index 0000000..e7e56c3
+--- /dev/null
++++ b/web/src/tiles.ts
+@@ -0,0 +1,12 @@
++const HIGHEST_STYLED_VALUE = 2048
++
++/**
++ * CSS classes for one cell. An empty cell keeps the base look; every value up to 2048 has
++ * its own class in index.css, and anything above shares `tile-super`.
++ */
++export function tileClassName(value: number): string {
++  if (value === 0) {
++    return 'tile'
++  }
++  return value > HIGHEST_STYLED_VALUE ? 'tile tile-super' : `tile tile-${value}`
++}

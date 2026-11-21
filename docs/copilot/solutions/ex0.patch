@@ -1,0 +1,87 @@
+diff --git a/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt b/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+index 245db7c..3cc07e0 100644
+--- a/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
++++ b/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+@@ -22,13 +22,17 @@ class GameNotFoundException(id: UUID) : RuntimeException("Game $id does not exis
+  * this class only decides what happens around a move.
+  */
+ @Service
+-class GameService {
++class GameService(
++    // Tests pass a factory that returns a known board. Spring finds no bean of this type and,
++    // because the parameter has a default, falls back to a random new game.
++    private val newBoard: () -> Board = { Board.newGame() },
++) {
+     // Demo storage: games live in memory only and are lost on restart.
+     private val boards = ConcurrentHashMap<UUID, Board>()
+ 
+     fun create(): GameState {
+         val id = UUID.randomUUID()
+-        val board = Board.newGame()
++        val board = newBoard()
+         boards[id] = board
+         return stateOf(id, board)
+     }
+@@ -41,8 +45,10 @@ class GameService {
+         synchronized(board) {
+             val changed = board.move(direction)
+ 
+-            // Place a new tile.
+-            board.spawnRandom()
++            // A move that slides nothing is not a turn, so it earns no new tile.
++            if (changed) {
++                board.spawnRandom()
++            }
+ 
+             return stateOf(id, board)
+         }
+diff --git a/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt b/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt
+new file mode 100644
+index 0000000..4f7040a
+--- /dev/null
++++ b/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt
+@@ -0,0 +1,44 @@
++package com.quanti.g2048.api
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import org.assertj.core.api.Assertions.assertThat
++import org.junit.jupiter.api.Test
++
++class GameServiceTest {
++
++    /** A service whose every new game starts from the given rows instead of two random tiles. */
++    private fun serviceStartingWith(vararg rows: List<Int>): GameService = GameService { Board(rows.toList()) }
++
++    @Test
++    fun `a move that changes nothing leaves the grid unchanged`() {
++        // Both rows are packed to the left with no equal neighbours, so LEFT cannot move a tile.
++        val games = serviceStartingWith(
++            listOf(2, 4, 0, 0),
++            listOf(4, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        val created = games.create()
++
++        val moved = games.move(created.id, Direction.LEFT)
++
++        assertThat(moved.grid).isEqualTo(created.grid)
++    }
++
++    @Test
++    fun `a move that changes the board spawns one tile`() {
++        val games = serviceStartingWith(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        val created = games.create()
++
++        val moved = games.move(created.id, Direction.LEFT)
++
++        // The merged 4 plus the spawned tile; where the new tile lands is random, its existence is not.
++        assertThat(moved.grid.flatten().count { it != 0 }).isEqualTo(2)
++    }
++}

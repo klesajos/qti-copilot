@@ -1,0 +1,739 @@
+diff --git a/conductor/solver-tournament.yaml b/conductor/solver-tournament.yaml
+new file mode 100644
+index 0000000..8c09632
+--- /dev/null
++++ b/conductor/solver-tournament.yaml
+@@ -0,0 +1,161 @@
++# Solver tournament as a Conductor workflow.
++#
++# Three agents write one solver each at the same time, a script step runs the
++# seeded benchmark, and a judge with no tools ranks the numbers. The benchmark is
++# a plain command, so the table the judge reads was not produced by a model.
++#
++#   conductor validate conductor/solver-tournament.yaml
++#   conductor run conductor/solver-tournament.yaml
++#
++# Run from the repository root, after the shared pieces exist: Solver.kt,
++# Benchmark.kt, BenchmarkRunner.kt and the `benchmark` Gradle task.
++
++workflow:
++  name: solver-tournament
++  description: Build three 2048 solvers in parallel, benchmark them, let a judge pick the winner
++  version: "1.0.0"
++  entry_point: solver_builders
++
++  runtime:
++    provider: copilot
++    # Let Copilot pick from the models your organization allows.
++    default_model: auto
++
++  context:
++    mode: explicit
++
++  limits:
++    max_iterations: 10
++    timeout_seconds: 1800
++
++# There is no top-level `tools:` list on purpose. Without one, an agent that names
++# no tools gets the provider's default set, which is what lets the builders create
++# files. The judge opts out of all tools with `tools: []`.
++
++parallel:
++  - name: solver_builders
++    description: One solver and its test file per agent, written at the same time
++    agents:
++      - corner_builder
++      - greedy_builder
++      - monotonic_builder
++    # A missing solver would break the benchmark's compile step, so stop early.
++    failure_mode: fail_fast
++    routes:
++      - to: benchmark
++
++agents:
++  - name: corner_builder
++    description: Writes the corner-biased solver and its tests
++    prompt: |
++      Read engine/src/main/kotlin/com/quanti/g2048/engine/solver/Solver.kt first.
++
++      Create exactly two files and touch nothing else:
++      - engine/src/main/kotlin/com/quanti/g2048/engine/solver/CornerSolver.kt
++      - engine/src/test/kotlin/com/quanti/g2048/engine/solver/CornerSolverTest.kt
++
++      `class CornerSolver : Solver`, with `name = "corner"`. From `legalOutcomes(board)` it
++      picks the outcome whose grid has the most tile value on the cells nearest the top-left
++      corner (weight each cell, largest weight in the corner, weights falling along a snake).
++      It returns null when there is no legal outcome.
++
++      Tests: JUnit Jupiter, one behaviour per test, backtick sentence names,
++      Arrange-Act-Assert, boards built with `Board(listOf(...))` so nothing is random.
++
++      Do not run Gradle: two other agents are writing files in the same source set right
++      now and a half-written file of theirs would fail your compile.
++    output:
++      files:
++        type: array
++        description: Paths of the files you created
++
++  - name: greedy_builder
++    description: Writes the greedy-by-score solver and its tests
++    prompt: |
++      Read engine/src/main/kotlin/com/quanti/g2048/engine/solver/Solver.kt first.
++
++      Create exactly two files and touch nothing else:
++      - engine/src/main/kotlin/com/quanti/g2048/engine/solver/GreedySolver.kt
++      - engine/src/test/kotlin/com/quanti/g2048/engine/solver/GreedySolverTest.kt
++
++      `class GreedySolver : Solver`, with `name = "greedy"`. From `legalOutcomes(board)` it
++      picks the outcome with the highest `gained`; on a tie the first outcome in the list
++      wins. It returns null when there is no legal outcome.
++
++      Tests: JUnit Jupiter, one behaviour per test, backtick sentence names,
++      Arrange-Act-Assert, boards built with `Board(listOf(...))` so nothing is random.
++
++      Do not run Gradle: two other agents are writing files in the same source set right
++      now and a half-written file of theirs would fail your compile.
++    output:
++      files:
++        type: array
++        description: Paths of the files you created
++
++  - name: monotonic_builder
++    description: Writes the monotonicity solver and its tests
++    prompt: |
++      Read engine/src/main/kotlin/com/quanti/g2048/engine/solver/Solver.kt first.
++
++      Create exactly two files and touch nothing else:
++      - engine/src/main/kotlin/com/quanti/g2048/engine/solver/MonotonicSolver.kt
++      - engine/src/test/kotlin/com/quanti/g2048/engine/solver/MonotonicSolverTest.kt
++
++      `class MonotonicSolver : Solver`, with `name = "monotonic"`. From `legalOutcomes(board)`
++      it picks the outcome whose grid has the most neighbouring pairs in order, a pair being
++      in order when the value does not grow from left to right or from top to bottom.
++      It returns null when there is no legal outcome.
++
++      Tests: JUnit Jupiter, one behaviour per test, backtick sentence names,
++      Arrange-Act-Assert, boards built with `Board(listOf(...))` so nothing is random.
++
++      Do not run Gradle: two other agents are writing files in the same source set right
++      now and a half-written file of theirs would fail your compile.
++    output:
++      files:
++        type: array
++        description: Paths of the files you created
++
++  # Not an agent: Conductor runs the command itself and stores stdout, stderr and
++  # exit_code as this step's output. Compiling here is also the first build of the
++  # three new solvers together.
++  - name: benchmark
++    type: script
++    description: Compiles the engine and prints the seeded benchmark table
++    command: ./gradlew
++    args: ["-q", ":engine:benchmark"]
++    timeout: 600
++    routes:
++      - to: judge
++
++  - name: judge
++    description: Ranks the solvers from the benchmark table alone
++    tools: []
++    input:
++      - benchmark.output
++    prompt: |
++      A seeded benchmark played the same games with each 2048 solver. Its output
++      (exit code {{ benchmark.output.exit_code }}) is:
++
++      {{ benchmark.output.stdout }}
++
++      Rank the solvers by average score, highest first. Break a tie with the best tile.
++      Use only the numbers above. If the text is not a table with one row per solver,
++      set winner to "none" and quote the first error line as the reason.
++    output:
++      winner:
++        type: string
++        description: Name of the best solver, or "none"
++      ranking:
++        type: string
++        description: Markdown table - rank, solver, average score, best tile
++      reason:
++        type: string
++        description: One sentence on why the winner won
++    routes:
++      - to: $end
++
++output:
++  winner: "{{ judge.output.winner }}"
++  ranking: "{{ judge.output.ranking }}"
++  reason: "{{ judge.output.reason }}"
+diff --git a/engine/build.gradle.kts b/engine/build.gradle.kts
+index fb072e6..ed29fc4 100644
+--- a/engine/build.gradle.kts
++++ b/engine/build.gradle.kts
+@@ -16,3 +16,15 @@ dependencies {
+ tasks.test {
+     useJUnitPlatform()
+ }
++
++// Prints one line per solver: ./gradlew -q :engine:benchmark [-Pgames=50] [-Pseed=7]
++tasks.register<JavaExec>("benchmark") {
++    group = "verification"
++    description = "Plays seeded games with every solver and prints average score and best tile."
++    classpath = sourceSets["test"].runtimeClasspath
++    mainClass = "com.quanti.g2048.engine.solver.BenchmarkRunnerKt"
++    args(
++        providers.gradleProperty("games").getOrElse("1000"),
++        providers.gradleProperty("seed").getOrElse("2048"),
++    )
++}
+diff --git a/engine/src/main/kotlin/com/quanti/g2048/engine/solver/Benchmark.kt b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/Benchmark.kt
+new file mode 100644
+index 0000000..8ce4a56
+--- /dev/null
++++ b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/Benchmark.kt
+@@ -0,0 +1,42 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import kotlin.random.Random
++
++data class BenchmarkResult(
++    val solver: String,
++    val games: Int,
++    val averageScore: Double,
++    val bestTile: Int,
++)
++
++/**
++ * Plays one game to the end and returns the final board. The game ends when the solver
++ * finds no move that changes the board, so the loop does not depend on Board.isGameOver().
++ */
++fun playGame(solver: Solver, random: Random): Board {
++    val board = Board.newGame(random)
++    while (true) {
++        val direction = solver.chooseMove(board) ?: return board
++        board.move(direction)
++        board.spawnRandom()
++    }
++}
++
++/**
++ * Plays [games] games with [solver] and summarises them. Game number n is seeded with
++ * `seed + n`, so every solver starts game n from the same two tiles and a run with the
++ * same arguments always returns the same numbers.
++ */
++fun benchmark(solver: Solver, games: Int, seed: Long): BenchmarkResult {
++    require(games > 0) { "games must be positive" }
++
++    var totalScore = 0L
++    var bestTile = 0
++    for (game in 0 until games) {
++        val board = playGame(solver, Random(seed + game))
++        totalScore += board.score
++        bestTile = maxOf(bestTile, board.grid.flatten().max())
++    }
++    return BenchmarkResult(solver.name, games, totalScore.toDouble() / games, bestTile)
++}
+diff --git a/engine/src/main/kotlin/com/quanti/g2048/engine/solver/CornerSolver.kt b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/CornerSolver.kt
+new file mode 100644
+index 0000000..f204c07
+--- /dev/null
++++ b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/CornerSolver.kt
+@@ -0,0 +1,36 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import com.quanti.g2048.engine.SIZE
++
++/**
++ * Corner-biased: plays the move that leaves the most tile value on the cells closest to
++ * the top-left corner. The weights follow a snake from that corner, so the next-largest
++ * tiles line up behind the largest one instead of scattering.
++ */
++class CornerSolver : Solver {
++    override val name = "corner"
++
++    override fun chooseMove(board: Board): Direction? =
++        legalOutcomes(board).maxByOrNull { cornerScore(it.grid) }?.direction
++
++    private fun cornerScore(grid: List<List<Int>>): Int {
++        var total = 0
++        for (row in 0 until SIZE) {
++            for (col in 0 until SIZE) {
++                total += grid[row][col] * WEIGHTS[row][col]
++            }
++        }
++        return total
++    }
++
++    private companion object {
++        val WEIGHTS = listOf(
++            listOf(15, 14, 13, 12),
++            listOf(8, 9, 10, 11),
++            listOf(7, 6, 5, 4),
++            listOf(0, 1, 2, 3),
++        )
++    }
++}
+diff --git a/engine/src/main/kotlin/com/quanti/g2048/engine/solver/GreedySolver.kt b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/GreedySolver.kt
+new file mode 100644
+index 0000000..5bd7066
+--- /dev/null
++++ b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/GreedySolver.kt
+@@ -0,0 +1,15 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++
++/**
++ * Greedy by score: plays the move that gains the most points right now. When several
++ * moves gain the same, the first one in the order UP, DOWN, LEFT, RIGHT wins.
++ */
++class GreedySolver : Solver {
++    override val name = "greedy"
++
++    override fun chooseMove(board: Board): Direction? =
++        legalOutcomes(board).maxByOrNull { it.gained }?.direction
++}
+diff --git a/engine/src/main/kotlin/com/quanti/g2048/engine/solver/MonotonicSolver.kt b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/MonotonicSolver.kt
+new file mode 100644
+index 0000000..dd0def4
+--- /dev/null
++++ b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/MonotonicSolver.kt
+@@ -0,0 +1,32 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import com.quanti.g2048.engine.SIZE
++
++/**
++ * Monotonicity: plays the move that leaves the most neighbouring pairs in order, counting
++ * a pair as ordered when the value does not grow from left to right or from top to bottom.
++ * Ordered lines keep equal tiles next to each other, which is what makes them mergeable.
++ */
++class MonotonicSolver : Solver {
++    override val name = "monotonic"
++
++    override fun chooseMove(board: Board): Direction? =
++        legalOutcomes(board).maxByOrNull { orderedPairs(it.grid) }?.direction
++
++    private fun orderedPairs(grid: List<List<Int>>): Int {
++        var ordered = 0
++        for (row in 0 until SIZE) {
++            for (col in 0 until SIZE) {
++                if (col + 1 < SIZE && grid[row][col] >= grid[row][col + 1]) {
++                    ordered++
++                }
++                if (row + 1 < SIZE && grid[row][col] >= grid[row + 1][col]) {
++                    ordered++
++                }
++            }
++        }
++        return ordered
++    }
++}
+diff --git a/engine/src/main/kotlin/com/quanti/g2048/engine/solver/Solver.kt b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/Solver.kt
+new file mode 100644
+index 0000000..901280c
+--- /dev/null
++++ b/engine/src/main/kotlin/com/quanti/g2048/engine/solver/Solver.kt
+@@ -0,0 +1,32 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++
++/** A strategy that plays 2048 by picking the next move for a board. */
++interface Solver {
++    /** Short label used in benchmark output. */
++    val name: String
++
++    /** The move to play on [board], or null when no direction changes it. Never modifies [board]. */
++    fun chooseMove(board: Board): Direction?
++}
++
++/** What one direction would do to a board: the grid it leads to and the score it gains. */
++class Outcome(val direction: Direction, val grid: List<List<Int>>, val gained: Int)
++
++/**
++ * Tries every direction on a copy of [board] and returns the ones that change it, in the
++ * order UP, DOWN, LEFT, RIGHT. The board passed in is never modified.
++ */
++fun legalOutcomes(board: Board): List<Outcome> =
++    Direction.entries.mapNotNull { direction ->
++        // Board has no copy function; its public constructor rebuilds one from grid and score.
++        // The copy never spawns a tile, so the trial draws nothing from the game's Random.
++        val copy = Board(board.grid, board.score)
++        if (copy.move(direction)) {
++            Outcome(direction, copy.grid, copy.score - board.score)
++        } else {
++            null
++        }
++    }
+diff --git a/engine/src/test/kotlin/com/quanti/g2048/engine/solver/BenchmarkRunner.kt b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/BenchmarkRunner.kt
+new file mode 100644
+index 0000000..cd06682
+--- /dev/null
++++ b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/BenchmarkRunner.kt
+@@ -0,0 +1,29 @@
++package com.quanti.g2048.engine.solver
++
++import java.util.Locale
++
++/**
++ * Prints the benchmark table: `./gradlew -q :engine:benchmark [-Pgames=50] [-Pseed=7]`.
++ * It lives in the test source set because engine main code performs no I/O.
++ */
++fun main(args: Array<String>) {
++    val games = args.getOrNull(0)?.toInt() ?: 1000
++    val seed = args.getOrNull(1)?.toLong() ?: 2048L
++    val solvers = listOf(CornerSolver(), GreedySolver(), MonotonicSolver())
++
++    println("solver      games  avg score  best tile   (seed $seed)")
++    for (solver in solvers) {
++        val result = benchmark(solver, games, seed)
++        // Locale.ROOT keeps the decimal point a point on every machine.
++        println(
++            String.format(
++                Locale.ROOT,
++                "%-10s %6d %10.1f %10d",
++                result.solver,
++                result.games,
++                result.averageScore,
++                result.bestTile,
++            ),
++        )
++    }
++}
+diff --git a/engine/src/test/kotlin/com/quanti/g2048/engine/solver/BenchmarkTest.kt b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/BenchmarkTest.kt
+new file mode 100644
+index 0000000..111ee74
+--- /dev/null
++++ b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/BenchmarkTest.kt
+@@ -0,0 +1,50 @@
++package com.quanti.g2048.engine.solver
++
++import kotlin.random.Random
++import org.junit.jupiter.api.Assertions.assertEquals
++import org.junit.jupiter.api.Assertions.assertNotEquals
++import org.junit.jupiter.api.Assertions.assertThrows
++import org.junit.jupiter.api.Assertions.assertTrue
++import org.junit.jupiter.api.Test
++
++class BenchmarkTest {
++
++    @Test
++    fun `a game is played until no move changes the board`() {
++        val board = playGame(GreedySolver(), Random(1))
++
++        assertTrue(legalOutcomes(board).isEmpty())
++    }
++
++    @Test
++    fun `the same seed gives the same result`() {
++        val first = benchmark(GreedySolver(), games = 3, seed = 42)
++
++        val second = benchmark(GreedySolver(), games = 3, seed = 42)
++
++        assertEquals(first, second)
++    }
++
++    @Test
++    fun `a different seed gives a different result`() {
++        val first = benchmark(GreedySolver(), games = 3, seed = 42)
++
++        val second = benchmark(GreedySolver(), games = 3, seed = 43)
++
++        assertNotEquals(first.averageScore, second.averageScore)
++    }
++
++    @Test
++    fun `the result names the solver it measured`() {
++        val result = benchmark(CornerSolver(), games = 1, seed = 42)
++
++        assertEquals("corner", result.solver)
++    }
++
++    @Test
++    fun `zero games are rejected`() {
++        assertThrows(IllegalArgumentException::class.java) {
++            benchmark(GreedySolver(), games = 0, seed = 42)
++        }
++    }
++}
+diff --git a/engine/src/test/kotlin/com/quanti/g2048/engine/solver/CornerSolverTest.kt b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/CornerSolverTest.kt
+new file mode 100644
+index 0000000..612e3b3
+--- /dev/null
++++ b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/CornerSolverTest.kt
+@@ -0,0 +1,56 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import org.junit.jupiter.api.Assertions.assertEquals
++import org.junit.jupiter.api.Assertions.assertNull
++import org.junit.jupiter.api.Test
++
++class CornerSolverTest {
++
++    private val solver = CornerSolver()
++
++    private fun boardOf(vararg rows: List<Int>): Board = Board(rows.toList())
++
++    @Test
++    fun `moves the largest tile into the top-left corner`() {
++        // UP puts the 64 on the corner cell (weight 15); DOWN and RIGHT land on weights 0 and 4.
++        val board = boardOf(
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(64, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        val move = solver.chooseMove(board)
++
++        assertEquals(Direction.UP, move)
++    }
++
++    @Test
++    fun `does not pull the largest tile out of the corner`() {
++        // UP changes nothing; DOWN and RIGHT move the 64 away; LEFT keeps it and packs the 2.
++        val board = boardOf(
++            listOf(64, 0, 2, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        val move = solver.chooseMove(board)
++
++        assertEquals(Direction.LEFT, move)
++    }
++
++    @Test
++    fun `returns null when no move changes the board`() {
++        val board = boardOf(
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++        )
++
++        assertNull(solver.chooseMove(board))
++    }
++}
+diff --git a/engine/src/test/kotlin/com/quanti/g2048/engine/solver/GreedySolverTest.kt b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/GreedySolverTest.kt
+new file mode 100644
+index 0000000..0af9a78
+--- /dev/null
++++ b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/GreedySolverTest.kt
+@@ -0,0 +1,56 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import org.junit.jupiter.api.Assertions.assertEquals
++import org.junit.jupiter.api.Assertions.assertNull
++import org.junit.jupiter.api.Test
++
++class GreedySolverTest {
++
++    private val solver = GreedySolver()
++
++    private fun boardOf(vararg rows: List<Int>): Board = Board(rows.toList())
++
++    @Test
++    fun `takes the move that gains the most points`() {
++        // LEFT and RIGHT merge the 8s (+16); UP and DOWN merge only the 2s (+4).
++        val board = boardOf(
++            listOf(8, 8, 0, 2),
++            listOf(0, 0, 0, 2),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        val move = solver.chooseMove(board)
++
++        assertEquals(Direction.LEFT, move)
++    }
++
++    @Test
++    fun `breaks a tie with the first direction in enum order`() {
++        // UP and LEFT change nothing; DOWN and RIGHT both gain 0, and DOWN comes first.
++        val board = boardOf(
++            listOf(2, 4, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        val move = solver.chooseMove(board)
++
++        assertEquals(Direction.DOWN, move)
++    }
++
++    @Test
++    fun `returns null when no move changes the board`() {
++        val board = boardOf(
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++        )
++
++        assertNull(solver.chooseMove(board))
++    }
++}
+diff --git a/engine/src/test/kotlin/com/quanti/g2048/engine/solver/MonotonicSolverTest.kt b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/MonotonicSolverTest.kt
+new file mode 100644
+index 0000000..3a985b5
+--- /dev/null
++++ b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/MonotonicSolverTest.kt
+@@ -0,0 +1,41 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import org.junit.jupiter.api.Assertions.assertEquals
++import org.junit.jupiter.api.Assertions.assertNull
++import org.junit.jupiter.api.Test
++
++class MonotonicSolverTest {
++
++    private val solver = MonotonicSolver()
++
++    private fun boardOf(vararg rows: List<Int>): Board = Board(rows.toList())
++
++    @Test
++    fun `prefers the move that leaves every line in order`() {
++        // LEFT gives 4, 2, 0, 0: no pair grows. DOWN and RIGHT each leave a pair that grows.
++        val board = boardOf(
++            listOf(0, 4, 0, 2),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        val move = solver.chooseMove(board)
++
++        assertEquals(Direction.LEFT, move)
++    }
++
++    @Test
++    fun `returns null when no move changes the board`() {
++        val board = boardOf(
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++        )
++
++        assertNull(solver.chooseMove(board))
++    }
++}
+diff --git a/engine/src/test/kotlin/com/quanti/g2048/engine/solver/SolverTest.kt b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/SolverTest.kt
+new file mode 100644
+index 0000000..5e2347b
+--- /dev/null
++++ b/engine/src/test/kotlin/com/quanti/g2048/engine/solver/SolverTest.kt
+@@ -0,0 +1,97 @@
++package com.quanti.g2048.engine.solver
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import org.junit.jupiter.api.Assertions.assertEquals
++import org.junit.jupiter.api.Assertions.assertTrue
++import org.junit.jupiter.api.Test
++
++class SolverTest {
++
++    private fun boardOf(vararg rows: List<Int>): Board = Board(rows.toList())
++
++    @Test
++    fun `trying the moves leaves the board untouched`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        legalOutcomes(board)
++
++        assertEquals(
++            listOf(
++                listOf(2, 2, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++            ),
++            board.grid,
++        )
++    }
++
++    @Test
++    fun `a direction that changes nothing is not a legal outcome`() {
++        // The tiles already sit on the top edge, so UP is the one direction that moves nothing.
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        val directions = legalOutcomes(board).map { it.direction }
++
++        assertEquals(listOf(Direction.DOWN, Direction.LEFT, Direction.RIGHT), directions)
++    }
++
++    @Test
++    fun `an outcome reports the score its move gains`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        val left = legalOutcomes(board).first { it.direction == Direction.LEFT }
++
++        assertEquals(4, left.gained)
++    }
++
++    @Test
++    fun `an outcome carries the grid its move leads to`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        val left = legalOutcomes(board).first { it.direction == Direction.LEFT }
++
++        assertEquals(
++            listOf(
++                listOf(4, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++            ),
++            left.grid,
++        )
++    }
++
++    @Test
++    fun `a locked board has no legal outcome`() {
++        val board = boardOf(
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++        )
++
++        assertTrue(legalOutcomes(board).isEmpty())
++    }
++}

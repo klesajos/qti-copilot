@@ -1,0 +1,65 @@
+diff --git a/marketplace.json b/marketplace.json
+index edd5855..ff56419 100644
+--- a/marketplace.json
++++ b/marketplace.json
+@@ -10,8 +10,8 @@
+   "plugins": [
+     {
+       "name": "2048-dev",
+-      "description": "Dev workflow skill (build-test) and the game-explorer agent for the 2048 workshop project",
+-      "version": "1.0.0",
++      "description": "Dev workflow skills (build-test, run-local) and the game-explorer agent for the 2048 workshop project",
++      "version": "1.1.0",
+       "source": "./plugins/2048-dev"
+     }
+   ]
+diff --git a/plugins/2048-dev/plugin.json b/plugins/2048-dev/plugin.json
+index 0974450..3e550e2 100644
+--- a/plugins/2048-dev/plugin.json
++++ b/plugins/2048-dev/plugin.json
+@@ -1,8 +1,8 @@
+ {
+   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+   "name": "2048-dev",
+-  "description": "Dev workflow skill (build-test) and the game-explorer agent for the 2048 workshop project",
+-  "version": "1.0.0",
++  "description": "Dev workflow skills (build-test, run-local) and the game-explorer agent for the 2048 workshop project",
++  "version": "1.1.0",
+   "author": {
+     "name": "Josef Klesa",
+     "url": "https://github.com/klesajos"
+diff --git a/plugins/2048-dev/skills/run-local/SKILL.md b/plugins/2048-dev/skills/run-local/SKILL.md
+new file mode 100644
+index 0000000..e93c7a4
+--- /dev/null
++++ b/plugins/2048-dev/skills/run-local/SKILL.md
+@@ -0,0 +1,29 @@
++---
++name: run-local
++description: Start the 2048 app on this machine (Spring Boot API on port 8080, Vite dev server on port 5173) and smoke-test it with curl. Use when asked to run or start the app, to try a change in the browser, or to check that the API answers.
++---
++
++# Run the app locally
++
++Both servers run until they are stopped. Start each one as a background process, never as a
++blocking command.
++
++1. API: `./gradlew :api:bootRun` serves http://localhost:8080.
++2. Web: `cd web && npm run dev` serves http://localhost:5173 and proxies `/api` to the API
++   (run `npm ci` first if `web/node_modules` is missing).
++
++The web port is strict: if 5173 is taken, Vite exits instead of moving to 5174. Free the
++port; do not change `web/vite.config.ts`.
++
++## Smoke test
++
++```bash
++curl -s -X POST http://localhost:5173/api/v1/games
++```
++
++Expected: HTTP 201 and `{"data":{"id":"...","grid":[...],"score":0,"status":"IN_PROGRESS"}}`
++with exactly two non-zero tiles in `grid`. The call goes through the Vite proxy, so it
++proves both servers. Games live in memory only: restarting the API loses them.
++
++Then report the two URLs and the smoke-test result, and stop both servers when the task is
++done unless the user asked to keep them running.

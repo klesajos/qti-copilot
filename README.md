@@ -7,7 +7,8 @@ hands-on project of a workshop on AI-assisted development with **GitHub Copilot 
 the workshop we add features to it, fix bugs, write tests and refactor, with Copilot generating
 the code.
 
-The workshop guides are in [docs/copilot/](docs/copilot/README.md). Start there.
+The workshop guides are in [docs/copilot/](docs/copilot/README.md). Start there: the agenda takes
+3 h 50 min.
 
 ## Requirements
 
@@ -16,7 +17,7 @@ The workshop guides are in [docs/copilot/](docs/copilot/README.md). Start there.
 - Node.js 24 (24.15 or later) or 26.
 - `git` and `jq` (the hook scripts use `jq`).
 - GitHub Copilot CLI 1.0.114 or later for the workshop itself; see
-  [docs/copilot/00-install.md](docs/copilot/00-install.md).
+  [docs/copilot/01-getting-started.md](docs/copilot/01-getting-started.md).
 
 ## Build and run
 
@@ -53,7 +54,7 @@ web/      React UI: App, Board, API client, key mapping
 plugins/  the 2048-dev plugin, served by the in-repo marketplace (marketplace.json)
 evals/    evals for the skill, the agent and the plugin
 conductor/ a Microsoft Conductor workflow
-docs/copilot/  workshop guides, exercises, cheat sheet
+docs/copilot/  workshop guides, exercises with solution patches, cheat sheet
 ```
 
 The heart of the game is `slideLineLeft()` in

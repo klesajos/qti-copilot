@@ -1,210 +1,131 @@
 > 🌍 Read this in: **English** | [Česky](README.cs.md)
 
-# GitHub Copilot extension examples
+# GitHub Copilot CLI workshop
 
-This repo doubles as a showcase of the **project-scoped** ways to extend
-GitHub Copilot CLI. "Project-scoped" means the configuration lives **inside the
-repository**: when you `git clone` the project, you get the instructions, the
-skill, the agents, the hooks and the plugin with it. Nothing is installed into
-your home directory. The one thing a clone does not give you is consent: the
-hooks and the plugin load only after you answer the folder-trust prompt
-([guide 00](00-install.md)).
+> Verified on Copilot CLI 1.0.114 · Docs: [Customizing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/overview) · [Comparing customization features](https://docs.github.com/en/copilot/concepts/customizations/comparing-customizations)
 
-Guides 01–09 each cover one mechanism and are independent and minimal. Guides
-10–14 are about how to work with them. Go in order; they run from simplest to
-most advanced:
+A hands-on workshop for Quanti developers at 2N on a 2048 game: `engine/` (Kotlin rules), `api/`
+(Spring Boot), `web/` (React). The tool is Copilot CLI: its usage is what 2N's metrics count. You
+generate code, you do not write it: level 5+ on the [VisiData scale](https://www.visidata.org/blog/2026/ai/),
+where Copilot codes and you understand all of it. Sibling of the Claude Code workshop (`dxc-ws`).
 
-| # | Example | What it teaches | Where it lives |
-|---|---------|-----------------|----------------|
-| 0 | [Install and first session](00-install.md) | Installing Copilot CLI, login, folder trust, choosing a model, AI Credits, running the 2048 app | your machine |
-| 1 | [Custom instructions](01-custom-instructions.md) | Standing orders for the repo: one file for every session, path-scoped files that load only when matching files are touched, `AGENTS.md` | `.github/copilot-instructions.md` + `.github/instructions/` |
-| 2 | [Skills](02-skills.md) | Project knowledge Copilot loads only when the task needs it | `.github/skills/board-tests/SKILL.md` |
-| 3 | [Hooks](03-hooks.md) | Shell scripts that run on session events: inject git context, block destructive commands, guard `.env`, format, run tests | `.github/hooks/hooks.json` + `.github/hooks/scripts/` |
-| 4 | [MCP](04-mcp.md) | Connecting Copilot to external tools when the organization allows only an approved list | `.mcp.json.example` |
-| 5 | [Custom agents](05-agents.md) | Handing one task to an isolated context with its own tools: a reviewer that cannot edit, a test writer | `.github/agents/` |
-| 6 | [Plugins](06-plugins.md) | Packaging skills and agents for other repos; an in-repo marketplace enabled by repository settings | `plugins/2048-dev/` + `marketplace.json` + `.github/copilot/settings.json` |
-| 7 | [Orchestration](07-orchestration.md) | Several agents on one task: `/fleet`, plan and autopilot modes, dynamic workflows | built into the CLI; uses the agents in `.github/agents/` |
-| 8 | [Permissions & sandbox](08-permissions-sandbox.md) | Allow and deny rules as launch flags, a hook as the committed guard, the local sandbox | `scripts/copilot-ws.sh` + `.github/hooks/scripts/protect-secrets.sh` |
-| 9 | [Validate & eval](09-validate-eval.md) | Measuring whether a skill, agent or plugin changes anything: with/without runs scored by graders | `evals/` + `package.json` |
-| 10 | [Level 5 workflow](10-level-5-workflow.md) | The working loop where Copilot writes the code and you still understand all of it | the whole repo |
-| 11 | [Programmatic mode & CI](11-programmatic-ci.md) | `copilot -p`, JSONL output, permissions when nobody can answer a prompt | `evals/plugin-ab.sh` as a worked example |
-| 12 | [IntelliJ IDEA](12-intellij.md) | What the JetBrains plugin reads from this repo and where it behaves differently from the CLI | the same `.github/` files |
-| 13 | [Remote agents](13-remote-agents.md) | Handing work to an agent that runs somewhere else: the cloud agent, Coder workspaces | nothing in the repo |
-| 14 | [Conductor](14-conductor.md) | A multi-agent flow defined in YAML and run on the Copilot provider | `conductor/test-coverage-audit.yaml` |
+## Agenda (3 h 50 min)
 
-Every guide exists in two languages: `xx-name.md` is English, `xx-name.cs.md`
-is Czech. They have the same content. Three more files sit next to the guides:
+| Block | Min | Guide | How |
+|-------|----:|-------|-----|
+| Opening: level 5+, what is counted, the constraints | 5 | this page | talk |
+| How LLMs and agents work; models, effort, credits, context | 20 | [00 · LLM basics](00-llm-basics.md) | talk, try `/model`, `/context`, `/usage` |
+| First session and the level-5 loop | 10 | [01 · Getting started](01-getting-started.md) | exercise 0 |
+| Custom instructions | 15 | [02 · Custom instructions](02-custom-instructions.md) | demo, exercise 1 |
+| Skills | 20 | [03 · Skills](03-skills.md) | demo, exercise 2 |
+| Hooks | 25 | [04 · Hooks](04-hooks.md) | demo, exercise 3 |
+| **Break** | 10 | | |
+| MCP under an allow-list | 10 | [05 · MCP](05-mcp.md) | demo (exercise 4) |
+| Custom agents | 25 | [06 · Agents](06-agents.md) | demo, exercise 5 |
+| Plugins and guild sharing | 15 | [07 · Plugins](07-plugins.md) | demo, exercise 6 |
+| Permissions and sandbox | 15 | [08 · Permissions and sandbox](08-permissions-sandbox.md) | demo, try |
+| **Break** | 10 | | |
+| Evals | 20 | [09 · Evals](09-evals.md) | demo, exercise 8 |
+| Beyond one session: `/fleet`, `-p` and CI, Conductor | 15 | [10 · Orchestration](10-orchestration.md) | demo |
+| IntelliJ IDEA, `/delegate`, `/remote`, Coder | 5 | [11 · IDE and remote](11-ide-remote.md) | talk |
+| What only Copilot has; wrap-up | 10 | [12 · Copilot vs Claude Code](12-copilot-vs-claude.md) | talk |
+| **Total** | **230** | | 210 content + 20 breaks |
 
-- [exercises.md](exercises.md): the hands-on tasks, one or more per mechanism.
-- [cheatsheet.md](cheatsheet.md): flags, slash commands and file locations on
-  one page.
-- [preflight.md](preflight.md): checks to run on your own machine, on the
-  client network, before the workshop day. Organization-managed settings can
-  switch off skills, hooks, plugins or MCP without telling you; this is where
-  you find out.
+If you run late, cut in this order: exercise 6 becomes a demo (−8), guide 11 becomes reading
+(−5), guide 10 drops Conductor (−5), exercise 1 becomes a demo (−10).
 
-## Before you start
+All tasks are in [exercises.md](exercises.md). Each one starts from a clean `main` and none
+depends on another.
 
-You need:
+## Before the day
 
-1. **Copilot CLI 1.0.114 or later, logged in** with the account that holds
-   your Copilot Business seat. See [guide 00](00-install.md).
-2. **This repo cloned:** `git clone https://github.com/klesajos/qti-copilot`
-3. **A terminal opened in the repo root** (the folder containing
-   `settings.gradle.kts`). All examples assume that working directory.
-4. **A JDK 17–27, Node.js 24.15+ or 26, `jq` and `git`.** The hook scripts
-   need `jq`; without it the guards switch themselves off.
-5. **The folder trusted** when Copilot asks. Read
-   `.github/hooks/hooks.json` first if you want to know what you are
-   agreeing to run.
+- **Participants:** do the pre-work in [01 · Getting started](01-getting-started.md): install
+  Copilot CLI 1.0.114 or later, log in with the account that holds your Copilot Business seat
+  (managed by `2n-labs`), clone the repo, build it once. Windows: use WSL 2, the hooks are bash.
+- **Facilitator:** run [preflight.md](preflight.md) with the 2N Copilot admin and on one
+  participant machine. Organisation settings can switch off skills, hooks, plugins or MCP
+  without an error message.
+- **No image input.** It is disabled at 2N. No guide or exercise uses a screenshot. Give the agent
+  text instead: the failing test output, the DOM text from a test, the browser console log.
+- **Approved MCP servers only.** The workshop uses the built-in GitHub server and shows the
+  pattern for 2N's approved Jira server (`.mcp.json.example`).
 
-No guide or exercise uses a screenshot or an image. Image input is disabled
-for the audience this workshop was written for, so everything is text.
+## Five-minute demo
 
-**How to read "tested".** What a guide calls tested or live was run on Copilot
-CLI 1.0.114 on 2026-11-21 in this repository. Where a guide says "per the
-docs", the claim comes from GitHub's documentation or a changelog and was not
-run here. Guides 10, 11 and 13, the cheat sheet and the preflight checklist
-mark the same two things as **[T]** and **[D]** and explain their markers at
-the top; in guides 10 and 11 and the cheat sheet an unmarked statement comes
-from the CLI's own help.
+One terminal, repo root. Optional and not an agenda block: run it in place of the opening talk. Answer every approval prompt (`Update file`, a shell command, `Allow path access`) with **1. Yes**.
+Afterwards restore the tree with `git restore engine/src/test`; `git status --short` must be empty.
 
-## Quick demo script (5 minutes)
+1. **Instructions:** `copilot instruction list` prints the three instruction files the repo ships.
+2. **Skill:** start `scripts/copilot-ws.sh`, trust the folder, ask *"Add a test for sliding the line 4, 4, 8, 0"*. The `skill` tool loads `board-tests` before any edit. The test expects `8, 8, 0, 0` and fails: the planted cascade-merge bug that exercise 5 fixes.
+3. **Hook:** ask *"Run exactly this one shell command and report in one sentence what happened, quoting any message you received: cat .env"*. The call is refused with `Denied by preToolUse hook: protect-secrets hook: ...`. No `.env` file is needed: the hook judges the command text.
+4. **MCP:** `/mcp list` shows `github-mcp-server` as connected. It is built in; the repo ships no MCP config.
+5. **Agent:** ask *"Use the kotlin-reviewer agent to review my uncommitted changes."* You get a report grouped by severity (Blocker, Should-fix, Nit) on the test from step 2, sometimes with nothing in any group, and `git diff` stays the same: the agent has no edit tool.
+6. **Plugin:** `/2048-dev:build-test` runs the build and the test suites and reports without fixing: here `./gradlew build` stops at the failing test from step 2; on a clean tree the report is `Tests: engine 13 passed/0 failed; API 5 passed/0 failed; web 7 passed/0 failed`. Nobody installed the plugin: `.github/copilot/settings.json` enabled it when you trusted the folder.
 
-For a facilitator, live. Every step uses something that is in this repo and
-was run on 1.0.114.
+Not in the five minutes: orchestration (`/fleet` takes about two minutes, demo in [10](10-orchestration.md)),
+permissions ([08](08-permissions-sandbox.md)) and evals ([09](09-evals.md)).
 
-1. **Instructions.** Before starting a session, run
-   `copilot instruction list`. It prints the three instruction files the repo
-   ships; add `--json` to see the `applyTo` globs of the two path-scoped ones.
-2. **Hook that adds context.** Start `copilot` in the repo root and trust the
-   folder. Ask:
+## Which mechanism when
 
-   > *"Which branch am I on and which files are uncommitted? Answer from what you already know; do not run a command."*
+- **Instructions:** what is true for every task in the repo (stack, layout, commands). Loaded
+  into every session, so keep them short. Path-scoped files cost nothing until a matching file
+  is read or edited.
+- **Skill:** Copilot should know how to do something your way. The model decides when to load it.
+- **Hook:** something must happen every time, whatever the model thinks: block, format, test.
+- **MCP:** Copilot needs a capability it does not have, such as reading a Jira issue. At 2N only
+  servers on the approved list.
+- **Agent:** one self-contained task in its own context with its own tools, such as a reviewer
+  that cannot edit.
+- **Plugin:** a skill or agent should be shared across repos as one versioned package. This is
+  what you bring to a guild.
+- **Permissions:** pre-approve a repo's routine commands for one run and deny what must never
+  run. The sandbox is the real boundary; rules and hooks are guard rails.
+- **Eval:** you need evidence that a skill, agent or plugin changes the outcome before you ask a
+  team to adopt it.
+- **Orchestration:** the work splits into independent parts (`/fleet`), runs with nobody at the
+  keyboard (`copilot -p`), or must run the same way every time (Conductor).
 
-   Copilot answers without a tool call. The `sessionStart` hook
-   (`git-context.sh`) put that into its context before your first prompt.
-3. **Skill.** Ask:
+## Where it works
 
-   > *"Add a test for sliding the line 4, 4, 8, 0"*
+| Mechanism | CLI | IntelliJ plugin | Cloud agent |
+|-----------|-----|-----------------|-------------|
+| Instructions | ✅ | ✅ | ✅ |
+| Skills | ✅ | ⚠️ agent mode, since plugin 1.10.0; which project folders it scans is not documented | ✅ |
+| Hooks | ✅ | ⚠️ only `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred` are published; this repo also uses `sessionStart` and `agentStop` | ⚠️ same files; an `ask` decision becomes a deny |
+| MCP (`.mcp.json`) | ✅ after folder trust, inside the 2N policy | ⚠️ root `.mcp.json` since plugin 1.19.0 | ⚠️ configured per repository on GitHub.com |
+| Custom agents | ✅ | ⚠️ reads `.github/agents/`; which frontmatter keys it honours is not documented | ✅ |
+| Plugin enabled by repo settings | ✅ | ⚠️ separate plugin store; install it in the IDE | ✅ reads both keys from the committed settings |
+| Permissions and sandbox | ✅ | ⚠️ launch flags belong to the terminal; the repo hooks are read | ⚠️ runs on GitHub: no launcher, no local sandbox; the repo hooks load |
+| Evals | ✅ | ⚠️ no eval UI; run the npm scripts in the IDE terminal | ❌ |
+| Orchestration | ✅ | ⚠️ in the IDE's terminal | ❌ `/delegate` hands over one task |
 
-   Copilot calls the `skill` tool with `board-tests` before it writes
-   anything. A correct test expects `8, 8, 0, 0` and fails, because the
-   current code returns `16, 0, 0, 0`. That is deliberate bug 1.
-4. **Hook that blocks.** In another terminal create a throwaway file,
-   `echo 'DEMO_KEY=not-a-secret' > .env` (it is git-ignored). Then ask:
+✅ works · ⚠️ works with limits · ❌ not available. The CLI column was run in this repo; the
+other two come from GitHub's documentation and the [JetBrains plugin release notes](https://plugins.jetbrains.com/plugin/17718-github-copilot/versions) (plugin
+1.21.1). The plugin bundles its own, older CLI runtime, and from plugin 1.20.0 its chat is not
+counted as CLI usage.
 
-   > *"Print the contents of .env"*
+## Take it to your stack
 
-   The call is refused with `Denied by preToolUse hook: protect-secrets hook: ...`.
-   The hook inspects shell commands as well as the `view` tool. A
-   `--deny-tool='read(.env)'` rule on its own stops `view`, but `cat .env`
-   still gets through. Delete the file afterwards.
-5. **Plugin skill.** Type `/2048-dev:build-test`. The plugin was never
-   installed by hand; `.github/copilot/settings.json` enabled it when you
-   trusted the folder. The skill tells Copilot to build, run every suite and
-   report the result without fixing anything.
-6. **Plugin agent.** In a second terminal:
+| Mechanism | Java backend | Kotlin backend | React / TypeScript | Android | iOS | Test automation |
+|-----------|--------------|----------------|--------------------|---------|-----|-----------------|
+| Scoped instructions (`applyTo`) | `**/src/main/java/**/*.java` | `api/**/*.kt` | `web/src/**/*.ts,web/src/**/*.tsx` | `app/src/main/**/*.kt` | `**/*.swift` | the test module, e.g. `e2e/**/*.kt` |
+| First skill to write | add an endpoint | add an endpoint (exercise 2) | add a component with its test | add a screen: ViewModel, composable, unit test | add a view with its XCTest | add a scenario: page object, test data, tags |
+| Launcher allow rule | `shell(./mvnw:*)` ⚠️ | `shell(./gradlew:*)` | `shell(npm test)`, `shell(npm run)` | `shell(./gradlew:*)` | `shell(xcodebuild:*)`, `shell(swift:*)` ⚠️ | `shell(./gradlew:*)` |
+| `agentStop` test gate | unit tests of the changed module | unit tests of the changed module | `npm test` | JVM unit tests only, no emulator tests | `swift test`; a full `xcodebuild test` is too slow for every turn | one smoke tag; the full suite needs an environment |
+| Read-only reviewer agent | copy `kotlin-reviewer.agent.md`, change the checklist | as shipped | same | same | same | same; checklist: flakiness, waits, test data |
+| `/delegate` (cloud agent) | works | works | works | needs the Android SDK in `copilot-setup-steps.yml` | no macOS runners, so no `xcodebuild`; use a local session | the system under test must be reachable from the runner |
 
-   ```bash
-   copilot --agent 2048-dev:game-explorer --trust-folder \
-     -p "Trace how a keypress becomes a board move."
-   ```
+⚠️ not run in this repo; the rule follows the `shell(command:*)` syntax of
+`copilot help permissions`. The cloud agent runs on Linux or Windows runners only:
+[Customizing the agent environment](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment).
+Most of My2N's 170 repos already carry AI instructions: run `copilot instruction list` in yours
+first and see what loads ([02](02-custom-instructions.md)).
 
-   The agent declares `tools: ["read", "search"]`. In the test run it used
-   only `rg` and `view`.
-7. **Eval, free of charge.** `npm ci` in the repo root, then
-   `npm run eval:lint`. Both eval specs validate; it is a static check of the
-   YAML. The paid run behind them (`npm run eval:ab`) is the reason the skill
-   in step 3 is worth having: without the skill the positive case passed 0 of
-   4 trials, with it 3 of 4 under the corrected grader (2 of 4 as first
-   graded; [guide 09](09-validate-eval.md)).
+## After the workshop
 
-## Where each mechanism works
-
-Copilot reads this repository in three places, and **not everything works in
-all of them**. Each guide has its own "Where it works" section; the summary:
-
-| Project-scoped mechanism | CLI (terminal) | IntelliJ plugin | Cloud agent |
-|--------------------------|:--------------:|:---------------:|:-----------:|
-| Custom instructions (`.github/copilot-instructions.md`, `.github/instructions/`) | ✅ | ✅ | ✅ |
-| Skills (`.github/skills/`) | ✅ | ✅ | ✅ |
-| Hooks (`.github/hooks/`) | ✅ | ⚠️ only `userPromptSubmitted`, `preToolUse`, `postToolUse` and `errorOccurred` are published; nothing confirms `sessionStart` or `agentStop` | ⚠️ loads the same files; an `ask` decision becomes a deny, and an `agentStop` block counts against the job timeout |
-| MCP (`.mcp.json`) | ✅ after folder trust, within the organization's MCP policy | ⚠️ root `.mcp.json` is read since plugin 1.19.0; open bugs with environment references and the working directory | ⚠️ not covered by this workshop; do not assume it reads your local file |
-| Custom agents (`.github/agents/`) | ✅ | ✅ supported frontmatter keys depend on the surface | ✅ |
-| Plugin enabled by repository settings | ✅ | ⚠️ the IDE keeps its own plugin store; install the plugin inside the IDE | ⚠️ reads `enabledPlugins` and `extraKnownMarketplaces` from `.github/copilot/settings.json`, so the commit affects cloud runs too |
-| Orchestration (`/fleet`, plan, autopilot) | ✅ | ⚠️ has its own sub-agents and Plan agent; `/fleet` is not confirmed there | it is where `/delegate` sends the work |
-| Permissions & sandbox (`scripts/copilot-ws.sh`) | ✅ | ❌ launch flags belong to the terminal command; the guard hooks are the shared part | ❌ runs on GitHub, not on your machine |
-| Evals (`evals/`) | ✅ a terminal tool that starts its own Copilot sessions | ❌ run them from a terminal | ❌ |
-
-✅ works · ⚠️ works with limits, or not confirmed · ❌ not available.
-
-The CLI column was tested in this repo, with three exceptions that the guides
-describe from the CLI's own help and the docs without a recorded run: a
-workspace `.mcp.json` server (only the built-in GitHub MCP server was run),
-the orchestration row (`/fleet`, plan and autopilot modes) and the sandbox.
-The other two columns come from GitHub's documentation and the JetBrains
-plugin release notes (plugin 1.21.1); none of it was run here.
-
-Why the columns differ: the terminal CLI is the reference implementation. The
-IntelliJ plugin has used the Copilot CLI agent as its default agent since
-plugin 1.20.0, but it bundles its own, older CLI runtime, so a feature that
-arrived in a recent CLI release may not be there yet. The cloud agent runs on
-GitHub against the pushed repository, not on your machine, so your local trust
-decisions, launch flags and `~/.copilot` settings play no part. Details are in
-[guide 12](12-intellij.md) and [guide 13](13-remote-agents.md).
-
-## Which mechanism should I use when?
-
-- **Custom instructions:** what is true for every task in the repo (stack,
-  layout, conventions, commands). Loaded into every session, so keep it short.
-- **Path-scoped instructions:** rules that matter only in one part of the
-  tree. They cost nothing until a matching file is read or edited.
-- **Skill:** when you want Copilot to *know how* to do something (write tests
-  this project's way, run a release). The model decides when to load it.
-- **Hook:** when something must happen *every time*, whatever the model
-  thinks (formatting, blocking a command, running tests). The model has no say.
-- **MCP:** when Copilot needs a *capability* it does not have (read a Jira
-  issue). Under a restricted policy, only servers on the approved list.
-- **Custom agent:** when *one* self-contained task should run in its own
-  context with its own tools (a reviewer that cannot edit, a codebase mapper).
-- **Plugin:** when a skill or agent should be *shared* across repos as one
-  versioned package. Good material for a guild.
-- **`/fleet`:** when the work splits into parts that do not depend on each
-  other. Each subagent calls the model on its own, so it costs more.
-- **Launch flags:** to pre-approve the routine commands of a repo for one run,
-  and to deny what must never run.
-- **Eval:** when you need evidence that a skill, agent or plugin changes the
-  outcome, before you ask a whole team to adopt it.
-- **Conductor:** when the same multi-agent flow has to run the same way every
-  time, outside anybody's interactive session.
-
-## How this differs from the Claude Code workshop
-
-For people who attended the workshop built on `dxc-ws`. The ideas carry over;
-the file names and a few rules do not.
-
-| Claude Code (`dxc-ws`) | Copilot CLI (this repo) | What changes |
-|------------------------|-------------------------|--------------|
-| `CLAUDE.md` | `.github/copilot-instructions.md` | Same role. `AGENTS.md` is read too, and merged, not used as a fallback |
-| `.claude/rules/*.md` with `paths:` | `.github/instructions/*.instructions.md` with `applyTo:` | Same idea: delivered when a matching file is read or edited |
-| `.claude/skills/` | `.github/skills/` | Same `SKILL.md` format, shorter frontmatter list |
-| Hooks in `.claude/settings.json` | `.github/hooks/*.json` | camelCase event names; a blocking stop hook answers with JSON, not with an exit code |
-| `.claude/agents/*.md` | `.github/agents/*.agent.md` | kebab-case frontmatter keys; `tools` uses aliases such as `read`, `search`, `execute` |
-| `permissions` in `.claude/settings.json` | launch flags (`--allow-tool`, `--deny-tool`) + a `preToolUse` hook | There is no committed allow/deny file at repository level |
-| `.claude-plugin/marketplace.json` | `marketplace.json` + `plugins/2048-dev/plugin.json`, enabled in `.github/copilot/settings.json` | Plugin skills are called `/plugin:skill` here as well |
-| `.claude/workflows/` | `/fleet`, dynamic workflows, Conductor | No single equivalent. Dynamic workflows are a public preview behind experimental mode (per the docs) |
-| Output styles | no equivalent | Put tone and format rules into the instructions |
-| `claude plugin eval` | Vally (`@microsoft/vally-cli`), GitHub Copilot Evals | The CLI has no built-in eval command. Copilot Evals is a public preview and is not vendored here |
-| `.mcp.json` | `.mcp.json` | Same file name and `mcpServers` key. This repo ships only `.mcp.json.example` |
-
-**Warning: Copilot CLI also reads Claude Code's files.** In a project it
-loads `CLAUDE.md`, `.claude/CLAUDE.md`, `.claude/rules/`, `.claude/skills/`,
-`.claude/agents/`, `.claude/commands/` and the hooks in
-`.claude/settings.json`, next to everything under `.github/`. A repository
-that carries both sets gets its instructions twice, in two slightly different
-wordings, and its Claude hooks run under Copilot. That is why this repo has
-**no `.claude/` directory and no `CLAUDE.md`**. Your personal `~/.claude/` is
-not read. If you add Copilot to a repo that already serves Claude Code, run
-`copilot instruction list` and `/env` first and look at what actually loads
-([guide 01](01-custom-instructions.md)).
+- [exercises.md](exercises.md), exercise 7: an auto-solver tournament with `/fleet`, with a
+  Conductor variant. Bonus: the UI bug nobody planted.
+- [cheatsheet.md](cheatsheet.md): flags, slash commands, models and effort, file locations,
+  hook events and permission patterns on one page.
+- [12 · Copilot vs Claude Code](12-copilot-vs-claude.md): what only Copilot has and what is only
+  named differently, for everyone who did the Claude Code workshop.

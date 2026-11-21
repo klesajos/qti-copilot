@@ -1,0 +1,618 @@
+diff --git a/api/src/main/kotlin/com/quanti/g2048/api/GameController.kt b/api/src/main/kotlin/com/quanti/g2048/api/GameController.kt
+index c0c3a58..32903e7 100644
+--- a/api/src/main/kotlin/com/quanti/g2048/api/GameController.kt
++++ b/api/src/main/kotlin/com/quanti/g2048/api/GameController.kt
+@@ -31,4 +31,7 @@ class GameController(private val games: GameService) {
+         @PathVariable id: UUID,
+         @RequestBody request: MoveRequest,
+     ): ApiResponse<GameState> = ApiResponse(games.move(id, request.direction))
++
++    @PostMapping("/{id}/undo")
++    fun undo(@PathVariable id: UUID): ApiResponse<GameState> = ApiResponse(games.undo(id))
+ }
+diff --git a/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt b/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+index 245db7c..f0d717e 100644
+--- a/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
++++ b/api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+@@ -22,13 +22,17 @@ class GameNotFoundException(id: UUID) : RuntimeException("Game $id does not exis
+  * this class only decides what happens around a move.
+  */
+ @Service
+-class GameService {
++class GameService(
++    // Tests pass a factory that returns a known board. Spring finds no bean of this type and,
++    // because the parameter has a default, falls back to a random new game.
++    private val newBoard: () -> Board = { Board.newGame() },
++) {
+     // Demo storage: games live in memory only and are lost on restart.
+     private val boards = ConcurrentHashMap<UUID, Board>()
+ 
+     fun create(): GameState {
+         val id = UUID.randomUUID()
+-        val board = Board.newGame()
++        val board = newBoard()
+         boards[id] = board
+         return stateOf(id, board)
+     }
+@@ -41,13 +45,24 @@ class GameService {
+         synchronized(board) {
+             val changed = board.move(direction)
+ 
+-            // Place a new tile.
+-            board.spawnRandom()
++            // A move that slides nothing is not a turn, so it earns no new tile.
++            if (changed) {
++                board.spawnRandom()
++            }
+ 
+             return stateOf(id, board)
+         }
+     }
+ 
++    fun undo(id: UUID): GameState {
++        val board = boardFor(id)
++        synchronized(board) {
++            // Nothing to undo is not an error: the caller gets the unchanged game back.
++            board.undo()
++            return stateOf(id, board)
++        }
++    }
++
+     private fun boardFor(id: UUID): Board = boards[id] ?: throw GameNotFoundException(id)
+ 
+     private fun stateOf(id: UUID, board: Board): GameState {
+diff --git a/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt b/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
+index c7cdfe1..e7e7d6b 100644
+--- a/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
++++ b/api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt
+@@ -69,4 +69,24 @@ class GameControllerTest(@Autowired private val mvc: MockMvcTester) {
+             .extractingPath("$.error.code")
+             .isEqualTo("INVALID_REQUEST")
+     }
++
++    @Test
++    fun `undo on a fresh game returns the game with its four rows`() {
++        val id = createGameId()
++
++        val result = mvc.post().uri("/api/v1/games/$id/undo")
++
++        assertThat(result).hasStatusOk().bodyJson().extractingPath("$.data.grid.length()").isEqualTo(4)
++    }
++
++    @Test
++    fun `undo in an unknown game returns a structured 404`() {
++        val result = mvc.post().uri("/api/v1/games/${UUID.randomUUID()}/undo")
++
++        assertThat(result)
++            .hasStatus(HttpStatus.NOT_FOUND)
++            .bodyJson()
++            .extractingPath("$.error.code")
++            .isEqualTo("GAME_NOT_FOUND")
++    }
+ }
+diff --git a/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt b/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt
+new file mode 100644
+index 0000000..d3eee71
+--- /dev/null
++++ b/api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt
+@@ -0,0 +1,91 @@
++package com.quanti.g2048.api
++
++import com.quanti.g2048.engine.Board
++import com.quanti.g2048.engine.Direction
++import org.assertj.core.api.Assertions.assertThat
++import org.junit.jupiter.api.Test
++
++class GameServiceTest {
++
++    /** A service whose every new game starts from the given rows instead of two random tiles. */
++    private fun serviceStartingWith(vararg rows: List<Int>): GameService = GameService { Board(rows.toList()) }
++
++    @Test
++    fun `a move that changes nothing leaves the grid unchanged`() {
++        // Both rows are packed to the left with no equal neighbours, so LEFT cannot move a tile.
++        val games = serviceStartingWith(
++            listOf(2, 4, 0, 0),
++            listOf(4, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        val created = games.create()
++
++        val moved = games.move(created.id, Direction.LEFT)
++
++        assertThat(moved.grid).isEqualTo(created.grid)
++    }
++
++    @Test
++    fun `a move that changes the board spawns one tile`() {
++        val games = serviceStartingWith(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        val created = games.create()
++
++        val moved = games.move(created.id, Direction.LEFT)
++
++        // The merged 4 plus the spawned tile; where the new tile lands is random, its existence is not.
++        assertThat(moved.grid.flatten().count { it != 0 }).isEqualTo(2)
++    }
++
++    @Test
++    fun `undo restores the grid from before the last move`() {
++        val games = serviceStartingWith(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        val created = games.create()
++        games.move(created.id, Direction.LEFT)
++
++        val undone = games.undo(created.id)
++
++        assertThat(undone.grid).isEqualTo(created.grid)
++    }
++
++    @Test
++    fun `undo restores the score from before the last move`() {
++        val games = serviceStartingWith(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        val created = games.create()
++        games.move(created.id, Direction.LEFT) // +4
++
++        val undone = games.undo(created.id)
++
++        assertThat(undone.score).isEqualTo(0)
++    }
++
++    @Test
++    fun `undo on a fresh game returns the game unchanged`() {
++        val games = serviceStartingWith(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        val created = games.create()
++
++        val undone = games.undo(created.id)
++
++        assertThat(undone).isEqualTo(created)
++    }
++}
+diff --git a/engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt b/engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+index f6b4505..9ba294b 100644
+--- a/engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
++++ b/engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+@@ -59,6 +59,9 @@ class Board(
+ ) {
+     private val cells: Array<IntArray>
+ 
++    // One entry per move that changed the board: the grid and score from just before it.
++    private val history = ArrayDeque<Snapshot>()
++
+     var score: Int = score
+         private set
+ 
+@@ -80,6 +83,7 @@ class Board(
+      */
+     fun move(direction: Direction): Boolean {
+         val before = grid
++        val scoreBefore = score
+         var gained = 0
+ 
+         // NOTE: the four branches below are near-identical. They extract a line
+@@ -131,7 +135,27 @@ class Board(
+         }
+ 
+         score += gained
+-        return grid != before
++        val changed = grid != before
++        if (changed) {
++            history.addLast(Snapshot(before, scoreBefore))
++        }
++        return changed
++    }
++
++    /**
++     * Takes back the last move that changed the board: the grid and the score return to
++     * what they were just before it, so a tile spawned after that move disappears too.
++     * Returns false, and changes nothing, when there is no move to take back.
++     */
++    fun undo(): Boolean {
++        val previous = history.removeLastOrNull() ?: return false
++        for (row in 0 until SIZE) {
++            for (col in 0 until SIZE) {
++                cells[row][col] = previous.grid[row][col]
++            }
++        }
++        score = previous.score
++        return true
+     }
+ 
+     /**
+@@ -179,6 +203,8 @@ class Board(
+     /** True once any tile reaches [WIN_VALUE]. */
+     fun hasWon(): Boolean = cells.any { row -> row.any { it >= WIN_VALUE } }
+ 
++    private class Snapshot(val grid: List<List<Int>>, val score: Int)
++
+     companion object {
+         const val WIN_VALUE = 2048
+ 
+diff --git a/engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt b/engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+index c6b6389..40c4461 100644
+--- a/engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
++++ b/engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+@@ -198,4 +198,155 @@ class BoardTest {
+ 
+         assertFalse(board.isGameOver())
+     }
++
++    // -----------------------------------------------------------------------
++    // Undo.
++    // -----------------------------------------------------------------------
++
++    @Test
++    fun `undo restores the grid from before the last move`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        board.move(Direction.LEFT)
++
++        board.undo()
++
++        assertEquals(
++            listOf(
++                listOf(2, 2, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++            ),
++            board.grid,
++        )
++    }
++
++    @Test
++    fun `undo restores the score from before the last move`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        board.move(Direction.LEFT) // +4
++
++        board.undo()
++
++        assertEquals(0, board.score)
++    }
++
++    @Test
++    fun `undo reports true when it reverted a move`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        board.move(Direction.LEFT)
++
++        assertTrue(board.undo())
++    }
++
++    @Test
++    fun `undo on a fresh board reports false`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        assertFalse(board.undo())
++    }
++
++    @Test
++    fun `undo on a fresh board leaves the grid unchanged`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++
++        board.undo()
++
++        assertEquals(
++            listOf(
++                listOf(2, 2, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++            ),
++            board.grid,
++        )
++    }
++
++    @Test
++    fun `a move that changes nothing cannot be undone`() {
++        val board = boardOf(
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++            listOf(2, 4, 2, 4),
++            listOf(4, 2, 4, 2),
++        )
++        board.move(Direction.LEFT)
++
++        assertFalse(board.undo())
++    }
++
++    @Test
++    fun `undo also removes the tile spawned after the move`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        board.move(Direction.LEFT)
++        board.spawnRandom()
++
++        board.undo()
++
++        // Wherever the tile landed, the grid from before the move has no trace of it.
++        assertEquals(
++            listOf(
++                listOf(2, 2, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++            ),
++            board.grid,
++        )
++    }
++
++    @Test
++    fun `each undo reverts exactly one move`() {
++        val board = boardOf(
++            listOf(2, 2, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++            listOf(0, 0, 0, 0),
++        )
++        board.move(Direction.LEFT)
++        board.move(Direction.DOWN)
++
++        board.undo()
++
++        assertEquals(
++            listOf(
++                listOf(4, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++                listOf(0, 0, 0, 0),
++            ),
++            board.grid,
++        )
++    }
+ }
+diff --git a/web/src/App.test.tsx b/web/src/App.test.tsx
+new file mode 100644
+index 0000000..29772ff
+--- /dev/null
++++ b/web/src/App.test.tsx
+@@ -0,0 +1,83 @@
++import { render, screen } from '@testing-library/react'
++import userEvent from '@testing-library/user-event'
++import { beforeEach, describe, expect, it, vi } from 'vitest'
++import { createGame, move, undo } from './api'
++import type { Game } from './api'
++import { App } from './App'
++
++// api.ts is this app's own wrapper around fetch, so the tests replace the wrapper, not fetch.
++vi.mock('./api')
++
++const CURRENT: Game = {
++  id: 'game-1',
++  grid: [
++    [8, 0, 0, 0],
++    [0, 0, 0, 0],
++    [0, 0, 0, 0],
++    [0, 0, 0, 0],
++  ],
++  score: 8,
++  status: 'IN_PROGRESS',
++}
++
++const PREVIOUS: Game = {
++  id: 'game-1',
++  grid: [
++    [4, 4, 0, 0],
++    [0, 0, 0, 0],
++    [0, 0, 0, 0],
++    [0, 0, 0, 0],
++  ],
++  score: 0,
++  status: 'IN_PROGRESS',
++}
++
++describe('App', () => {
++  beforeEach(() => {
++    vi.resetAllMocks()
++    vi.mocked(createGame).mockResolvedValue(CURRENT)
++    vi.mocked(undo).mockResolvedValue(PREVIOUS)
++  })
++
++  it('shows the previous board when Undo is clicked', async () => {
++    const user = userEvent.setup()
++    render(<App />)
++    await screen.findByText('8')
++
++    await user.click(screen.getByRole('button', { name: 'Undo' }))
++
++    expect(await screen.findAllByText('4')).toHaveLength(2)
++  })
++
++  it('shows the previous board when u is pressed', async () => {
++    const user = userEvent.setup()
++    render(<App />)
++    await screen.findByText('8')
++
++    await user.keyboard('u')
++
++    expect(await screen.findAllByText('4')).toHaveLength(2)
++  })
++
++  it('still undoes with u after the game is over', async () => {
++    vi.mocked(createGame).mockResolvedValue({ ...CURRENT, status: 'OVER' })
++    const user = userEvent.setup()
++    render(<App />)
++    await screen.findByText('Game over.')
++
++    await user.keyboard('u')
++
++    expect(await screen.findAllByText('4')).toHaveLength(2)
++  })
++
++  it('sends no move after the game is over', async () => {
++    vi.mocked(createGame).mockResolvedValue({ ...CURRENT, status: 'OVER' })
++    const user = userEvent.setup()
++    render(<App />)
++    await screen.findByText('Game over.')
++
++    await user.keyboard('{ArrowLeft}')
++
++    expect(move).not.toHaveBeenCalled()
++  })
++})
+diff --git a/web/src/App.tsx b/web/src/App.tsx
+index effebac..1ddcedd 100644
+--- a/web/src/App.tsx
++++ b/web/src/App.tsx
+@@ -1,8 +1,8 @@
+ import { useCallback, useEffect, useState } from 'react'
+-import { createGame, move } from './api'
++import { createGame, move, undo } from './api'
+ import type { Game } from './api'
+ import { Board } from './Board'
+-import { toDirection } from './keys'
++import { isUndoKey, toDirection } from './keys'
+ 
+ const STATUS_MESSAGE: Record<Game['status'], string> = {
+   IN_PROGRESS: 'Use the arrow keys or WASD.',
+@@ -31,14 +31,28 @@ export function App() {
+     startGame()
+   }, [startGame])
+ 
++  const undoLastMove = useCallback(() => {
++    if (game === null) {
++      return
++    }
++    undo(game.id)
++      .then(setGame)
++      .catch((cause: unknown) => setError(messageOf(cause)))
++  }, [game])
++
+   useEffect(() => {
+-    if (game === null || game.status === 'OVER') {
++    if (game === null) {
+       return
+     }
+ 
+     const onKeyDown = (event: KeyboardEvent) => {
++      if (isUndoKey(event.key)) {
++        undoLastMove()
++        return
++      }
+       const direction = toDirection(event.key)
+-      if (direction === null) {
++      // A finished game takes no more moves, but its last move can still be undone.
++      if (direction === null || game.status === 'OVER') {
+         return
+       }
+       // Arrow keys would otherwise scroll the page.
+@@ -50,13 +64,16 @@ export function App() {
+ 
+     window.addEventListener('keydown', onKeyDown)
+     return () => window.removeEventListener('keydown', onKeyDown)
+-  }, [game])
++  }, [game, undoLastMove])
+ 
+   return (
+     <main className="app">
+       <header className="app-header">
+         <h1>2048</h1>
+         <p className="score">score: {game?.score ?? 0}</p>
++        <button type="button" onClick={undoLastMove} disabled={game === null}>
++          Undo
++        </button>
+         <button type="button" onClick={startGame}>
+           New game
+         </button>
+diff --git a/web/src/api.ts b/web/src/api.ts
+index 9842d82..ff54375 100644
+--- a/web/src/api.ts
++++ b/web/src/api.ts
+@@ -48,3 +48,9 @@ export function move(gameId: string, direction: Direction): Promise<Game> {
+     body: JSON.stringify({ direction }),
+   })
+ }
++
++export function undo(gameId: string): Promise<Game> {
++  return request<Game>(`/games/${encodeURIComponent(gameId)}/undo`, {
++    method: 'POST',
++  })
++}
+diff --git a/web/src/keys.test.ts b/web/src/keys.test.ts
+index 3bf512d..dbba7c9 100644
+--- a/web/src/keys.test.ts
++++ b/web/src/keys.test.ts
+@@ -1,5 +1,5 @@
+ import { describe, expect, it } from 'vitest'
+-import { toDirection } from './keys'
++import { isUndoKey, toDirection } from './keys'
+ 
+ describe('toDirection', () => {
+   it('maps an arrow key to its direction', () => {
+@@ -18,3 +18,17 @@ describe('toDirection', () => {
+     expect(toDirection('Enter')).toBeNull()
+   })
+ })
++
++describe('isUndoKey', () => {
++  it('recognises u as the undo key', () => {
++    expect(isUndoKey('u')).toBe(true)
++  })
++
++  it('ignores the case of the undo key', () => {
++    expect(isUndoKey('U')).toBe(true)
++  })
++
++  it('rejects a key that is not the undo key', () => {
++    expect(isUndoKey('ArrowUp')).toBe(false)
++  })
++})
+diff --git a/web/src/keys.ts b/web/src/keys.ts
+index e4c7682..5992254 100644
+--- a/web/src/keys.ts
++++ b/web/src/keys.ts
+@@ -15,3 +15,8 @@ const KEY_TO_DIRECTION: Record<string, Direction> = {
+ export function toDirection(key: string): Direction | null {
+   return KEY_TO_DIRECTION[key] ?? KEY_TO_DIRECTION[key.toLowerCase()] ?? null
+ }
++
++/** True for the key that takes back the last move: `u`, in either case. */
++export function isUndoKey(key: string): boolean {
++  return key.toLowerCase() === 'u'
++}
