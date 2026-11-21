@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "qti-copilot": {
+      "source": {
+        "source": "directory",
+        "path": "."
+      }
+    }
+  },
+  "enabledPlugins": {
+    "2048-dev@qti-copilot": true
+  }
+}

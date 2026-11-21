@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "./.github/hooks/scripts/git-context.sh",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "matcher": "bash|powershell",
+        "bash": "./.github/hooks/scripts/block-destructive.sh",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "matcher": "edit|create|str_replace_editor|apply_patch",
+        "bash": "./.github/hooks/scripts/format.sh",
+        "cwd": ".",
+        "timeoutSec": 60
+      }
+    ],
+    "agentStop": [
+      {
+        "type": "command",
+        "bash": "./.github/hooks/scripts/run-tests.sh",
+        "cwd": ".",
+        "timeoutSec": 300
+      }
+    ]
+  }
+}

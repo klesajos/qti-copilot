@@ -1,0 +1,18 @@
+{
+  "name": "qti-copilot",
+  "owner": {
+    "name": "Josef Klesa"
+  },
+  "metadata": {
+    "description": "Plugins for the qti-copilot GitHub Copilot workshop",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "2048-dev",
+      "description": "Dev workflow skill (build-test) and the game-explorer agent for the 2048 workshop project",
+      "version": "1.0.0",
+      "source": "./plugins/2048-dev"
+    }
+  ]
+}

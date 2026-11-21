@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "jira": {
+      "type": "http",
+      "url": "https://REPLACE-WITH-THE-APPROVED-JIRA-MCP-URL/mcp",
+      "tools": ["*"]
+    }
+  }
+}
