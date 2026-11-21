@@ -130,7 +130,10 @@ This is the workflow's tool registry. **Every tool an agent lists must also be l
 here.** Tested: with `glob` removed from this list, `conductor validate` fails with
 *"Agent 'engine_inventory' references unknown tool 'glob'. Available tools: grep, view"*.
 The names are Copilot's built-in tool names. Per the docs, an agent that omits `tools:`
-inherits this whole list, and `tools: []` gives it none.
+inherits this whole list, and `tools: []` gives it none. The lists only restrict when they
+exist: the workflow in exercise 7 has no top-level `tools:` and its builder agents name none,
+and in that run they had the provider's full default tool set and wrote files. Deleting the
+list is therefore the opposite of locking a workflow down.
 
 Why this is the safety mechanism: per its docs, Conductor approves ordinary permission
 requests automatically. Nobody is asked. An agent is read-only because it has no tool

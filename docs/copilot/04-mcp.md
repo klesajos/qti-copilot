@@ -62,7 +62,8 @@ each tool with the server name as prefix, for example `github-mcp-server-search_
 From a shell, `copilot mcp list` and `copilot mcp get github-mcp-server` show the
 configuration, not the live status.
 
-**Widen the toolset.** Three launch flags, tested on 1.0.114:
+**Widen the toolset.** Three launch flags. The first two were tested on 1.0.114; the third
+is described from `copilot --help`:
 
 | Flag | Effect |
 |------|--------|

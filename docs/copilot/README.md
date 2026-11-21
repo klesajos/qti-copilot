@@ -61,10 +61,13 @@ You need:
 No guide or exercise uses a screenshot or an image. Image input is disabled
 for the audience this workshop was written for, so everything is text.
 
-**How to read "tested".** The CLI behaviour described in these guides was run
-on Copilot CLI 1.0.114 on 2026-11-21 in this repository. Where a guide says
-"per the docs", the claim comes from GitHub's documentation or a changelog and
-was not run here.
+**How to read "tested".** What a guide calls tested or live was run on Copilot
+CLI 1.0.114 on 2026-11-21 in this repository. Where a guide says "per the
+docs", the claim comes from GitHub's documentation or a changelog and was not
+run here. Guides 10, 11 and 13, the cheat sheet and the preflight checklist
+mark the same two things as **[T]** and **[D]** and explain their markers at
+the top; in guides 10 and 11 and the cheat sheet an unmarked statement comes
+from the CLI's own help.
 
 ## Quick demo script (5 minutes)
 
@@ -114,7 +117,8 @@ was run on 1.0.114.
    `npm run eval:lint`. Both eval specs validate; it is a static check of the
    YAML. The paid run behind them (`npm run eval:ab`) is the reason the skill
    in step 3 is worth having: without the skill the positive case passed 0 of
-   4 trials, with it 3 of 4 ([guide 09](09-validate-eval.md)).
+   4 trials, with it 3 of 4 under the corrected grader (2 of 4 as first
+   graded; [guide 09](09-validate-eval.md)).
 
 ## Where each mechanism works
 
@@ -135,9 +139,12 @@ all of them**. Each guide has its own "Where it works" section; the summary:
 
 ✅ works · ⚠️ works with limits, or not confirmed · ❌ not available.
 
-The CLI column was tested in this repo. The other two columns come from
-GitHub's documentation and the JetBrains plugin release notes (plugin 1.21.1);
-none of it was run here.
+The CLI column was tested in this repo, with three exceptions that the guides
+describe from the CLI's own help and the docs without a recorded run: a
+workspace `.mcp.json` server (only the built-in GitHub MCP server was run),
+the orchestration row (`/fleet`, plan and autopilot modes) and the sandbox.
+The other two columns come from GitHub's documentation and the JetBrains
+plugin release notes (plugin 1.21.1); none of it was run here.
 
 Why the columns differ: the terminal CLI is the reference implementation. The
 IntelliJ plugin has used the Copilot CLI agent as its default agent since

@@ -171,7 +171,7 @@ What this means for you:
 | Give the agent your selection or the current diagnostics | `/ide` from that terminal session (preview) | The editor's context without leaving the CLI |
 | Completions and next edit suggestions while you read or adjust | The plugin | The CLI has no equivalent. They are not billed in AI credits |
 | Reading the diff, navigating, running a single test, debugging | IDEA itself | It is what the IDE is best at |
-| Review before a commit | `kotlin-reviewer` or `/review` in the CLI first; the plugin's inline review as a second view | The CLI agent gets the repo instructions; the IDE shows findings in place |
+| Review before a commit | `kotlin-reviewer` or `/review` in the CLI first; the plugin's inline review as a second view | `kotlin-reviewer` gets the repo instructions (the built-in `/review` agent does not, per the docs); the IDE shows findings in place |
 | Sharing a workflow with the team | A skill or an agent in `.github/` | Both clients read them. A prompt file reaches IDE users only |
 
 One working tree, two agents: do not let the IDE's agent and a CLI session edit the same files

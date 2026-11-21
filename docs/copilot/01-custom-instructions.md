@@ -281,9 +281,11 @@ covers the Kotlin tests.)
    git commit -m "Add path-scoped test rules"
    ```
 
-The single-glob form is what this repo's two files use and what was tested.
-The comma-separated form in step 1 is from the docs; step 2 is how you confirm
-your CLI version parsed it.
+The single-glob form is what this repo's two files use and what was tested
+for delivery. The comma-separated form in step 1 is from the docs; on 1.0.114
+`copilot instruction list --json` splits it into one glob per pattern (tested),
+and step 2 is how you confirm that on your version. Delivery of a
+comma-separated file was not tested.
 
 ## `applyTo` for your own stack
 

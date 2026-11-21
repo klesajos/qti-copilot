@@ -62,7 +62,8 @@ spawning a tile after a no-op move. A good audit names all three as untested.
   and run the independent ones as parallel subagents. They report back into the same
   conversation. Each subagent has its own context window (per the docs), so the main
   agent only sees what a subagent returns.
-- **Plan first.** Make a plan with `/plan <prompt>` (or Shift+Tab into plan mode). When
+- **Plan first.** Make a plan with `/plan <prompt>` (or Shift+Tab into plan mode, per the
+  docs). When
   the plan has independent parts, approving it can offer **Accept plan and continue in
   Autopilot execution mode + /fleet**. The other route: `/fleet` with no prompt works
   through the session's open todos, such as the ones the plan made.

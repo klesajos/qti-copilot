@@ -192,7 +192,8 @@ calls and about 66,000 tokens. With `--output-format json` you can see it: a
 `/fleet <prompt>` tells the main agent to split the work into todos and run the independent
 ones as parallel subagents that report back into the same conversation. Per the docs, you
 point it at a custom agent by writing `@kotlin-reviewer` in the fleet prompt. `/tasks` lists
-what is running. Details and an exercise are in [guide 07](07-orchestration.md).
+what is running. Details are in [guide 07](07-orchestration.md); exercise 7 in
+[exercises.md](exercises.md) uses it.
 
 ## `/delegate`: hand the session to the cloud agent
 

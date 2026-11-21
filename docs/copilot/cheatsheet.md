@@ -49,7 +49,7 @@ Unmarked rows come from the CLI's own help on 1.0.114 (`copilot --help`, `copilo
 | | `-n` / `--name <name>` | Name the new session |
 | **MCP and plugins** | `--additional-mcp-config <json>` / `@file` | Extra MCP servers for this session; repeatable |
 | | `--disable-mcp-server <name>`, `--enable-mcp-server <name>` | Turn one server off / on for this run |
-| | `--disable-builtin-mcps` | Turn off the built-in servers (`github-mcp-server`, `githubiq`) |
+| | `--disable-builtin-mcps` | Turn off the built-in servers. `copilot --help` names `github-mcp-server` and `githubiq`; `copilot mcp list` on the test machine printed `computer-use` and `github-mcp-server` |
 | | `--add-github-mcp-toolset`, `--add-github-mcp-tool`, `--enable-all-github-mcp-tools` | Widen the built-in GitHub server. Any of them makes it read-write |
 | | `--plugin-dir <dir>` | Load a plugin from a local directory; repeatable |
 | **Misc** | `--experimental` / `--no-experimental` | Experimental features (extensions, dynamic workflows) |
@@ -220,7 +220,7 @@ Agent keys are kebab-case. camelCase is ignored with a warning: `unknown fields 
 
 | File | Key | Meaning |
 |------|-----|---------|
-| `*.instructions.md` | `applyTo` | Glob, e.g. `"engine/**/*.kt"`. Listed by `copilot instruction list --json` **[T]**. The body is delivered when the agent reads or edits a matching file **[D]** |
+| `*.instructions.md` | `applyTo` | Glob, e.g. `"engine/**/*.kt"`. Listed by `copilot instruction list --json` **[T]**. The body is delivered when the agent reads a matching file (**[T]**, seen on a `view`) or edits one **[D]** |
 | | `excludeAgent` | `"code-review"` or `"cloud-agent"` **[D]** |
 | `SKILL.md` | `name`, `description` | Required; max 64 and 1024 characters **[D]**. A prompt that fits the description triggers the skill without naming it **[T]** |
 | | `argument-hint` | Hint shown in the skill picker **[D]** |
@@ -337,7 +337,7 @@ Set the mode with `/permissions` or the `defaultPermissionMode` setting. Agent m
 | Run one eval | `npm run eval -- -e evals/game-explorer/eval.yaml` |
 | Skill A/B (spends credits) | `npm run eval:ab`. Plan only, free: `npx vally experiment run evals/experiments/board-tests-ab.experiment.yaml --dry-run` |
 | Plugin A/B (spends credits) | `evals/plugin-ab.sh`, or `RUNS=3 MODEL=<model-id> evals/plugin-ab.sh` |
-| Conductor | `conductor validate conductor/test-coverage-audit.yaml`, then `conductor run conductor/test-coverage-audit.yaml` (`--silent` for JSON only). `conductor doctor` shows provider status |
+| Conductor | `conductor validate conductor/test-coverage-audit.yaml`, then `conductor run conductor/test-coverage-audit.yaml` (`conductor --silent run ...` for JSON only; `--silent` is a root option and goes before `run`). `conductor doctor` shows provider status |
 
 Eval results land in `evals/results/<timestamp>/`. See [Example 9](09-validate-eval.md) and [Example 14](14-conductor.md).
 

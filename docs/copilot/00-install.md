@@ -4,8 +4,9 @@
 
 Do this **before the workshop day**. It takes about 15 minutes with a good
 connection, and the last section is a checklist that tells you when you are
-done. Everything here was run with Copilot CLI **1.0.114** on 2026-11-21;
-where a line says "per the docs", it was not.
+done. The install, the `copilot` subcommands and the `-p` runs here were run with Copilot CLI
+**1.0.114** on 2026-11-21. The slash commands of an interactive session are described from
+the CLI's own help, and where a line says "per the docs", it was not run.
 
 ## What you need
 

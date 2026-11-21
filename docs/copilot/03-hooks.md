@@ -219,7 +219,10 @@ rm -r .github/hooks/logs
   (see [Optional parameters](#optional-parameters)).
 - `"bash"`: the command line. The path is relative to `cwd`.
 - `"cwd": "."`: relative to the **repository root**, not to the directory you started
-  `copilot` in. That is why `./.github/hooks/scripts/...` resolves from any subdirectory.
+  `copilot` in. Start `copilot` from the repository root all the same: a `-p --trust-folder`
+  run started in `web/` skipped the hooks with *"Skipped repository hooks (../.github/hooks)
+  because --trust-folder trusts only .../web, not the repository root"* (tested). `-C <root>`
+  is the documented way to point a run at the root from elsewhere.
 - `"timeoutSec"`: the default is 30. The fast hooks get 10, the formatter 60, the test run
   300. When the limit hits, the hook is killed and the CLI carries on as if it had not run.
 - `"matcher"`: a regex on the **tool name**, compiled as `^(?:PATTERN)$`. It has to match the

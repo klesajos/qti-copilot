@@ -276,7 +276,7 @@ The question Vally does not answer: **does installing the plugin change the outc
 
 | | Without the skill | With the skill |
 |---|---|---|
-| `game-over-edge-case` (positive) | **0 of 4** trials passed | **3 of 4** trials passed |
+| `game-over-edge-case` (positive) | **0 of 4** trials passed | **3 of 4** trials passed under the corrected grader (2 of 4 as graded at the time; see below) |
 | `unrelated-question` (negative) | 4 of 4 | 4 of 4 |
 | Tokens | baseline | about 26–32% more |
 | Wall time | baseline | about 51–67% more |
@@ -298,7 +298,7 @@ Read it with these caveats:
   (`val gameOver = board.isGameOver()` … `assertFalse(gameOver)`), exactly the
   Arrange-Act-Assert the skill asks for. The pattern was relaxed to `assertFalse\(`.
   The 3 of 4 counts that trial under the current pattern; the saved report of that run
-  shows it as a fail.
+  shows it as a fail, so the two saved reports add up to 2 of 4.
 - **The skill is not free:** a quarter to a third more tokens, and half to two thirds
   more time.
 - The negative control held in 8 of 8 trials: the skill did not fire on an unrelated question.

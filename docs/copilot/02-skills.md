@@ -26,7 +26,8 @@ the suite, and what to do when a correct test fails.
 
 Whether that changes anything was measured ([Example 9](09-validate-eval.md)).
 In a with/without comparison, the same test-writing task passed its checks in
-0 of 4 trials without the skill and in 3 of 4 with it. Without the skill the
+0 of 4 trials without the skill and in 3 of 4 with it (2 of 4 as first graded,
+before one grader was corrected). Without the skill the
 tests never used the `boardOf(` helper (4 of 4) and half of them had a
 camelCase name instead of a sentence in backticks. The price: about 26–32 %
 more tokens and 51–67 % more time with the skill loaded.

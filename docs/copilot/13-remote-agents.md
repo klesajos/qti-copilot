@@ -66,7 +66,7 @@ Prerequisites **[D]**:
 | `scripts/copilot-ws.sh` | Not involved. Its allow and deny flags belong to a local launch |
 
 Consequences for this repo: `block-destructive.sh`, `protect-secrets.sh`, `format.sh` and
-`run-tests.sh` run in the job too. They need `jq`; `protect-secrets.sh` deliberately lets the
+`run-tests.sh` run in the job too. The first three need `jq`; `protect-secrets.sh` deliberately lets the
 call through and reports that the guard is inactive when `jq` is missing. If you turn
 `run-tests.sh` into a blocking gate (exercise 3) and commit it, the gate applies to cloud jobs
 as well, and the time it takes counts against the job's time limit.

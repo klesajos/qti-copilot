@@ -174,7 +174,7 @@ Interactive sessions ask once whether you trust a folder. A script cannot be ask
 | For how long | One new `-p` (or piped) session. Nothing is saved |
 | What it does not do | Grant any tool, path or URL permission. It cannot be combined with `--resume`, `--continue` or `--session-id` **[D]** |
 | Without it | A `-p` run in an untrusted folder skips workspace MCP servers and repository hooks, and the repo's plugin settings **[D]** |
-| Where to run | From the repository root. From a subdirectory the hooks at the root are not loaded, with a warning **[D]** |
+| Where to run | From the repository root. Started in `web/`, the run printed `Skipped repository hooks (../.github/hooks) because --trust-folder trusts only ".../web", not the repository root` and suggested `-C <root>` **[T]** |
 
 With `--trust-folder` this repo's hooks fired, and the plugin from
 `.github/copilot/settings.json` loaded with no install step **[T]**. Without the hooks you lose
