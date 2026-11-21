@@ -6,7 +6,7 @@
 
 ## In short
 
-**You need:** Copilot CLI installed and logged in ([01](01-getting-started.md) pre-work), this repo open. Nothing else.
+**You need:** Copilot CLI installed and logged in ([01](01-getting-started.md) setup), this repo open. Nothing else.
 
 **What it is for:** A coding agent is a text predictor in a loop that can call tools. Once you know what it sees, what it forgets and what it costs, you know why it gets things wrong and what to change: the prompt, the context or the model.
 

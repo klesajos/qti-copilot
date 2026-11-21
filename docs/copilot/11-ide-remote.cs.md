@@ -55,7 +55,7 @@ aktuální runtime, počítá se jako CLI. Plugin si nech na doplňování a nex
 
 Plugin 1.15.0–1.19.x počítal některé agentní sessions z IDE jako aktivitu CLI
 ([opraveno v 1.20.0, zpětně nedoplněno](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/usage-metrics-coverage)):
-plugin aktualizuj. Které pole čte tvoje organizace, je otázka v [preflight.cs.md](preflight.cs.md).
+plugin aktualizuj. Které pole čte tvoje organizace, ti řekne jen administrátor Copilotu ([pole](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics)).
 
 ¹ Stránka dokumentace si u `totals_by_feature` protiřečí: jedna sekce říká, že se tam používání
 CLI neprojevuje, tabulka featur uvádí `copilot_cli`. Ptej se, ze kterého pole číslo pochází.

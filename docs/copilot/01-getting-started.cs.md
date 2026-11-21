@@ -2,7 +2,7 @@
 
 # 01 · Začínáme: instalace, první session, smyčka úrovně 5
 
-> ⏱ Příprava předem 15 min · workshop 10 min (3 min první session + 7 min [cvičení 0](exercises.cs.md)) · Dokumentace: [Installing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli) · [Plan mode](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices#plan-mode) · [Rolling back changes](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/roll-back-changes) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · Ověřeno na Copilot CLI 1.0.114
+> ⏱ 20 min (10 min nastavení + 3 min první session + 7 min [cvičení 0](exercises.cs.md)) · Dokumentace: [Installing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli) · [Plan mode](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices#plan-mode) · [Rolling back changes](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/roll-back-changes) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · Ověřeno na Copilot CLI 1.0.114
 
 ## Ve zkratce
 
@@ -16,7 +16,7 @@
 2. Vrať špatný krok za pár sekund přes `/rewind`, místo abys uklízel ručně.
 3. Nech si každou změnu před commitem zkontrolovat přes `/review`.
 
-## Před dnem workshopu (příprava předem, 15 min)
+## Nastavení (10 min, na začátku)
 
 Potřebuješ seat Copilot Business nebo Enterprise se zapnutou politikou Copilot CLI, libovolné JDK
 17–27 (toolchain JDK 21 si Gradle stáhne sám), Node.js 24.15+ nebo 26, `jq` a `git`. Na
@@ -56,9 +56,19 @@ Windows použij WSL 2: hooky jsou bash skripty.
    Skripty hooků běží s tvými oprávněními: v repu, které neznáš, si nejdřív přečti
    `.github/hooks/`. Běh `copilot -p` se zeptat nemůže: v nedůvěryhodné složce je přeskočí,
    pokud nepředáš `--trust-folder`.
-6. **Závěrečná kontrola.** Napiš `/env`: vypíšou se soubory s instrukcemi, `board-tests`, hooky
-   a plugin `2048-dev`. Pošli `Reply with the word OK.`: odpověď dokazuje, že funguje seat,
-   politika CLI i model (v našem běhu na Auto 0,48 AI kreditu). Pak `/exit`.
+6. **Zkontroluj nastavení:** `scripts/check-setup.sh`. Ověří nástroje a pak jedním voláním modelu
+   dokáže, že funguje seat, model, skill, agenti, plugin, hooky a vestavěný MCP server (asi 20 s).
+   Každý řádek `MISS` uvádí pravděpodobnou příčinu. Politiku organizace během workshopu nezměníš:
+   cvičení, které blokuje, přeskoč a pokračuj dál.
+   ```
+   Copilot account and repository customizations (one model call)
+     ok    signed in, a model answered (<model-id>)
+     ok    project skill board-tests (guide 03)
+     ok    project agents (guide 06)
+     ok    repo plugin 2048-dev (guide 07)
+     ok    hooks run (guide 04): the .env read was refused
+     ok    built-in GitHub MCP server, 6 tools (guide 05)
+   ```
 
 ## První session (3 min, před cvičením 0)
 

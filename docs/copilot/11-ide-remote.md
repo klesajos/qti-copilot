@@ -55,7 +55,7 @@ current runtime, counted as CLI. Keep the plugin for completions and next edit s
 
 Plugin 1.15.0–1.19.x counted some IDE agent sessions as CLI activity
 ([fixed in 1.20.0, not backfilled](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/usage-metrics-coverage)):
-upgrade the plugin. Which field your organisation reads is a question in [preflight.md](preflight.md).
+upgrade the plugin. Which field your organisation reads, only your Copilot administrator can tell ([fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics)).
 
 ¹ The docs page contradicts itself on `totals_by_feature`: one section says CLI usage is not
 reflected there, the feature table lists `copilot_cli`. Ask which field a number comes from.

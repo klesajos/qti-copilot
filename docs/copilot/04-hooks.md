@@ -232,7 +232,7 @@ on the matching events and with Claude Code's field names: such a repo runs both
 ## Troubleshooting
 
 - **Hook never runs, `/env` does not list it** → start a new session from the repo root
-  (`git rev-parse --show-toplevel`). A `-p` run needs `--trust-folder`. Still missing: [preflight.md](preflight.md).
+  (`git rev-parse --show-toplevel`). A `-p` run needs `--trust-folder`. Still missing: run `scripts/check-setup.sh` ([01](01-getting-started.md)).
 - **Every shell command fails with `Denied by preToolUse hook (hook errored)`** → a
   `preToolUse` script exits non-zero. Run it with fake stdin and look for `set -e`.
 - **A guard passes the fake-stdin test but not the session** → the matcher misses the real tool

@@ -164,7 +164,7 @@ has `claude plugin validate`; Copilot CLI has no validate command, hence the sch
 
 ## Troubleshooting
 
-- **`/2048-dev:build-test` is unknown** → `settings.local.json` opts you out, or a `-p` run has no `--trust-folder`. Organisation policies that block plugins: [preflight](preflight.md).
+- **`/2048-dev:build-test` is unknown** → `settings.local.json` opts you out, or a `-p` run has no `--trust-folder`. A policy that blocks plugins shows up in `scripts/check-setup.sh` ([01](01-getting-started.md)).
 - **The skill loads but the agent is missing** → `$schema` is not the exact 1.0.0 value (legacy plugin).
 - **A plugin skill never runs** → a project skill with the same name shadows it. Rename one.
 - **Enabled from a remote marketplace but never active** → an [open CLI issue](https://github.com/github/copilot-cli/issues/4837). Install it by name.

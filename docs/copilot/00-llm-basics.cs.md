@@ -6,7 +6,7 @@
 
 ## Ve zkratce
 
-**Potřebuješ:** Copilot CLI nainstalované a přihlášené (příprava předem v [01](01-getting-started.cs.md)), otevřené tohle repo. Nic dalšího.
+**Potřebuješ:** Copilot CLI nainstalované a přihlášené (nastavení v [01](01-getting-started.cs.md)), otevřené tohle repo. Nic dalšího.
 
 **K čemu to je:** Kódovací agent je prediktor textu ve smyčce, který umí volat nástroje. Jakmile víš, co vidí, co zapomíná a kolik stojí, víš, proč se plete a co změnit: prompt, kontext, nebo model.
 

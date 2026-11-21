@@ -9,13 +9,13 @@ nad hrou 2048: `engine/` (pravidla v Kotlinu), `api/` (Spring Boot), `web/` (Rea
 Kód generuješ, nepíšeš: úroveň 5+ na [škále VisiData](https://www.visidata.org/blog/2026/ai/),
 kde kóduje Copilot a ty všemu rozumíš. Sesterský workshop k workshopu Claude Code (`dxc-ws`).
 
-## Program (3 h 50 min)
+## Program (4 h)
 
 | Blok | Min | Návod | Jak |
 |------|----:|-------|-----|
 | Úvod: úroveň 5+, co se počítá, omezení | 5 | tahle stránka | výklad |
 | Jak fungují LLM a agenti; modely, effort, kredity, kontext | 20 | [00 · Základy LLM](00-llm-basics.cs.md) | výklad, vyzkoušej `/model`, `/context`, `/usage` |
-| První session a smyčka úrovně 5 | 10 | [01 · Začínáme](01-getting-started.cs.md) | cvičení 0 |
+| Nastavení, první session, smyčka úrovně 5 | 20 | [01 · Začínáme](01-getting-started.cs.md) | kontrola nastavení, cvičení 0 |
 | Vlastní instrukce | 15 | [02 · Vlastní instrukce](02-custom-instructions.cs.md) | demo, cvičení 1 |
 | Skilly | 20 | [03 · Skilly](03-skills.cs.md) | demo, cvičení 2 |
 | Hooky | 25 | [04 · Hooky](04-hooks.cs.md) | demo, cvičení 3 |
@@ -29,7 +29,7 @@ kde kóduje Copilot a ty všemu rozumíš. Sesterský workshop k workshopu Claud
 | Víc než jedna session: `/fleet`, `-p` a CI, Conductor | 15 | [10 · Orchestrace](10-orchestration.cs.md) | demo |
 | IntelliJ IDEA, `/delegate`, `/remote`, Coder | 5 | [11 · IDE a vzdálená práce](11-ide-remote.cs.md) | výklad |
 | Co má jen Copilot; závěr | 10 | [12 · Copilot vs Claude Code](12-copilot-vs-claude.cs.md) | výklad |
-| **Celkem** | **230** | | 210 obsah + 20 přestávky |
+| **Celkem** | **240** | | 220 obsah + 20 přestávky |
 
 Když nestíháš, škrtej v tomhle pořadí: z cvičení 6 udělej demo (−8), návod 11 nech na čtení
 (−5), z návodu 10 vypusť Conductor (−5), z cvičení 1 udělej demo (−10).
@@ -37,14 +37,13 @@ Když nestíháš, škrtej v tomhle pořadí: z cvičení 6 udělej demo (−8),
 Všechny úkoly jsou v [exercises.cs.md](exercises.cs.md). Každý začíná z čistého `main` a žádný
 nezávisí na jiném.
 
-## Před workshopem
+## Co potřebuješ
 
-- **Účastník:** udělej přípravu předem z [01 · Začínáme](01-getting-started.cs.md): nainstaluj
-  Copilot CLI 1.0.114 nebo novější, přihlas se účtem, na kterém máš seat Copilot Business
-  nebo Enterprise, naklonuj repo a jednou ho sestav. Windows: použij WSL 2, hooky jsou v bashi.
-- **Lektor:** projdi [preflight.cs.md](preflight.cs.md) s adminem Copilotu ve vaší organizaci a na jednom
-  účastnickém stroji. Nastavení organizace umí vypnout skilly, hooky, pluginy nebo MCP
-  bez chybové hlášky.
+- **Nic připraveného předem.** Nastavení je prvních 10 minut bloku 01
+  ([01 · Začínáme](01-getting-started.cs.md)): nainstaluj Copilot CLI 1.0.114 nebo novější, přihlas
+  se seatem Copilot Business nebo Enterprise, naklonuj, sestav. Windows: WSL 2, hooky jsou v bashi.
+- **`scripts/check-setup.sh`** pak za 20 sekund ukáže, co na tvém účtu funguje. Nastavení
+  organizace umí bez chyby vypnout skilly, hooky, pluginy nebo MCP; co je blokované, přeskoč.
 - **Obrazový vstup není potřeba.** Některé organizace ho vypínají, proto žádný návod ani cvičení nepoužívá screenshot. Dej agentovi
   místo něj text: výstup padajícího testu, text DOMu z testu, log z konzole prohlížeče.
 - **Není potřeba žádný MCP server třetí strany.** Workshop používá vestavěný GitHub server a ukazuje

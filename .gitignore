@@ -25,3 +25,6 @@ dist/
 evals/results/
 vally-results/
 .copilot/evals/results/
+
+# Local notes, never committed (the old admin preflight checklist lives here)
+.local/

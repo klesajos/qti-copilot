@@ -164,7 +164,7 @@ má `claude plugin validate`; Copilot CLI validační příkaz nemá, proto ta k
 
 ## Když něco nefunguje
 
-- **`/2048-dev:build-test` je neznámý** → `settings.local.json` ti plugin vypíná, nebo běhu `-p` chybí `--trust-folder`. Politiky organizace, které blokují pluginy: [předletová kontrola](preflight.cs.md).
+- **`/2048-dev:build-test` je neznámý** → `settings.local.json` ti plugin vypíná, nebo běhu `-p` chybí `--trust-folder`. Politiku, která blokuje pluginy, ukáže `scripts/check-setup.sh` ([01](01-getting-started.cs.md)).
 - **Skill se načte, ale agent chybí** → `$schema` není přesně hodnota 1.0.0 (legacy plugin).
 - **Skill z pluginu se nikdy nespustí** → zastiňuje ho projektový skill se stejným jménem. Jeden přejmenuj.
 - **Zapnutý ze vzdáleného marketplace, ale nikdy aktivní** → [otevřené issue v CLI](https://github.com/github/copilot-cli/issues/4837). Nainstaluj ho podle jména.

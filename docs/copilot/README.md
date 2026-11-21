@@ -9,13 +9,13 @@ on a 2048 game: `engine/` (Kotlin rules), `api/` (Spring Boot), `web/` (React). 
 generate code, you do not write it: level 5+ on the [VisiData scale](https://www.visidata.org/blog/2026/ai/),
 where Copilot codes and you understand all of it. Sibling of the Claude Code workshop (`dxc-ws`).
 
-## Agenda (3 h 50 min)
+## Agenda (4 h)
 
 | Block | Min | Guide | How |
 |-------|----:|-------|-----|
 | Opening: level 5+, what is counted, the constraints | 5 | this page | talk |
 | How LLMs and agents work; models, effort, credits, context | 20 | [00 · LLM basics](00-llm-basics.md) | talk, try `/model`, `/context`, `/usage` |
-| First session and the level-5 loop | 10 | [01 · Getting started](01-getting-started.md) | exercise 0 |
+| Setup, first session, the level-5 loop | 20 | [01 · Getting started](01-getting-started.md) | setup check, exercise 0 |
 | Custom instructions | 15 | [02 · Custom instructions](02-custom-instructions.md) | demo, exercise 1 |
 | Skills | 20 | [03 · Skills](03-skills.md) | demo, exercise 2 |
 | Hooks | 25 | [04 · Hooks](04-hooks.md) | demo, exercise 3 |
@@ -29,7 +29,7 @@ where Copilot codes and you understand all of it. Sibling of the Claude Code wor
 | Beyond one session: `/fleet`, `-p` and CI, Conductor | 15 | [10 · Orchestration](10-orchestration.md) | demo |
 | IntelliJ IDEA, `/delegate`, `/remote`, Coder | 5 | [11 · IDE and remote](11-ide-remote.md) | talk |
 | What only Copilot has; wrap-up | 10 | [12 · Copilot vs Claude Code](12-copilot-vs-claude.md) | talk |
-| **Total** | **230** | | 210 content + 20 breaks |
+| **Total** | **240** | | 220 content + 20 breaks |
 
 If you run late, cut in this order: exercise 6 becomes a demo (−8), guide 11 becomes reading
 (−5), guide 10 drops Conductor (−5), exercise 1 becomes a demo (−10).
@@ -37,14 +37,13 @@ If you run late, cut in this order: exercise 6 becomes a demo (−8), guide 11 b
 All tasks are in [exercises.md](exercises.md). Each one starts from a clean `main` and none
 depends on another.
 
-## Before the day
+## What you need
 
-- **Participants:** do the pre-work in [01 · Getting started](01-getting-started.md): install
-  Copilot CLI 1.0.114 or later, log in with the account that holds your Copilot Business or
-  Enterprise seat, clone the repo, build it once. Windows: use WSL 2, the hooks are bash.
-- **Facilitator:** run [preflight.md](preflight.md) with your Copilot admin and on one
-  participant machine. Organisation settings can switch off skills, hooks, plugins or MCP
-  without an error message.
+- **Nothing prepared in advance.** Setup is the first 10 minutes of block 01
+  ([01 · Getting started](01-getting-started.md)): install Copilot CLI 1.0.114 or later, log in
+  with your Copilot Business or Enterprise seat, clone, build. Windows: WSL 2, the hooks are bash.
+- **`scripts/check-setup.sh`** then shows in 20 seconds what works on your account. Organisation
+  settings can switch off skills, hooks, plugins or MCP without an error; skip what is blocked.
 - **No image input needed.** Some organisations disable it, so no guide or exercise uses a screenshot. Give the agent
   text instead: the failing test output, the DOM text from a test, the browser console log.
 - **No third-party MCP server needed.** The workshop uses the built-in GitHub server and shows the

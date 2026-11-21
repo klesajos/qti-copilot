@@ -232,7 +232,7 @@ v repu, při odpovídajících událostech a s názvy polí Claude Code: takové
 ## Když něco nefunguje
 
 - **Hook se nikdy nespustí, `/env` ho nevypisuje** → spusť novou session z kořene repa
-  (`git rev-parse --show-toplevel`). Běh s `-p` potřebuje `--trust-folder`. Pořád chybí: [preflight.cs.md](preflight.cs.md).
+  (`git rev-parse --show-toplevel`). Běh s `-p` potřebuje `--trust-folder`. Pořád chybí: spusť `scripts/check-setup.sh` ([01](01-getting-started.cs.md)).
 - **Každý shellový příkaz selže s `Denied by preToolUse hook (hook errored)`** → některý
   skript `preToolUse` končí nenulovým kódem. Pusť ho s podvrženým stdin a hledej `set -e`.
 - **Pojistka projde testem s podvrženým stdin, ale v session ne** → matcher míjí skutečný název

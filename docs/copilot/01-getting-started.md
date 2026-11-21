@@ -2,7 +2,7 @@
 
 # 01 · Getting started: install, first session, the level-5 loop
 
-> ⏱ Pre-work 15 min · workshop 10 min (3 min first session + 7 min [exercise 0](exercises.md)) · Docs: [Installing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli) · [Plan mode](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices#plan-mode) · [Rolling back changes](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/roll-back-changes) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · Verified on Copilot CLI 1.0.114
+> ⏱ 20 min (10 min setup + 3 min first session + 7 min [exercise 0](exercises.md)) · Docs: [Installing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli) · [Plan mode](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices#plan-mode) · [Rolling back changes](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/roll-back-changes) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · Verified on Copilot CLI 1.0.114
 
 ## In short
 
@@ -16,7 +16,7 @@
 2. Undo a wrong turn in seconds with `/rewind` instead of cleaning up by hand.
 3. Have every change reviewed with `/review` before you commit it.
 
-## Before the workshop day (pre-work, 15 min)
+## Setup (10 min, at the start)
 
 You need a Copilot Business or Enterprise seat with the Copilot CLI policy enabled, any JDK
 17–27 (Gradle fetches the JDK 21 toolchain itself), Node.js 24.15+ or 26, `jq` and `git`. On
@@ -56,9 +56,19 @@ Windows use WSL 2: the hooks are bash scripts.
    Hook scripts run with your permissions: in a repo you do not know, read `.github/hooks/`
    first. A `copilot -p` run cannot ask: in an untrusted folder it skips them unless you pass
    `--trust-folder`.
-6. **Final check.** Type `/env`: the instruction files, `board-tests`, the hooks and the
-   `2048-dev` plugin are listed. Send `Reply with the word OK.`: an answer proves that the
-   seat, the CLI policy and a model work (0.48 AI credits in our run on Auto). Then `/exit`.
+6. **Check the setup:** `scripts/check-setup.sh`. It checks the tools, then makes one model call
+   that proves the seat, a model, the skill, the agents, the plugin, the hooks and the built-in
+   MCP server (about 20 s). Every `MISS` line names the likely cause. An organisation policy cannot
+   be changed during the workshop: skip the exercise it blocks and carry on.
+   ```
+   Copilot account and repository customizations (one model call)
+     ok    signed in, a model answered (<model-id>)
+     ok    project skill board-tests (guide 03)
+     ok    project agents (guide 06)
+     ok    repo plugin 2048-dev (guide 07)
+     ok    hooks run (guide 04): the .env read was refused
+     ok    built-in GitHub MCP server, 6 tools (guide 05)
+   ```
 
 ## First session (3 min, before exercise 0)
 
