@@ -16,6 +16,13 @@
         "bash": "./.github/hooks/scripts/block-destructive.sh",
         "cwd": ".",
         "timeoutSec": 10
+      },
+      {
+        "type": "command",
+        "matcher": "bash|powershell|view",
+        "bash": "./.github/hooks/scripts/protect-secrets.sh",
+        "cwd": ".",
+        "timeoutSec": 10
       }
     ],
     "postToolUse": [
