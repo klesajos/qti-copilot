@@ -20,6 +20,8 @@ expected to understand every line that lands (level 5 on the
 [scale](https://www.visidata.org/blog/2026/ai/)).
 
 1. **Start from a clean `main`.** Every exercise assumes the repository as it was cloned.
+   Two exceptions say so themselves: exercise 6 branches from your exercise 5 branch, and
+   exercise 8 copies the skill from your exercise 2 branch.
 
    ```bash
    git switch main && git status --short     # must print nothing
@@ -62,6 +64,10 @@ A clean `main` has 13 engine tests, 5 API tests and 7 web tests.
 `GameService.move` spawns a tile after a move that changed nothing. Exercise 5 fixes two of
 them. If Copilot offers to fix one in passing, say no; the reference solutions below keep them.
 
+There is a fourth bug, in the web layer, that nobody planted: it turned up when the app was
+tested in a browser. It is kept for the [bonus exercise](#bonus-web---a-bug-nobody-planted)
+at the end. Leave it alone in exercises 1–8 as well.
+
 Difficulty: 🟢 Easy · 🟡 Medium · 🔴 Hard.
 
 ## At a glance
@@ -76,6 +82,7 @@ Difficulty: 🟢 Easy · 🟡 Medium · 🔴 Hard.
 | 6 | [**Plugin**](06-plugins.md) | Package an undo workflow skill into the `2048-dev` plugin and bump its version | 🟡 | none (config) |
 | 7 | [**Orchestration**](07-orchestration.md) | An auto-solver chosen by a judge: heuristics built in parallel with `/fleet`; Conductor variant optional | 🔴 | engine |
 | 8 | [**Eval**](09-validate-eval.md) | Prove a skill helps: write an eval case, run it with and without the skill, read the delta | 🟡 | none (config) |
+| + | Bonus | Find and fix a stale-board race in the UI, with the failing test first | 🟡 | web |
 
 ---
 
@@ -107,7 +114,8 @@ A procedure you only need sometimes belongs in a skill (exercise 2).
 - There is no test for `App` yet. `Board.test.tsx` and `keys.test.ts` show the style: Testing
   Library queries by role, one behaviour per `it`.
 - This counter lives in the client and counts every move the API accepted. The client cannot
-  tell whether a move changed the board. Exercise 3 moves the counting to the server.
+  tell whether a move changed the board. Exercise 3 builds a counter on the server instead,
+  starting again from a clean `main`.
 
 **Starter prompt.**
 > *"Read every file in `web/src/` and `web/eslint.config.js`, `web/.prettierrc.json` and
@@ -546,6 +554,8 @@ Jackson 3). Work in this order; each step has one home.
 6. **Test.** Add cases to `GameControllerTest` (`@WebMvcTest(GameController::class)`,
    `@Import(GameService::class)`, `MockMvcTester`). One test for the success path and one per
    failure case. Assert on the status and on a JSON path, not on Kotlin objects.
+   Tests live in `api/src/test/kotlin/com/quanti/g2048/api/<Controller>Test.kt`; create it if missing.
+   Name each test as a plain-English sentence in backticks, one behaviour per test.
 7. **Run** `./gradlew :api:test` (and `./gradlew :engine:test` if step 1 applied) and report the
    pass and fail counts.
 
@@ -555,6 +565,7 @@ Jackson 3). Work in this order; each step has one home.
 - Success body: `{ "data": ... }`. Error body: `{ "error": { "code": "...", "message": "..." } }`.
 - Status: 201 for a create, 200 for a read or a move, 400 for input that cannot be parsed or is
   not allowed, 404 for an unknown game. Never 200 with an error inside, never 500 for bad input.
+- A delete answers 204 with no body: `@ResponseStatus(HttpStatus.NO_CONTENT)`, no return value.
 - A new field on `GameState` is additive. If the web client should show it, add it to the `Game`
   interface in `web/src/api.ts` in the same change.
 
@@ -694,7 +705,7 @@ copilot skill list | grep '^  api-endpoint'
    a 4 × 4 board can hold. `WIN_VALUE` became `DEFAULT_WIN_VALUE`, so the one mention of it in
    `.github/skills/board-tests/SKILL.md` changes too:
 
-```diff
+````diff
 --- a/.github/skills/board-tests/SKILL.md
 +++ b/.github/skills/board-tests/SKILL.md
 @@ -30,7 +30,7 @@ fun slideLineLeft(line: IntArray): Int          // mutates the line, returns sco
@@ -706,7 +717,7 @@ copilot skill list | grep '^  api-endpoint'
  ```
  
  ## Running the tests
-```
+````
 
    Deterministic tests in `BoardTest.kt`:
 
@@ -1305,8 +1316,10 @@ class GameService {
 
    The service now stores a `Game` (board plus counter) instead of a bare board, and uses the
    `changed` flag for the first time. `start(board)` is the seam for tests: `internal`, so it
-   is visible to the tests of this module and to nothing else. The spawn after a no-op move is
-   still there; it belongs to exercise 5. If Copilot guards it with `if (changed)` anyway, the
+   is visible to the tests of this module and to nothing else. Exercise 5 solves the same
+   problem differently, with a constructor parameter that supplies the board; both are
+   valid, and since each exercise starts from a clean `main` they never meet. The spawn after
+   a no-op move is still there; it belongs to exercise 5. If Copilot guards it with `if (changed)` anyway, the
    tests below still pass.
 
    `api/src/test/kotlin/com/quanti/g2048/api/GameServiceTest.kt` (new, plain JUnit, no Spring):
@@ -3964,9 +3977,10 @@ solver with the highest average.
 **Layers:** none (config)
 
 **Goal.** Write an eval for a skill you created, here the `api-endpoint` skill from
-exercise 2: a spec with a positive and a negative stimulus and deterministic graders, and
-an experiment that runs the same spec with and without the skill. Lint it, dry-run it, run
-it, and read the report without reading more into it than it holds.
+exercise 2 (the reference version printed there): a spec with a positive and a negative
+stimulus and deterministic graders, and an experiment that runs the same spec with and
+without the skill. Lint it, dry-run it, run it, and read the report without reading more
+into it than it holds.
 
 **Mechanism it teaches.** [Evals](09-validate-eval.md) with Vally. A trial is a real Copilot
 session in a throwaway workspace that contains the files you stage and, in the variant that
@@ -3979,7 +3993,7 @@ skill.
 
 - `evals/api-endpoint/eval.yaml` (new)
 - `evals/experiments/api-endpoint-ab.experiment.yaml` (new)
-- `.github/skills/api-endpoint/SKILL.md` — yours, from exercise 2
+- `.github/skills/api-endpoint/SKILL.md` — from exercise 2, unchanged
 
 **Inline context.**
 
@@ -3996,24 +4010,23 @@ skill.
   `git checkout <your-exercise-2-branch> -- .github/skills/api-endpoint`. Do not run the
   eval on the exercise 2 branch itself: the spec stages `GameController.kt` and
   `GameService.kt` from the working tree, and there they already contain the win-value
-  feature.
-- **A grader can only check what the skill says.** Go through your `SKILL.md` and write one
-  grader per convention. For the spec below, the skill has to say all of this:
+  feature. No exercise 2 branch? Create the file from the reference block in exercise 2.
+- **A grader can only check what the skill says.** Go through the `SKILL.md` and write one
+  grader per convention. Every grader of the spec below has a line in the reference skill:
 
-  | Grader checks | The skill must say | Reference skill of exercise 2 |
-  |---|---|---|
-  | `@DeleteMapping("/{id}")` in `GameController.kt` | Routes hang off `/api/v1/games`, the game id is `{id}` | yes |
-  | `NO_CONTENT` or `noContent()` | A delete answers 204 | **no** |
-  | `boards.remove(` in `GameService.kt` | The controller only delegates; storage belongs to the service | yes |
-  | `GameControllerTest.kt` exists | Where controller tests go, and that every endpoint ships with one | by class name, no path |
-  | `MockMvcTester` in that file | The Spring Boot 4 test stack, not `MockMvc` | yes |
-  | a backtick test name | Test names are sentences in backticks | by example only |
-  | `GAME_NOT_FOUND` in that file | The unknown-game case is tested against the structured error code | yes |
+  | Grader checks | Where the reference skill says it |
+  |---|---|
+  | `@DeleteMapping("/{id}")` in `GameController.kt` | Contract: resources under `/api/v1`, plural nouns, no verbs |
+  | `NO_CONTENT` or `noContent()` | Contract: "A delete answers 204 with no body" |
+  | `boards.remove(` in `GameService.kt` | Steps 2 and 5: the service method does the work, the controller maps HTTP to it |
+  | `GameControllerTest.kt` exists | Step 6: tests live in `api/src/test/kotlin/com/quanti/g2048/api/<Controller>Test.kt` |
+  | `MockMvcTester` in that file | Step 6 and "Boot 4, not Boot 3" |
+  | a backtick test name | Step 6: "a plain-English sentence in backticks" |
+  | `GAME_NOT_FOUND` in that file | Step 6: one test per failure case; the shape to copy |
 
-  A grader for something the skill never mentions measures the model, not the skill. The
-  reference skill of exercise 2 lists the statuses 201, 200, 400 and 404 and says nothing
-  about a delete. With it, either add "a delete answers 204 with no body" to the skill or
-  drop that grader.
+  A grader for something the skill never mentions measures the model, not the skill. If
+  your own skill leaves one of these out, as an earlier draft of the reference did with the
+  204, the test path and the test names, extend the skill or drop the grader.
 - `package.json` pins `@microsoft/vally-cli`; `npm ci` at the repository root installs it.
   `EVALUATE_USE_HOST_COPILOT_HOME=1` reuses your Copilot login, `VALLY_TELEMETRY_OPTOUT=1`
   turns Vally's telemetry off.
@@ -4035,89 +4048,15 @@ skill.
 **Walkthrough (full solution).**
 
 > **What was run for this catalog.** Everything below: lint, dry run, and one real run of
-> the experiment with `runs: 1` (four sessions), on a clean `HEAD` plus the three files of
-> this exercise. The skill under test was a stand-in that states all seven conventions
-> (step 1), not the reference skill of exercise 2. With your skill the numbers will differ.
+> the experiment with `runs: 1` (four sessions), in a clean worktree that held the reference
+> skill exactly as exercise 2 prints it and the two files of this exercise. With a
+> differently worded skill your numbers will differ.
 
-1. **Check the skill against the table.** *Mechanism: you.* This is the stand-in the run
-   used. Yours will differ; what matters is that every grader has a line in it.
-
-````markdown
----
-name: api-endpoint
-description: Use when adding or changing a REST endpoint of the 2048 API (GameController, GameService, ApiExceptionHandler). Covers the URL and response conventions, where the logic goes, the error format and the controller test every endpoint ships with.
----
-
-# Adding an API endpoint
-
-The API is Spring Boot 4 (Spring MVC) in Kotlin, under
-`api/src/main/kotlin/com/quanti/g2048/api/`. An endpoint is three small pieces, in this order.
-
-## 1. Controller: `GameController.kt`
-
-- Routes hang off `/api/v1/games`. Plural nouns, the game id as `{id}` typed `UUID`.
-- The method is one expression: call `GameService`, wrap the result in `ApiResponse`.
-  No logic, no `if`, no access to storage.
-- Status codes: 200 for reads and moves, `@ResponseStatus(HttpStatus.CREATED)` for a create,
-  `@ResponseStatus(HttpStatus.NO_CONTENT)` and no return value for a delete.
-
-## 2. Service: `GameService.kt`
-
-- All behaviour lives here: the `boards` map, lookups, what happens around a move.
-- Look a game up with `boardFor(id)`, which throws `GameNotFoundException`.
-- Touch a `Board` only inside `synchronized(board)`.
-- Game rules do not belong here either; they live in the `engine` module.
-
-## 3. Errors: `ApiExceptionHandler.kt`
-
-- Every error body is `{ "error": { "code": "...", "message": "..." } }`, built with
-  `ErrorResponse(ErrorBody(code, message))`.
-- A new failure case gets its own exception class and its own `@ExceptionHandler` with an
-  UPPER_SNAKE_CASE `code`. Write the message yourself; never pass framework text through.
-- An unknown game is already handled: 404 with code `GAME_NOT_FOUND`.
-
-## The test every endpoint ships with
-
-Tests go in `api/src/test/kotlin/com/quanti/g2048/api/GameControllerTest.kt`. Create the file
-if it does not exist. Use the Boot 4 test stack, not `MockMvc` or `TestRestTemplate`:
-
-```kotlin
-@WebMvcTest(GameController::class)
-@Import(GameService::class)
-class GameControllerTest(@Autowired private val mvc: MockMvcTester) {
-
-    @Test
-    fun `moving in an unknown game returns a structured 404`() {
-        val result = mvc.post().uri("/api/v1/games/${UUID.randomUUID()}/moves")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("""{"direction":"LEFT"}""")
-
-        assertThat(result)
-            .hasStatus(HttpStatus.NOT_FOUND)
-            .bodyJson()
-            .extractingPath("$.error.code")
-            .isEqualTo("GAME_NOT_FOUND")
-    }
-}
-```
-
-Imports: `org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest`,
-`org.springframework.test.web.servlet.assertj.MockMvcTester`,
-`org.assertj.core.api.Assertions.assertThat`.
-
-- One behaviour per test, named as a plain-English sentence in backticks.
-- Arrange-Act-Assert, separated by blank lines. Assert on the JSON body, not on Kotlin objects.
-- Each new endpoint needs at least two tests: the success case, and the unknown game
-  answering 404 with `GAME_NOT_FOUND`.
-
-## Running the tests
-
-```bash
-./gradlew :api:test
-```
-
-Report the pass and fail counts.
-````
+1. **Check the skill against the table.** *Mechanism: you.* Open
+   `.github/skills/api-endpoint/SKILL.md` next to the table in the inline context and find
+   the sentence behind each grader. Three of them are single lines that are easy to lose
+   when Copilot rewrites the skill: the 204 for a delete, the path of the test file, and
+   the backtick test names. If one is gone, put it back before you measure anything.
 
 2. **Write the spec.** *Mechanism: the main session.* `evals/api-endpoint/eval.yaml`:
 
@@ -4273,19 +4212,18 @@ Plans:      2
   File:        ../api-endpoint/eval.yaml
   Model:       (unset)
   Config hash: 37dca6240065c336
-  Eval hash:   0e307bd7b3c11332
+  Eval hash:   76334ef3a03ae1a5
 
 ── skills=with ──
   Eval:        api-endpoint
   File:        ../api-endpoint/eval.yaml
   Model:       (unset)
   Config hash: 422626e8c5067705
-  Eval hash:   0e307bd7b3c11332
+  Eval hash:   76334ef3a03ae1a5
 ```
 
    Two plans, the same eval hash, different config hashes: the variants differ in the
-   environment and in nothing else. Your hashes differ from these as soon as your skill or
-   spec does.
+   environment and in nothing else. Do not expect these exact hash values on your machine.
 
 5. **Run it.** *Mechanism: Vally, four real sessions (2 variants × 2 stimuli × `runs: 1`).*
 
@@ -4299,19 +4237,26 @@ VALLY_TELEMETRY_OPTOUT=1 EVALUATE_USE_HOST_COPILOT_HOME=1 \
 
 ```text
 skills=without
-  FAIL  delete-game-endpoint · 7/8 graders · 54.6s
+  FAIL  delete-game-endpoint · 7/8 graders · 47.3s
    ✘ file-matches api/src/test/… /MockMvcTester/  Pattern /MockMvcTester/ not found in any file
    · score 87.5% < threshold 100.0% · trial 1
 
   → skills=with beat baseline — 2/2 vs 1/2 stimuli.
-    skills=with used −13% tokens, −16% trial time.
+    skills=with used +1% tokens, +17% trial time.
 
   eval          skills=without (baseline)   skills=with                Δ
   api-endpoint  ✘ 1/2 (score 93.8% < 100%)  ✓ 2/2 (score 100% ≥ 100%)  +1
   stimuli       1/2                         2/2                        +1
-  tokens        245.5k                      213.9k                     −13%
-  trial time    1m12s                       1m01s                      −16%
+  tokens        168.8k                      170.9k                     +1%
+  trial time    1m07s                       1m18s                      +17%
 ```
+
+   Per trial, from `report.md`:
+
+   | Stimulus | `skills=without` (baseline) | `skills=with` |
+   |---|---|---|
+   | `delete-game-endpoint` | ✘ 7/8 graders · 47.3s · 117,321 tokens · 13 tool calls | ✓ 8/8 graders · 1m 01s · 119,197 tokens · 14 tool calls |
+   | `unrelated-question` | ✓ 4/4 graders · 18.7s · 51,450 tokens · 2 tool calls | ✓ 4/4 graders · 15.9s · 51,667 tokens · 3 tool calls |
 
 6. **Read the report.** *Mechanism: you.* `evals/results/<timestamp>/report.md` has one table
    per variant. Each trial folder holds `events.jsonl` (what the agent did) and
@@ -4319,15 +4264,18 @@ skills=without
 
    - **Positive case.** With the skill all 8 graders passed. Without it 7 of 8 passed. The
      baseline did write a controller test at the right path with backtick names and a
-     `GAME_NOT_FOUND` case; its `workspace.patch` shows the classic `MockMvc` with
-     `MockMvcBuilders` instead of `MockMvcTester`. So on this trial the skill bought one
-     thing, the Boot 4 test stack. The other six conventions the model inferred from the
-     staged source.
+     `GAME_NOT_FOUND` case, and it answered the delete with 204; its `workspace.patch` shows
+     the classic `MockMvc` with `MockMvcBuilders` instead of `MockMvcTester`. So on this
+     trial the skill bought one thing, the Boot 4 test stack. The other six conventions the
+     model inferred from the staged source, including the three the skill spells out for
+     this eval.
    - **Negative control.** Passed in both variants: 4 of 4 graders, no skill invocation, no
      file touched.
    - **It is one trial per cell.** "1 of 1 against 0 of 1" is an anecdote. The token and time
-     differences come from a single pair of sessions and mean nothing yet. Set `runs: 3` or
-     more and rerun before you tell anyone that the skill helps.
+     differences come from a single pair of sessions and mean nothing yet: an earlier run of
+     this spec with a differently worded skill showed −13 % tokens and −16 % time for the
+     skill, this one +1 % and +17 %. Set `runs: 3` or more and rerun before you tell anyone
+     that the skill helps, and before you say anything about its cost.
    - **How the skill reached the model.** In the passing trial `events.jsonl` contains no
      `skill` tool call. Vally copied the skill folder into the trial workspace and the model
      read `api-endpoint/SKILL.md` with `view` while exploring. The run therefore shows that
@@ -4361,6 +4309,149 @@ sessions) ends with the comparison table and leaves `evals/results/<timestamp>/r
 `git status --short` lists only the files you created for this exercise. A run in which
 the baseline also passes everything is a valid result: it tells you the skill is not earning
 its place for that task, or that your graders check what the model does anyway.
+
+---
+
+## Bonus (web) 🟡 — a bug nobody planted
+
+**Layers:** web
+
+**Goal.** Reproduce a real race condition in the UI with a failing test, then fix it. Press
+two direction keys in quick succession and the board can end up showing an older state than
+the server holds.
+
+**Mechanism it teaches.** None in particular; this is the level 5 loop from
+[guide 10](10-level-5-workflow.md) on a bug with no prepared answer in the instructions:
+describe the symptom, make Copilot prove it with a test, then fix.
+
+**Files.** `web/src/App.tsx` (changed), `web/src/App.test.tsx` (new).
+
+**Inline context.**
+
+- `App.tsx` sends one request per key press and calls `setGame` with whatever comes back.
+  Two requests in flight can answer in either order. The server applied both moves, but the
+  response that arrives last wins on screen, and that can be the older one.
+- It was found by driving the app with an automated browser that pressed two keys about a
+  millisecond apart. At human speed it is rare, which is why no test had caught it.
+- The server is right; do not touch `api/`. The fix belongs in the client.
+- The cheapest correct fix is to allow one move in flight at a time and ignore key presses
+  until it returns. Applying responses "latest request wins" is not correct here: the later
+  request is not necessarily the one the server processed last.
+
+**Starter prompt.**
+
+> *"Pressing two arrow keys almost at the same time can leave the board showing a stale
+> state: the server has applied both moves, the screen shows only the first. Find the cause
+> in `web/src`. Do not fix anything yet. Write a test in `web/src/App.test.tsx` that fails
+> because of it, mocking `./api`, and run it to show me the failure."*
+
+**Walkthrough (full solution).**
+
+1. **The failing test first.** *Mechanism: none; the prompt asks for evidence before a fix.*
+   The test mocks the API client, leaves the first move unanswered, presses a second key and
+   asserts that only one request went out.
+
+```tsx
+import { fireEvent, render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createGame, move } from './api'
+import type { Game } from './api'
+import { App } from './App'
+
+vi.mock('./api')
+
+const GAME: Game = {
+  id: 'game-1',
+  grid: [
+    [2, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ],
+  score: 0,
+  status: 'IN_PROGRESS',
+}
+
+describe('App', () => {
+  beforeEach(() => {
+    vi.mocked(createGame).mockResolvedValue(GAME)
+    // Never resolves: the first move stays in flight for the whole test.
+    vi.mocked(move).mockReturnValue(new Promise<Game>(() => {}))
+  })
+
+  it('ignores a key press while the previous move is still in flight', async () => {
+    render(<App />)
+    await screen.findByRole('grid')
+
+    fireEvent.keyDown(window, { key: 'ArrowLeft' })
+    fireEvent.keyDown(window, { key: 'ArrowDown' })
+
+    expect(move).toHaveBeenCalledTimes(1)
+  })
+})
+```
+
+   On a clean `main` it fails with `expected "vi.fn()" to be called 1 times, but got 2 times`.
+
+2. **The fix.**
+
+   > *"Now fix it in `App.tsx`: only one move may be in flight at a time; ignore direction
+   > keys until it returns, on success and on failure. Keep `preventDefault` for direction
+   > keys even while a move is in flight, so the page does not scroll. Run the web tests, lint
+   > and build."*
+
+```diff
+--- a/web/src/App.tsx
++++ b/web/src/App.tsx
+@@ -1,4 +1,4 @@
+-import { useCallback, useEffect, useState } from 'react'
++import { useCallback, useEffect, useRef, useState } from 'react'
+ import { createGame, move } from './api'
+ import type { Game } from './api'
+ import { Board } from './Board'
+@@ -17,6 +17,8 @@ function messageOf(error: unknown): string {
+ export function App() {
+   const [game, setGame] = useState<Game | null>(null)
+   const [error, setError] = useState<string | null>(null)
++  // Responses can arrive out of order, so only one move is in flight at a time.
++  const isMoveInFlight = useRef(false)
+ 
+   const startGame = useCallback(() => {
+     createGame()
+@@ -43,9 +45,16 @@ export function App() {
+       }
+       // Arrow keys would otherwise scroll the page.
+       event.preventDefault()
++      if (isMoveInFlight.current) {
++        return
++      }
++      isMoveInFlight.current = true
+       move(game.id, direction)
+         .then(setGame)
+         .catch((cause: unknown) => setError(messageOf(cause)))
++        .finally(() => {
++          isMoveInFlight.current = false
++        })
+     }
+ 
+     window.addEventListener('keydown', onKeyDown)
+```
+
+   A ref and not state: the flag must not trigger a render, and the key handler has to read
+   its current value, not the one captured when the effect ran.
+
+3. **Review.** Ask the `kotlin-reviewer` agent to review the uncommitted change; despite its
+   name it also reviews TypeScript (its checklist includes effects without cleanup).
+
+**Done check.**
+
+```bash
+cd web && npm test && npm run lint && npm run build
+```
+
+Expected: `Tests  8 passed (8)` in 3 files (7 existing + 1 new), lint prints nothing, the
+build ends with `✓ built in`. The reference solution was built and tested for this catalog;
+the prompts were not replayed through Copilot.
 
 ---
 

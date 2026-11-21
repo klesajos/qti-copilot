@@ -1,4 +1,4 @@
-> 🌍 Čti v jazyce: [English](README.md) | **Česky**
+> 🌍 Číst v jazyce: [English](README.md) | **Česky**
 
 # 2048 — projekt pro workshop GitHub Copilot
 
