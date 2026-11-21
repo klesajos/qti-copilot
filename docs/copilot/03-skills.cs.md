@@ -22,7 +22,7 @@ Načtení je volání nástroje. Model zavolá nástroj `skill` s názvem skillu
     └── SKILL.md          ← must be named exactly SKILL.md
 ```
 
-`board-tests` učí Copilota, jak se v tomhle projektu píšou testy desky: kde žijí, jak se jmenují,
+`board-tests` učí Copilota, jak se v tomhle projektu píšou testy desky: kde leží, jak se jmenují,
 který helper sestaví desku, jak spustit sadu testů a co dělat, když správný test selže.
 Změřeno s ním a bez něj ([návod 09](09-evals.cs.md)): stejný úkol na psaní testu prošel
 kontrolami v 0 ze 4 trialů bez skillu a ve 3 ze 4 s ním, za cenu o 26–32 % víc tokenů a
@@ -38,7 +38,7 @@ description: Use when writing or extending JUnit tests for the 2048 board logic 
 ```
 
 - `name` je to, co píšeš za lomítko a co model předává nástroji `skill`. Nejvýš 64 znaků;
-  používej malá písmena a pomlčky.
+  používej malá písmena a spojovníky.
 - `description` je jediná část, kterou model vidí, než se rozhodne. Tenhle popis je spouštěč („Use
   when ...“) poskládaný ze slov, která vývojář píše: `slideLineLeft`, `Board.move`, „game-over“.
   Nejvýš 1 024 znaků; s delším popisem se skill nenačte.
@@ -103,7 +103,7 @@ i po skillech. Spočítej si, co tomu tvému konkuruje:
 
 | Pole nebo příkaz | Co dělá |
 |---|---|
-| `allowed-tools` | Nástroje, které běží **bez dotazu**, dokud je skill aktivní. Předschválení, ne whitelist: neuvedené nástroje fungují dál a dál se ptají. Ve skillu, který jsi nepsal, znamená `allowed-tools: shell` jakýkoli shellový příkaz bez ptaní |
+| `allowed-tools` | Nástroje, které běží **bez dotazu**, dokud je skill aktivní. Předschválení, ne whitelist: neuvedené nástroje fungují dál a pořád se ptají. Ve skillu, který jsi nepsal, znamená `allowed-tools: shell` jakýkoli shellový příkaz bez ptaní |
 | `argument-hint` | Text zobrazený ve výběru skillů, např. `"[test-name]"`. Jen nápověda: požadavek piš jako prózu za `/name` |
 | `user-invocable: false` | Odebere příkaz `/name`. Skill může načíst jen model |
 | `disable-model-invocation: true` | Model už skill sám nenačte. Spouštíš ho přes `/name` |
@@ -125,7 +125,7 @@ Kompletní reference: [Skills reference](https://docs.github.com/en/copilot/refe
 Claude Code: skilly ve stejném formátu `SKILL.md` (otevřený standard Agent Skills), uložené
 v `.claude/skills/`, které čte i Copilot. Klíče Claude Code `model`, `context: fork` a
 `paths` v referenci Copilota nejsou. Claude Code dosazuje `$ARGUMENTS`; Copilot předá text za
-`/name` modelu jako prózu. Prompt soubory (`.github/prompts/*.prompt.md`) fungují v IDE,
+`/name` modelu jako prózu. Soubory s prompty (`.github/prompts/*.prompt.md`) fungují v IDE,
 ale ne v Copilot CLI: tam je nahrazuje skill.
 
 ## Když něco nefunguje

@@ -3,7 +3,7 @@
 # 2048 — projekt pro workshop GitHub Copilot
 
 Malá hra 2048: pravidla v Kotlinu, REST API ve Spring Bootu a UI v Reactu. Slouží jako základ
-pro hands-on část workshopu o AI-asistovaném vývoji s **GitHub Copilot CLI**. Během workshopu
+pro praktickou část workshopu o vývoji s pomocí AI v **GitHub Copilot CLI**. Během workshopu
 do ní přidáváme funkce, opravujeme chyby, dopisujeme testy a refaktorujeme, přičemž kód
 generuje Copilot.
 
@@ -42,7 +42,7 @@ cd web && npm run lint && npm run build
 
 ## Ovládání
 
-Dlaždice posouvají šipky nebo `W` `A` `S` `D`. **New game** začne znovu.
+Dlaždice posouváš šipkami nebo klávesami `W` `A` `S` `D`. **New game** spustí hru od začátku.
 
 ## Struktura
 
@@ -60,5 +60,5 @@ docs/copilot/  workshop guides, exercises with solution patches, cheat sheet
 Srdcem hry je `slideLineLeft()` v
 `engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt`. Začni číst tam.
 
-Kód obsahuje několik záměrných chyb pro cvičení. Testy přesto procházejí; zjistit proč je
-součástí workshopu.
+Kód obsahuje několik záměrných chyb pro cvičení. Testy přesto procházejí; zjistit, proč tomu tak je,
+je součástí workshopu.

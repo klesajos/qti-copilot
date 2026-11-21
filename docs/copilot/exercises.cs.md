@@ -14,7 +14,7 @@
 2. Copilota spouštěj přes `scripts/copilot-ws.sh` z kořene repa.
 3. Kód generuješ, nepíšeš. Vlož prompt, přečti plán, zkontroluj důkazy
    (testy, `/diff`). Smyčku popisuje [01 · Začínáme](01-getting-started.cs.md).
-4. Když vyprší časový limit, přestaň. Svůj pokus odlož (na rozdělaném patch selže) a aplikuj řešení:
+4. Když vyprší časový limit, přestaň. Svůj pokus odlož (na rozdělané práci patch selže) a aplikuj řešení:
    `git stash -u && git apply docs/copilot/solutions/exN.patch`. Výpis jeho souborů: `git apply --stat <patch>`.
 5. Tvůj model nenapíše stejný kód jako řešení. Testem je „Hotovo, když“, ne diff.
 
@@ -29,7 +29,7 @@
 | [4](#4-mcp---implementuj-featuru-přímo-z-github-issue) | MCP | Nejlepší skóre přímo z GitHub issue | api | 10 min | blok 05, demo |
 | [5](#5-agenti---oprav-dvě-nastražené-chyby-třemi-agenty) | Agenti | Explorer, test writer a reviewer opraví dvě chyby v enginu | engine | 20 min | blok 06 |
 | [6](#6-plugin---přidej-skill-do-pluginu-2048-dev) | Plugin | Přidej skill `run-local` do `2048-dev` | config | 8 min | blok 07 |
-| [8](#8-eval---dokaž-že-skill-pomáhá) | Eval | Přidej eval case, lint, dry-run, přečti výsledek se skillem a bez něj | config | 15 min | blok 09 |
+| [8](#8-eval---dokaž-že-skill-pomáhá) | Eval | Přidej případ do evalu, lint, dry-run, přečti výsledek se skillem a bez něj | config | 15 min | blok 09 |
 | [7](#7-orchestrace---auto-solver-vybraný-porotou) | Orchestrace | Tři solvery paralelně, porota vybere jeden | engine | 60 min | po workshopu |
 | [B](#bonus-web---bug-který-nikdo-nenastražil) | Smyčka úrovně 5 | Zastaralá deska po dvou rychlých stiscích kláves | web | 30 min | po workshopu |
 
@@ -47,20 +47,20 @@ Patche cvičení 0, 4 a `ex5-undo` všechny přidávají `GameServiceTest.kt`: n
 
 1. Na čistém `main` spusť `scripts/copilot-ws.sh` z kořene repa. Jsi tu poprvé? Zkus
    čtyři příkazy z [První session](01-getting-started.cs.md#první-session-3-min-před-cvičením-0).
-2. Plán. Vlož spec. Asi po půl minutě se objeví box **Plan Ready for Review**;
+2. Plán. Vlož specifikaci. Asi po půl minutě se objeví box **Plan Ready for Review**;
    `Ctrl+E` ukáže celý plán. Zkontroluj ho: test před opravou, mění se jen dva soubory pod `api/`.
    Zvol možnost 1, **Exit to Interactive execution mode without running the plan**.
    > */plan Bug: `GameService.move` ignoruje výsledek `board.move(direction)` a spawnuje dlaždici,
    > i když se nic nepohnulo. Nejdřív padající test v novém `GameServiceTest.kt`, bez náhodných
    > dlaždic: dej `GameService` parametr konstruktoru `newBoard: () -> Board = { Board.newGame() }`.
    > V `engine/` ani `web/` nic neměň. Důkaz: `./gradlew :api:test`.*
-3. Červená. Vlož první prompt a každý dotaz na edit (`Update file`, `Create file`) potvrď
+3. Červená. Vlož první prompt a každý dotaz na úpravu (`Update file`, `Create file`) potvrď
    **1. Yes**; `./gradlew :api:test` běží bez dotazu, sbalený do jednoho řádku timeline:
    `✗ Shell … Failed with exit code 1` (`Ctrl+O` na prázdném promptu rozbalí všechny položky). Odpověď
    cituje neúspěšnou aserci; kolo končí hláškou `run-tests hook: tests are failing in: gradle`.
    > *„Udělej jen krok s testem: přidej parametr a test, spusť `./gradlew :api:test` a ukaž
    > název padajícího testu a zprávu jeho aserce. `GameService.move` zatím neopravuj.“*
-4. Zelená. Vlož druhý prompt a schval ten jeden edit. Odpověď hlásí 6 prošlých testů a 0 neprošlých
+4. Zelená. Vlož druhý prompt a schval tu jednu úpravu. Odpověď hlásí 6 prošlých testů a 0 neprošlých
    (řešení má dva testy: 7 prošlých).
    > *„Teď oprav `GameService.move`, znovu spusť `./gradlew :api:test` a nahlas, kolik testů prošlo a kolik selhalo.“*
 5. Napiš `/diff`: vlevo `Files (2)`, vpravo diff. Přečti každý řádek: jeden parametr
@@ -114,7 +114,7 @@ do souboru instrukcí vázaného na cestu, ne do každého promptu; `engine/` a 
 3. Přečti si soubor. Potřebuje tři pravidla, která featura prověří: styly jsou obyčejné třídy ve
    `web/src/index.css` bez inline `style`; soubor komponenty exportuje jen komponenty, helpery
    mají vlastní modul; testy se dotazují podle role nebo viditelného textu. Řekni Copilotovi, ať doplní, co chybí.
-4. Zkontroluj, že CLI soubor načítá. V druhém terminálu, z kořene repa:
+4. Zkontroluj, že CLI ten soubor načítá. V druhém terminálu, z kořene repa:
 
    ```bash
    copilot instruction list --json | jq -c '.[] | select(.label == "web.instructions.md") | .applyTo'
@@ -123,10 +123,10 @@ do souboru instrukcí vázaného na cestu, ne do každého promptu; `engine/` a 
    Vypíše `["web/src/**/*.ts","web/src/**/*.tsx","web/src/**/*.css"]`. Z jednoho řetězce
    `applyTo` s čárkami vzniknou tři globy.
 5. Instrukce se načítají při startu session. Napiš `/exit`, spusť znovu `scripts/copilot-ws.sh` a vlož
-   navazující prompt. CLI soubor doručí, když Copilot poprvé otevře soubor odpovídající `applyTo`:
+   navazující prompt. CLI ten soubor doručí, když Copilot poprvé otevře soubor odpovídající `applyTo`:
    v timeline se pak objeví `● Discovered web.instructions.md from .github/instructions/`.
    > *„Obarvi dlaždice podle hodnoty. Jen web: na `api/` ani `engine/` nesahej. Přidej testy.“*
-6. Napiš `/diff`. Uvidíš helper modul vedle `Board.tsx`, nové třídy `.tile-…` v `index.css`
+6. Napiš `/diff`. Uvidíš pomocný modul vedle `Board.tsx`, nové třídy `.tile-…` v `index.css`
    a test, který dlaždici najde podle role nebo textu. Nikde žádný atribut `style=`.
 
 ### Hotovo, když
@@ -190,7 +190,7 @@ endpointu, a s ním postavený `DELETE /api/v1/games/{id}`: 204, strukturovaná 
    > testů jsou obyčejné anglické věty ve zpětných apostrofech. `description` napiš tak, aby říkal, kdy
    > skill použít; nedávej do něj dvojtečku. Žádný kotlinový soubor neměň.“*
 
-   Schval zápis souboru. Copilot přečte soubory jmenované v promptu a vytvoří jeden. Žádný kotlinový soubor se nemění.
+   Schval zápis souboru. Copilot přečte soubory jmenované v promptu a vytvoří jeden nový. Žádný kotlinový soubor se nemění.
 2. Otevři `.github/skills/api-endpoint/SKILL.md` a porovnej ho s referencí:
    ```markdown
    ---
@@ -210,7 +210,7 @@ endpointu, a s ním postavený `DELETE /api/v1/games/{id}`: 204, strukturovaná 
 4. Spusť znovu `scripts/copilot-ws.sh` a vlož úkol. Skill nejmenuj:
    > *„Přidej endpoint, který smaže hru, i s testy.“*
 
-   Před prvním editem Copilot zavolá nástroj `skill` s `{"skill":"api-endpoint"}`; TUI
+   Před první úpravou Copilot zavolá nástroj `skill` s `{"skill":"api-endpoint"}`; TUI
    tomu volání nemusí dát vlastní řádek. Pak upraví `GameService.kt`, `GameController.kt`,
    `GameControllerTest.kt` a spustí testy API. Skill se nepoužil? Zopakuj prompt
    s `/api-endpoint` na začátku a pak zpřesni `description`.
@@ -267,7 +267,7 @@ hook `agentStop` běží při každém zastavení, ať se model rozhodl jakkoli.
 
 1. Na čistém `main` s připraveným `web/node_modules` (`cd web && npm ci`) spusť
    `scripts/copilot-ws.sh` z kořene repa.
-2. Vlož startovací prompt a schval edit. Dnes skript při červené končí s kódem 2: jen varování.
+2. Vlož startovací prompt a schval úpravu. Dnes skript při červené končí s kódem 2: jen varování.
    > *„Přepiš `.github/hooks/scripts/run-tests.sh` tak, aby hook `agentStop` blokoval, když testy
    > selžou. Zachovej, co testuje teď: Gradle, když jsou necommitnuté změny v `engine/` nebo `api/`,
    > Vitest, když jsou ve `web/src/`. Při selhání vypiš na stdout právě jeden JSON objekt
@@ -303,8 +303,8 @@ hook `agentStop` běží při každém zastavení, ať se model rozhodl jakkoli.
    nenapsal. Jeho promptem je `reason` z hooku: `run-tests hook: tests are failing in: web …` a
    výstup Vitestu s `× ignores the case of a WASD key`. Copilot kód znovu změní, spustí
    `cd web && npm test` a zastaví se na zelené; při tomhle zastavení hook nevypíše nic.
-5. Napiš `/diff`. Brána dokazuje, že testy procházejí, ne že je změna správně: Copilot může
-   do mapy kláves přidat velká `S`, `A`, `D` a `W` vynechat. Pak spusť `git restore web/src`.
+5. Napiš `/diff`. Brána dokazuje, že testy procházejí, ne že je změna správná: Copilot může
+   do mapy kláves přidat jen velká `S`, `A`, `D` a `W` vynechat. Pak spusť `git restore web/src`.
 
 ### Hotovo, když
 
@@ -339,13 +339,13 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex3.patch`
 
 ### Jdi dál
 
-- Postav featuru za bránou: počítadlo tahů na serveru (`moves` ve stavu hry, počítá se jen,
-  když se deska změnila, zobrazené v hlavičce webu). Hook pak spouští Gradle i Vitest.
+- Postav featuru za bránou: počítadlo tahů na serveru (`moves` ve stavu hry, počítá se,
+  jen když se deska změnila, zobrazené v hlavičce webu). Hook pak spouští Gradle i Vitest.
 - Udělej bránu přísnou: smaž větev `stop_hook_active`. CLI ukončí kolo po 8 zablokováních.
 
 ## 4. MCP 🟡 — implementuj featuru přímo z GitHub issue
 
-**Čas:** celé 10 min; na workshopu lektor ukáže kroky 1 až 3 (5 min) · **Návod:** [05 · MCP pod allow-listem](05-mcp.cs.md) · **Vrstva:** api · **Řešení:** [`solutions/ex4.patch`](solutions/ex4.patch)
+**Čas:** celkem 10 min; na workshopu lektor ukáže kroky 1 až 3 (5 min) · **Návod:** [05 · MCP pod allow-listem](05-mcp.cs.md) · **Vrstva:** api · **Řešení:** [`solutions/ex4.patch`](solutions/ex4.patch)
 
 **Cíl.** Copilot přečte issue „Show the best score“ přes vestavěný GitHub MCP server a
 implementuje ho: každý stav hry, který API vrací, nese `bestScore`. Pull request na issue odkazuje.
@@ -370,7 +370,7 @@ implementuje ho: každý stav hry, který API vrací, nese `bestScore`. Pull req
    > *„Přečti issue #<N> tohoto repozitáře nástrojem issue_read z GitHub MCP serveru. Zopakuj
    > jeho akceptační kritéria jako číslovaný seznam a u každého jmenuj soubory, které změníš.
    > Zatím nic needituj.“*
-4. Vlož navazující prompt a schval edity `GameService.kt` a obou testovacích souborů.
+4. Vlož navazující prompt a schval úpravy `GameService.kt` a obou testovacích souborů.
    > *„Implementuj issue jen v `api`. Nejlepší skóre sdílejí všechny hry: otestuj ho v novém
    > `GameServiceTest` s čerstvým `GameService()` pro každý test a dej službě `internal` způsob,
    > jak začít hru na desce, kterou dodá test. Testy controlleru sdílejí jednu službu: přidej tam
@@ -410,7 +410,7 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex4.patch`
 - **Webová vrstva.** Založ druhé issue, „Show `best: N` in the header“, a zopakuj kroky 2 až 5:
   `bestScore: number` ve `web/src/api.ts`, jedno `<p>` v `App.tsx`, test s mockovaným `./api`.
 - **Varianta s Jirou** (⚠️ v tomto repu nespuštěno). `cp .mcp.json.example .mcp.json`, místo
-  placeholderu dej URL Jira MCP serveru schváleného ve 2N a restartuj session. `/mcp list` ukáže
+  zástupné hodnoty dej URL Jira MCP serveru schváleného ve 2N a restartuj session. `/mcp list` ukáže
   `jira` jako připojený; když chce přihlášení, spusť `/mcp auth jira`. Použij stejné dva prompty,
   jen místo GitHub issue *„Přečti Jira issue <KEY> přes server jira“*.
 
@@ -427,7 +427,7 @@ testů zůstanou mimo hlavní kontext a explorer ani reviewer nemůžou editovat
 ### Kroky
 
 1. Na čistém `main` (`git status --short` nevypíše nic) spusť `scripts/copilot-ws.sh` z kořene
-   repa. Předem schválí `./gradlew`, který test writer potřebuje.
+   repa. Předem schválí `./gradlew`, který potřebuje test writer.
 2. Vlož startovací prompt. Když agenta jmenuješ, hlavní agent zavolá nástroj `task`
    s `agent_type` nastaveným na toho agenta.
    > *„U dvou pravidel enginu je podezření, že jsou špatně. Posun řady 4, 4, 8, 0 musí dát
@@ -439,7 +439,7 @@ testů zůstanou mimo hlavní kontext a explorer ani reviewer nemůžou editovat
    Uvidíš dvě delegace v tomhle pořadí. `2048-dev:game-explorer` (agent z pluginu, nástroje `read`
    a `search`) vrátí stopu `file:function:line`, která končí ve `slideLineLeft` a
    `Board.isGameOver`. `board-test-writer` (projektový agent, navíc `edit` a `execute`) změní
-   `BoardTest.kt` a spustí `./gradlew :engine:test`; edit schval. Kolo končí se 2 padajícími
+   `BoardTest.kt` a spustí `./gradlew :engine:test`; úpravu schval. Kolo končí se 2 padajícími
    testy z 15 a varováním `run-tests hook: tests are failing in: gradle`. Červená je tady
    očekávaný stav.
 3. V druhém terminálu zkontroluj, že testy ověřují pravidlo, a ne současné chování:
@@ -454,7 +454,7 @@ testů zůstanou mimo hlavní kontext a explorer ani reviewer nemůžou editovat
    > ./gradlew :engine:test a nahlas počty. Pak použij agenta kotlin-reviewer, ať zreviduje
    > necommitnuté změny, a ukaž mi jeho nálezy.“*
 
-   Uvidíš edit `Board.kt` (schval ho), běh testů s 15 prošlými a pak delegaci na
+   Uvidíš úpravu `Board.kt` (schval ji), běh testů s 15 prošlými a pak delegaci na
    `kotlin-reviewer`. Ten si změnu přečte přes `git status` a `git diff` a nálezy hlásí jako
    Blocker, Should-fix a Nit. Hlavní agent může ten report zkrátit na jeden řádek.
 5. Opravu si přečti sám přes `git diff engine/src/main`. Po sloučení se musí procházení posunout
@@ -502,7 +502,7 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex5.patch`
 ### Jdi dál
 
 - Postav **undo** ve všech třech vrstvách se stejným týmem: nejdřív testy `Board.undo()`, pak
-  `POST /api/v1/games/{id}/undo`, klávesa `u` a tlačítko Undo. Reference, z čistého `main`
+  `POST /api/v1/games/{id}/undo`, klávesa `u` a tlačítko Undo. Referenční řešení z čistého `main`
   (hlídá i spawn po tahu, který nic nezměnil):
   `git apply docs/copilot/solutions/ex5.patch && git apply docs/copilot/solutions/ex5-undo.patch`
 - Otestuj hranici nástrojů, místo abys věřil promptu agenta:
@@ -532,14 +532,14 @@ udělej smoke test), ve verzi 1.1.0 a session ho nabízí jako `/2048-dev:run-lo
 
    Copilot vytvoří jeden soubor a dva upraví. Skill se nikde neregistruje: CLI ho najde podle
    cesty `skills/<name>/SKILL.md` a před jeho příkaz dá `name` pluginu.
-2. Přečti nový `SKILL.md` proti `web/vite.config.ts` a `GameController.kt`: porty 8080 a
+2. Zkontroluj nový `SKILL.md` proti `web/vite.config.ts` a `GameController.kt`: porty 8080 a
    5173, `strictPort`, `POST /api/v1/games` → 201. Žádný nástroj skill proti kódu nekontroluje.
 3. V druhém terminálu zkontroluj plugin bez volání modelu:
    ```bash
    copilot --plugin-dir ./plugins/2048-dev plugin list | tail -1
    copilot --plugin-dir ./plugins/2048-dev skill list --json | jq -r '.[] | select(.source == "plugin") | .name'
    ```
-4. Napiš `/exit` a spusť novou session: plugin načte z pracovního stromu. Napiš `/2048`:
+4. Napiš `/exit` a spusť novou session: ta načte plugin z pracovního stromu. Napiš `/2048`:
    seznam návrhů nabídne `/2048-dev:run-local` vedle `/2048-dev:build-test`. Smaž řádek klávesou `Ctrl+U` a vlož:
    > */2048-dev:run-local Nic nespouštěj. Ve dvou řádcích: které dva příkazy aplikaci spustí
    > a na jakých portech?*
@@ -633,14 +633,14 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex7.patch`
 
 ### Jdi dál
 
-- Po aplikaci `ex5.patch` je `greedy` (3000.0) skoro nastejno s `monotonic` (3037.4): dej porotě pravidlo pro remízu.
-- Na `main` se žádná heuristika nedostane přes dlaždici 512: přidej solver, který hledá hlouběji, se stejným interfacem.
+- Po aplikaci `ex5.patch` je `greedy` (3000.0) skoro vyrovnaný s `monotonic` (3037.4): dej porotě pravidlo pro remízu.
+- Na `main` se žádná heuristika nedostane přes dlaždici 512: přidej solver, který hledá hlouběji, se stejným rozhraním.
 
 ## 8. Eval 🟡 — dokaž, že skill pomáhá
 
 **Čas:** 15 min · **Návod:** [09 · Evaly](09-evals.cs.md) · **Vrstva:** config · **Řešení:** [`solutions/ex8.patch`](solutions/ex8.patch)
 
-**Cíl.** `evals/board-tests/eval.yaml` má druhý pozitivní case, `cascade-merge-line`, který
+**Cíl.** `evals/board-tests/eval.yaml` má druhý pozitivní případ, `cascade-merge-line`, který
 projde lintem i dry-runem, a umíš říct, co zaznamenaný výsledek se skillem a bez něj dokazuje.
 
 **Proč tento mechanismus.** Skill stojí tokeny v každé session; A/B běh ukáže, co za ně dostaneš.
@@ -654,7 +654,7 @@ projde lintem i dry-runem, a umíš říct, co zaznamenaný výsledek se skillem
    > 8, 8, 0, 0 a přičíst 8 ke skóre. Prompt nesmí jmenovat skill ani funkci
    > `slideLineLeft` a zachová větu o chybějícím build nástroji. Přečti
    > `.github/skills/board-tests/SKILL.md` a přidej jeden grader `file-matches` na každou konvenci,
-   > kterou skill pro tenhle case uvádí, plus `completed` a `file-exists`. Nic dalšího neměň. Spusť
+   > kterou skill pro tenhle případ uvádí, plus `completed` a `file-exists`. Nic dalšího neměň. Spusť
    > `npm run eval:lint` a ukaž jeho výstup. Eval nespouštěj.“*
 
    Copilot upraví jeden soubor a ukáže dva řádky `✔ … is valid`.
@@ -673,10 +673,10 @@ projde lintem i dry-runem, a umíš říct, co zaznamenaný výsledek se skillem
    Dry-run vypíše dva plány, `skills=without (baseline)` a `skills=with`. Mají stejný
    `Eval hash` a liší se v `Config hash`: větve se liší prostředím a ničím
    jiným. Na čistém `main` je eval hash `ef971c7643e7f213`; tobě vyjde nová hodnota.
-4. Přečti si výsledek zaznamenaný pro dva starší casy v části
-   [Jak číst výsledek](09-evals.cs.md#jak-číst-výsledek) návodu 09: pozitivní case prošel bez skillu
+4. Přečti si výsledek zaznamenaný pro dva starší případy v části
+   [Jak číst výsledek](09-evals.cs.md#jak-číst-výsledek) návodu 09: pozitivní případ prošel bez skillu
    v 0 ze 4 trialů a se skillem ve 3 ze 4, za 26–32 % tokenů navíc.
-5. Volitelné, placené: `npm run eval:ab`. S tvým casem je to 12 skutečných Copilot sessions (2 varianty ×
+5. Volitelné, placené: `npm run eval:ab`. S tvým případem je to 12 skutečných Copilot sessions (2 varianty ×
    3 stimuly × 2 běhy); zaznamenané běhy s 8 sessions trvaly každý pod minutu. Porovnej řádky
    `cascade-merge-line` v `evals/results/<timestamp>/report.md`. ⚠️ v tomto repu nespuštěno
 
@@ -709,8 +709,8 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex8.patch`
 
 ### Jdi dál
 
-- Vyhodnoť vlastní skill, třeba `api-endpoint` ze cvičení 2: zkopíruj spec do
-  `evals/api-endpoint/`, do workspace připrav jen zdrojový kód aplikace, přidej soubor experimentu, lint, dry-run.
+- Vyhodnoť vlastní skill, třeba `api-endpoint` ze cvičení 2: zkopíruj specifikaci do
+  `evals/api-endpoint/`, do workspace trialu připrav jen zdrojový kód aplikace, přidej soubor experimentu a spusť lint a dry-run.
 
 ## Bonus (web) 🟡 — bug, který nikdo nenastražil
 
@@ -735,8 +735,8 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex8.patch`
 
 ### Hotovo, když
 
-- po kroku 1: `cd web && npm test` → `1 failed`, `expected "vi.fn()" to be called 1 times, but got 2 times`
-- po kroku 2: `cd web && npm test && npm run lint && npm run build` → `Tests  8 passed (8)`, `✓ built in`
+- Po kroku 1: `cd web && npm test` → `1 failed`, `expected "vi.fn()" to be called 1 times, but got 2 times`
+- Po kroku 2: `cd web && npm test && npm run lint && npm run build` → `Tests  8 passed (8)`, `✓ built in`
 
 ### Klíčová část řešení
 

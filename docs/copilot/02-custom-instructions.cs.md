@@ -6,7 +6,7 @@
 
 ## Co jsou vlastní instrukce?
 
-Markdown soubory, které Copilot načítá jako trvalé pokyny. Liší se v tom, *kdy* se dostanou k modelu:
+Soubory v Markdownu, které Copilot načítá jako trvalé pokyny. Liší se v tom, *kdy* se dostanou k modelu:
 
 - `.github/copilot-instructions.md` platí **pro celé repo**: posílá se s každým voláním modelu
   v každé session.
@@ -32,11 +32,11 @@ jen pro herní logiku a REST vrstvu, takže session, která pracuje ve `web/`, z
 ## Soubory řádek po řádku
 
 `.github/copilot-instructions.md` je obyčejný Markdown bez frontmatteru. Hlavní váhu nesou dvě části:
-- **Odstavec o Spring Boot 4** vyjmenovává, co použít (`tools.jackson.*`, `MockMvcTester`,
+- **Odstavec o Spring Bootu 4** vyjmenovává, co použít (`tools.jackson.*`, `MockMvcTester`,
   `@MockitoBean`) a co negenerovat (`@MockBean`, `com.fasterxml.jackson.*`). Model píše to, co
   viděl nejčastěji, a to je Boot 3. Sepiš každé místo, kde se tvůj stack liší od hlavního proudu
-  před dvěma lety: verzi a seznam „negeneruj“. Zbytek vynech.
-- **`## Commands`** obsahuje přesné příkazy pro build a testy, takže Copilot mezi nimi nehádá.
+  z doby před dvěma lety: verzi a seznam „negeneruj“. Zbytek vynech.
+- **`## Commands`** obsahuje přesné příkazy pro build a testy, takže Copilot nemusí hádat, který použít.
 
 `.github/instructions/engine.instructions.md` je blok frontmatteru a šest odrážek:
 - `applyTo: "engine/**/*.kt"` je glob relativní ke kořenu repozitáře. Odpovídá mu produkční
@@ -67,13 +67,13 @@ jen pro herní logiku a REST vrstvu, takže session, která pracuje ve `web/`, z
    ```
 
 > 🔷 **Jen Copilot:** `copilot instruction list --json` a přepínač pro jednotlivé soubory v `/instructions`.
-> Claude Code nedokumentuje žádný JSON výpis načtených zdrojů ani interaktivní přepínání po souborech.
+> Claude Code nedokumentuje žádný výpis načtených zdrojů v JSONu ani interaktivní přepínání po souborech.
 
 ## Vyzkoušej demo
 
 Spusť čerstvou session přes `scripts/copilot-ws.sh` a zeptej se:
 
-> *„Přečti engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt. Máš v kontextu sekci s názvem 'Engine rules'? Ocituj její první odrážku. Neměň žádný soubor.“*
+> *„Přečti engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt. Máš v kontextu sekci s názvem ‚Engine rules‘? Ocituj její první odrážku. Neměň žádný soubor.“*
 
 Copilot odpoví, že ano, a ocituje „`Board` stays free of I/O: no printing, no file or network access,
 no Spring imports.“ Časová osa ukáže `● Discovered engine.instructions.md from .github/instructions/`.
@@ -100,7 +100,7 @@ copilot instruction list --json | jq -r '.[] | [.location, .sourcePath, ((.apply
 
 1. Všechno načtené se slučuje a nic nemá přednost. Dvě skoro stejná pravidla se pošlou obě, při každém volání modelu.
 2. Nech v repu jeden soubor, který platí vždy. Společnou volbou pro všechny nástroje je `AGENTS.md`; pravidla z Cursoru přesuň tam.
-3. Po `/init` si přečti diff: zapíše `.github/copilot-instructions.md` vedle toho, co tam už je.
+3. Po `/init` si přečti diff: příkaz zapíše `.github/copilot-instructions.md` vedle toho, co tam už je.
 4. Výsledek porovnej A/B: jedna session tak, jak to je, druhá spuštěná s `--no-custom-instructions`.
 5. Hodně repozitářů: `scripts/instruction-audit.sh <repo-dir>...` vypíše pro každé repo soubor, scope a bajty.
 
@@ -112,11 +112,11 @@ copilot instruction list --json | jq -r '.[] | [.location, .sourcePath, ((.apply
 | Stack | `applyTo` | Pravidla, která stojí za řádek (výchozí body) |
 |---|---|---|
 | Java backend | `"**/src/main/java/**/*.java"` | jen constructor injection; DTO jsou recordy; přesná verze frameworku a JDK |
-| Kotlin backend | `"api/**/*.kt"`: vymez adresářem, `**/*.kt` zachytí i Android a testovací moduly | tenké controllery; vlastní výjimka pro každý případ selhání (tohle repo) |
+| Kotlin backend | `"api/**/*.kt"`: vymez adresářem, `**/*.kt` zachytí i androidové a testovací moduly | tenké controllery; vlastní výjimka pro každý případ selhání (tohle repo) |
 | React / TypeScript | `"web/src/**/*.ts,web/src/**/*.tsx"` | žádné `any`; pojmenované exporty; jak se testuje komponenta (cvičení 1) |
-| Kotlin Android | `"app/src/main/**/*.kt"` | jen Compose, žádné XML layouty; coroutines ze scope ViewModelu |
+| Kotlin Android | `"app/src/main/**/*.kt"` | jen Compose, žádné XML layouty; korutiny ze scope ViewModelu |
 | Swift iOS | `"**/*.swift"` | `async`/`await`, žádné completion handlery; stav UI na main actoru; žádné force unwrapy |
-| Kotlin automatizace testů | testovací modul, např. `"e2e/**/*.kt"` | čekej na podmínku, žádný sleep; selektory žijí v page objectech; každý test si vytváří vlastní data |
+| Automatizace testů v Kotlinu | testovací modul, např. `"e2e/**/*.kt"` | čekej na podmínku, žádný sleep; selektory žijí v page objektech; každý test si vytváří vlastní data |
 
 ## Volitelné parametry
 
@@ -140,7 +140,7 @@ Kompletní reference: [Custom instructions locations](https://docs.github.com/en
 ## Copilot vs Claude Code
 
 Claude Code: `CLAUDE.md`, `.claude/rules/*.md` s `paths:`, `/init`. Doručení při čtení nebo úpravě
-funguje stejně. Copilot slučuje každý soubor, který najde, včetně těch od Claude Code, takže repo,
+funguje stejně. Copilot slučuje všechny soubory, které najde, včetně těch od Claude Code, takže repo,
 které slouží oběma nástrojům, potřebuje jeden zdroj pravdy. `excludeAgent` nemá v Claude Code protějšek.
 
 ## Když něco nefunguje

@@ -13,7 +13,7 @@ Vlastní agent je Markdown soubor: frontmatter plus prompt. Tři věci má jen p
 - **Prompt.** Tělo souboru je jeho systémový prompt: role, rozsah, formát hlášení.
 
 Použij ho, když práce nadělá hodně šumu (průzkum, review), vystačí si s méně nástroji než tvoje
-session, nebo má hlásit výsledek v pevném formátu. Skill ([03](03-skills.cs.md)) přidává instrukce; agent úkol přebírá.
+session nebo má hlásit výsledek v pevném formátu. Skill ([03](03-skills.cs.md)) přidává instrukce; agent úkol přebírá.
 
 ## Co dělá tahle ukázka
 
@@ -42,7 +42,7 @@ include-custom-instructions: true
 
 - `name` — to, co předáváš do `--agent` a vidíš v `/agent`. Výchozí hodnota je ID agenta.
 - `description` — povinné. Hlavní agent podle něj rozhoduje, kdy delegovat. Nejdřív napiš
-  spouštěč („Use to review uncommitted ... changes“), potom co se vrátí.
+  spouštěč („Use to review uncommitted ... changes“), potom to, co se vrátí.
 - `tools` — allow-list aliasů: `read`, `search`, `edit`, `execute` (shell), `agent`, `web`.
   Když klíč vynecháš, agent dostane všechny nástroje. `[]` mu nedá žádný.
 - `strict-tools-list: true` — jen vyjmenované skupiny, bez obvyklých výchozích nástrojů. Na 1.0.114
@@ -89,7 +89,7 @@ V `/agent` nejsou. Vlastní agent s některým z těchto jmen se nikdy nespustí
    ```
 2. `execute` přidej, jen když má něco spouštět, `edit`, jen když má zapisovat, a
    `include-custom-instructions: true`, pokud posuzuje nebo píše kód.
-3. Zkontroluj, že se načte. Čekej `{"warnings":[],"errors":[]}`:
+3. Zkontroluj, že se načte. Očekávej `{"warnings":[],"errors":[]}`:
    ```bash
    copilot --agent my-agent -p "Reply with OK" --trust-folder --no-ask-user --output-format json \
      | jq -c 'select(.type == "session.custom_agents_updated") | .data | {warnings, errors}'
@@ -111,12 +111,12 @@ copilot --agent workshop-tutor -p "What does Board.hasWon() return? Don't edit a
   --trust-folder --no-ask-user
 ```
 
-Odpověď jmenuje `Board.kt:174` (jeden běh uvedl `:177`), dá důvod a končí příkazem `./gradlew :engine:test` na vyzkoušení.
+Odpověď jmenuje `Board.kt:174` (jeden běh uvedl `:177`), uvádí důvod a končí příkazem `./gradlew :engine:test` na vyzkoušení.
 Model může první nadpis přejmenovat (`What I found`) nebo do něj důvod zahrnout. V session ho vybereš přes `/agent workshop-tutor`
 (patička: `workshop-tutor · <model>`); `/agent` a pak Enter na `Default (deselect current agent)` ho zase vypne. `/agent default` selže. Omezení:
 
 - Jen jeden agent session najednou: s `--agent kotlin-reviewer` ho nezkombinuješ. Na hlášení
-  subagentů se tvar nevztahuje. Tvar je prosba: než v těle stálo „always“, jeden běh nedal žádný příkaz.
+  subagentů se tvar nevztahuje. Tvar je prosba: dokud v těle nestálo „always“, jeden běh nedal žádný příkaz.
 - Trvale zapnutá alternativa je sekce „Response format“ v `.github/copilot-instructions.md`.
   Stojí to kontext v každé session a u každého.
 
@@ -133,12 +133,12 @@ Model může první nadpis přejmenovat (`What I found`) nebo do něj důvod zah
 
 | Klíč | Co dělá |
 |-----|--------------|
-| `model`, `models` | Model, nebo modely v pořadí priority. Žádný agent tady ho nenastavuje: povolené modely se liší podle organizace (2N: všechny kromě Fable) a subagent dědí model session. Ignoruje se, když je model session Auto. Přepsání pro jednoho uživatele: `/subagents` |
+| `model`, `models` | Model, nebo modely v pořadí priority. Žádný agent ho tady nenastavuje: povolené modely se liší podle organizace (2N: všechny kromě Fable) a subagent dědí model session. Ignoruje se, když je model session Auto. Přepsání pro jednoho uživatele: `/subagents` |
 | `model-policy` | `preferred` (výchozí), nebo `required`: delegování odmítne, místo aby použil jiný model |
 | `reasoning-effort` | Úroveň úsilí při uvažování (reasoning effort) pro tohoto agenta |
 | `mcp-servers` | MCP servery jen pro tohoto agenta. V `tools` se MCP nástroje píšou `server/tool` nebo `server/*` |
 | `disable-model-invocation`, `user-invocable` | Vypnou automatické delegování, respektive ruční výběr |
-| `skills` | Názvy skillů, jejichž text se načte do kontextu agenta při startu. Název, který se nenajde, dá varování `skill_load` |
+| `skills` | Názvy skillů, jejichž text se načte do kontextu agenta při startu. Název, který se nenajde, vyvolá varování `skill_load` |
 
 > 🔷 **Jen Copilot:** `model-policy: required` zamkne jednoho agenta na modely, které jmenuje jeho soubor. Claude Code zámek pro jednotlivého agenta nemá; `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` platí pro všechny subagenty.
 

@@ -107,7 +107,7 @@ exit 0
   nástroje zamítne. S `-e` by ho zamítlo i selhání mimo `if`, třeba `jq` na rozbitém payloadu.
 - Řádky 10–15: `input=$(cat)` přečte payload ze stdin. Bez `jq` se pojistka sama vypne, ohlásí
   to na stderr a skončí s kódem 0: dozvíš se, že není aktivní, a žádné volání se nezamítne.
-- Výraz v `jq` přijímá tři tvary: objekt se použije tak, jak je, řetězec s JSON se rozparsuje
+- Výraz v `jq` přijímá tři tvary: objekt se použije tak, jak je, řetězec s JSONem se rozparsuje
   přes `fromjson`, cokoli jiného (řetězec s patchem) se změní na prázdnou hodnotu. `.path // .command`
   pokrývá oba nástroje: `view` nese `path`, shell `command`.
 - Regex: `.env` na začátku nebo za znakem, který není součástí slova, volitelná přípona jako
@@ -200,7 +200,7 @@ Kompletní reference: [GitHub Copilot hooks reference](https://docs.github.com/e
 |---|---|---|
 | Copilot CLI | ✅ | Všechno v tomto návodu |
 | Plugin pro IntelliJ IDEA | ⚠️ | Čte `.github/hooks/`. Zveřejněné události: `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred`. `sessionStart` a `agentStop` mezi nimi nejsou, takže počítej s tím, že `git-context.sh` a `run-tests.sh` neudělají nic. Viz [11](11-ide-remote.cs.md) |
-| Copilot cloud agent | ⚠️ | Načítá stejné `.github/hooks/*.json` v každém jobu na repu. Jen položky `bash` / `command`, z `ask` se stane deny, `permissionRequest` a `notification` se nespouštějí |
+| Copilot cloud agent | ⚠️ | Načítá stejné `.github/hooks/*.json` v každém jobu na repu. Jen položky `bash` / `command`, z `ask` se stane zamítnutí, `permissionRequest` a `notification` se nespouštějí |
 
 ## Copilot vs Claude Code
 
@@ -209,7 +209,7 @@ Claude Code má stejný mechanismus pod stejným názvem: hooky v `.claude/setti
 v cloudových bězích existují v obou. V čem se liší: Copilot používá ploché položky
 v `.github/hooks/*.json` a payload v camelCase (`toolName`, `toolArgs`); payload Claude Code je
 ve snake_case (`tool_name`, `tool_input`). Copilot CLI spouští i hooky z `.claude/settings.json`
-v repu, na odpovídajících událostech a s názvy polí Claude Code: takové repo spouští obě sady.
+v repu, při odpovídajících událostech a s názvy polí Claude Code: takové repo spouští obě sady.
 
 > 🔷 **Jen Copilot:** událost `userPromptTransformed` umožňuje hooku přepsat text promptu, který
 > model dostane. `UserPromptSubmit` v Claude Code umí prompt jen zablokovat nebo přidat kontext.

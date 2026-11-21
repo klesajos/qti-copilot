@@ -9,7 +9,7 @@ Návody 02–09 ladí jednoho agenta v jedné session. Čtyři způsoby, jak jí
 | Použij | Kdy | Kdo rozhoduje o rozdělení | Kde žije |
 |-----|------|-----------------------|----------|
 | `/fleet` | Uvnitř session: jednorázová práce s nezávislými částmi | Model, při každém běhu znovu | Prompt |
-| `copilot -p` | Skripty a CI: jeden prompt, žádné UI, výstup, který přečte skript | Tvůj skript | Shell, CI job |
+| `copilot -p` | Skripty a CI: jeden prompt, žádné UI, výstup čitelný pro skript | Tvůj skript | Shell, CI job |
 | Microsoft Conductor | Centrální, verzovaná multiagentní flow. 2N si ho vybralo; zatím není nasazený | YAML soubor | `conductor/*.yaml` |
 | Dynamická workflow | Stejná pevná pipeline uvnitř Copilota. Public preview | Kód rozšíření | `.github/extensions/` |
 
@@ -28,7 +28,7 @@ copilot --fleet -p "<the audit prompt below>" --deny-tool='write' --trust-folder
   vestavěného agenta `explore` a selhala: `400 The requested model is not supported.`
   `explore` má vlastní výchozí model a ten na seznamu testovacího účtu nebyl.
 - Hlavní agent pak vyslal znovu tři subagenty `general-purpose`. Ti doběhli: jedna tabulka,
-  38 řádků, s mezerou u kaskádového merge i u game over. Žádný soubor se nezměnil, exit kód 0,
+  38 řádků, s mezerou u kaskádového slučování i u game over. Žádný soubor se nezměnil, exit kód 0,
   1 min 52 s, asi 3 AI kredity.
 
 **Demo.** V `copilot --deny-tool='write' --max-ai-credits 60` pošli (⚠️ v tomto repu nespuštěno):
@@ -37,8 +37,8 @@ copilot --fleet -p "<the audit prompt below>" --deny-tool='write' --trust-folder
 
 Objeví se `Fleet deployed: …` a pak jedna položka `General-purpose (model: …)` na každého subagenta.
 Dokud běží, napiš `/tasks`: `x` ukončí vybraného subagenta, `Enter` otevře jeho přepis, který začíná
-promptem od hlavního agenta (`[Message from main agent]`). Shellový příkaz subagenta, který nepokrývá
-žádné pravidlo, vyvolá běžný dotaz na schválení v tvé session. Tabulka musí uvést kaskádový merge
+promptem od hlavního agenta (`[Message from main agent]`). Shellový příkaz subagenta, na který se
+nevztahuje žádné pravidlo, vyvolá běžný dotaz na schválení v tvé session. Tabulka musí uvést kaskádové slučování
 `4,4,8,0` a game over na plné desce se slučitelným párem jako `NONE`.
 
 > 🔷 **Jen Copilot:** `--max-ai-credits` a `/limits set max-ai-credits <n>` zastropují interaktivní
@@ -51,7 +51,7 @@ Na otázku nemá kdo odpovědět, takže oprávnění, důvěra a formát výstu
 
 | Přepínač | Co dělá |
 |------|--------------|
-| `-p "<prompt>"`, `-s` | Spustí jednou a skončí; `-s` vypíše jen odpověď. Funguje i vyvolání přes lomítko: `-p "/2048-dev:build-test ..."` |
+| `-p "<prompt>"`, `-s` | Proběhne jednou a skončí; `-s` vypíše jen odpověď. Funguje i vyvolání přes lomítko: `-p "/2048-dev:build-test ..."` |
 | `--output-format json` | Vypíše stream událostí jako JSONL, jeden objekt na řádek |
 | `--allow-tool='<rule>'`, `--deny-tool='<rule>'` | Rozhodnou o oprávněních předem; deny vyhrává. Pravidlo pro Gradle je `shell(./gradlew:*)`, včetně `./` |
 | `--trust-folder` | Načte pro tenhle běh hooky téhle složky, MCP servery workspace a nastavení pluginů. Bez něj se hooky repa a plugin `2048-dev` přeskočí. Spouštěj z kořene repozitáře |
@@ -59,7 +59,7 @@ Na otázku nemá kdo odpovědět, takže oprávnění, důvěra a formát výstu
 | `--agent <id>`, `--model <model-id>` | Poběží jako `kotlin-reviewer` nebo `2048-dev:game-explorer`; vybere model (`auto` nechá výběr na Copilotovi) |
 
 `scripts/copilot-ws.sh -p "..."` přidá pravidla repa. `evals/plugin-ab.sh` je kompletní skript:
-`copilot -p` na každou větev, hodnocení přes `jq`. Kompletní reference: [programmatic reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference).
+`copilot -p` na každou variantu, hodnocení přes `jq`. Kompletní reference: [programmatic reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference).
 
 **Demo.** Smoke test, že se skill `board-tests` načte (jen pro čtení, asi 0,4 AI kreditu,
 13 s). Prompt skill nejmenuje; Copilot ho vybere podle jeho `description`.
@@ -137,8 +137,8 @@ conductor run conductor/test-coverage-audit.yaml             # four agent sessio
 
 Spouštěj z kořene repozitáře. `validate` vypíše **Validation Successful**: 4 agenti, 1 paralelní
 skupina. `--dry-run` vypíše plán: `layer_inventories` se třemi paralelními agenty, `reporter`,
-`$end`. Zaznamenaný běh vrátil jednu tabulku mezer se 42 netestovanými chováními, mezi nimi
-mezeru u kaskádového merge i u game over, a nezměnil žádný soubor. Tvar je pevný; řádky se mezi
+`$end`. Zaznamenaný běh vrátil jednu tabulku mezer se 42 netestovanými chováními, včetně
+kaskádového slučování a game over, a nezměnil žádný soubor. Tvar je pevný; řádky se mezi
 běhy liší. Instrukce repa dostanou agenti jen s `--workspace-instructions`.
 
 `conductor/test-coverage-audit.yaml`, zkráceno (komentáře jsou přidané tady; kompletní syntaxe:
@@ -166,8 +166,8 @@ agents:
       - layer_inventories.outputs    # the three agents' typed output: fields, not prose
 ```
 
-- **Proč `default_model: auto`.** Vlastní výchozí hodnota Conductoru je pevné id modelu. Bez
-  tohohle řádku běh selhal s `Model "gpt-4o" is not available.` Id modelu do souboru nedávej.
+- **Proč `default_model: auto`.** Vlastní výchozí hodnota Conductoru je pevné ID modelu. Bez
+  tohohle řádku běh selhal s `Model "gpt-4o" is not available.` ID modelu do souboru nedávej.
 - **Pojistkou jsou seznamy nástrojů.** Conductor schvaluje žádosti o oprávnění bez ptaní. Každý
   nástroj agenta musí být i v seznamu `tools:` na nejvyšší úrovni. Bez jakýchkoli seznamů
   dostanou agenti celou výchozí sadu nástrojů a zapisují soubory.
@@ -189,7 +189,7 @@ agenti, za sebou nebo paralelně. Registruje ho rozšíření CLI
 | | CLI | Plugin pro IntelliJ | Cloud agent |
 |---|-----|-----------------|-------------|
 | `/fleet` | ✅ | ⚠️ V terminálu IDE | ❌ `/delegate` předá jeden úkol ([návod 11](11-ide-remote.cs.md)) |
-| `copilot -p` | ✅ I v GitHub Actions, pod politikou organizace | ⚠️ V terminálu IDE | ❌ |
+| `copilot -p` | ✅ I v GitHub Actions, v mezích politiky organizace | ⚠️ V terminálu IDE | ❌ |
 | Conductor | ✅ Samostatný nástroj; využívá přihlášení do Copilota | ⚠️ V terminálu IDE | ❌ |
 | Dynamická workflow | ⚠️ Public preview, experimentální režim | ⚠️ V terminálu IDE | ❌ |
 
@@ -202,7 +202,7 @@ agenti, za sebou nebo paralelně. Registruje ho rozšíření CLI
 
 ## Když něco nefunguje
 
-- **Subagenti fleetu selžou s `400 The requested model is not supported`** → řekni si o general-purpose subagenty, nebo vyber modely v `/subagents`.
+- **Subagenti z `/fleet` selžou s `400 The requested model is not supported`** → řekni si o general-purpose subagenty, nebo vyber modely v `/subagents`.
 - **Exit kód 0, ale nic se nestalo** → volání nástroje bylo zamítnuto. Přidej přesné pravidlo `--allow-tool`.
 - **V běhu `-p` chybí hooky nebo plugin** → chybí `--trust-folder`, nebo nejsi v kořenu repa.
 - **`references unknown tool '…'` z `conductor validate`** → přidej ho do `tools:` na nejvyšší úrovni.

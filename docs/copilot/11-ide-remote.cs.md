@@ -2,7 +2,7 @@
 
 # 11 · IntelliJ IDEA a vzdálení agenti
 
-> ⏱ 5 min (výklad: první tři tabulky; číslované seznamy, sekce o Coderu a srovnávací tabulka jsou čtení po workshopu) · Dokumentace: [Copilot in IDEs](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-in-ides) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · [/delegate](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/delegate-tasks-to-cca) · [Remote control](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/steer-remotely) · [Coder](https://github.com/coder/coder) · Nic z toho se pro tohle repo nespouštělo: ani v IntelliJ IDEA, ani `/delegate`, ani `/remote`, ani na Coderu. Zdroje: [release notes pluginu](https://plugins.jetbrains.com/plugin/17718-github-copilot/versions) do 1.21.1, nápověda CLI 1.0.114, dokumentace GitHubu a Coderu
+> ⏱ 5 min (výklad: první tři tabulky; číslované seznamy, sekce o Coderu a srovnávací tabulka jsou k přečtení po workshopu) · Dokumentace: [Copilot in IDEs](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-in-ides) · [Usage metrics fields](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) · [/delegate](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/delegate-tasks-to-cca) · [Remote control](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/steer-remotely) · [Coder](https://github.com/coder/coder) · Nic z toho se pro tohle repo nespouštělo: ani v IntelliJ IDEA, ani `/delegate`, ani `/remote`, ani na Coderu. Zdroje: [release notes pluginu](https://plugins.jetbrains.com/plugin/17718-github-copilot/versions) do 1.21.1, nápověda CLI 1.0.114, dokumentace GitHubu a Coderu
 
 ## Plugin pro IntelliJ IDEA
 
@@ -33,7 +33,7 @@ aktuální runtime, počítá se jako CLI. Plugin si nech na doplňování a nex
 > k ACP editorům se dostane jen přes adaptér třetí strany.
 
 **Jak se používání připisuje v metrikách 2N.** CLI má vlastní počítadla: `totals_by_cli`
-(sessions, requesty, prompty, tokeny) a denní příznak `used_cli` pro každého uživatele.¹
+(sessions, požadavky, prompty, tokeny) a denní příznak `used_cli` pro každého uživatele.¹
 
 | Co spouštíš | Vykazuje se jako |
 |-------------|------------------|
@@ -48,7 +48,7 @@ plugin aktualizuj. Které pole 2N čte, je otázka v [preflight.cs.md](preflight
 ¹ Stránka dokumentace si u `totals_by_feature` protiřečí: jedna sekce říká, že se tam používání
 CLI neprojevuje, tabulka featur uvádí `copilot_cli`. Ptej se, ze kterého pole číslo pochází.
 
-**Ověř si na své verzi pluginu** (jednou po každém upgradu pluginu):
+**Ověř si na své verzi pluginu** (jednou po každé aktualizaci pluginu):
 
 1. Settings → Plugins: GitHub Copilot je 1.20.0 nebo novější a výchozí chat agent je „Copilot“.
 2. Zeptej se *„Které soubory s instrukcemi jsi pro tenhle repozitář dostal? Vypiš jejich cesty.“*
@@ -56,7 +56,7 @@ CLI neprojevuje, tabulka featur uvádí `copilot_cli`. Ptej se, ze kterého pole
 3. Výběr agentů nabízí `kotlin-reviewer`, `board-test-writer` a `workshop-tutor`. Zeptej se *„Jaké
    má tenhle projekt konvence pro testy desky?“*: odpověď zmíní názvy testů ve zpětných apostrofech a
    `boardOf(...)`.
-4. Požádej agenta, ať přečte `.env`, v checkoutu, kde žádný skutečný není. Když hook v IDE běží,
+4. Požádej agenta, ať přečte `.env` v checkoutu, kde žádný skutečný není. Když hook v IDE běží,
    dostaneš stejnou odpověď jako v CLI, `Denied by preToolUse hook: protect-secrets hook: ...`; když se
    agent o čtení pokusí, zapiš si, že pojistky v pluginu aktivní nejsou.
 5. V terminálové session `copilot` spusť `/ide`. Když to funguje, IDE se nabídne a CLI z něj dostane
@@ -99,7 +99,7 @@ s tvými hooky a pravidly zadanými při spuštění. Jen interaktivní sessions
 1. `scripts/copilot-ws.sh --allow-tool='write' --deny-tool='shell(git push)'`, pak `/new worktree`.
 2. `/plan <spec>`, přečti si plán (`Ctrl+E` ho ukáže celý), zvol **Accept plan and continue in
    Autopilot execution mode**. Autopilot nic nepovoluje: co nepovolují pravidla zadaná při spuštění, se
-   zamítne, a po 5 pokračováních se pozastaví.
+   zamítne. Po 5 pokračováních se Autopilot pozastaví.
 3. `/limits set max-ai-credits <n>`, `/keep-alive busy` (stroj neusne, dokud agent pracuje), `/remote on`.
 4. Po návratu: přečti si, proč skončil, `git diff --stat`, sám spusť testy, přečti si diff každého
    testovacího souboru, který už existoval, a nech `kotlin-reviewer` zrevidovat branch.
@@ -122,7 +122,7 @@ scripts/copilot-ws.sh --allow-tool='write' --deny-tool='shell(git push)' \
     --trust-folder --no-ask-user --share="$HOME/overnight-session.md" -p "<spec>"
 ```
 
-Otevřené pro pilot: JDK, Node a `jq` v image workspace; jak se přihlášení ke GitHubu dostane do
+Otevřené otázky pro pilot: JDK, Node a `jq` v image workspace; jak se přihlášení ke GitHubu dostane do
 workspace; jestli se tyhle běhy počítají jako používání CLI; kdo se podívá, když se běh ve 2 ráno zastaví.
 
 ## Copilot vs Claude Code

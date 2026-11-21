@@ -7,14 +7,14 @@
 ## Co je eval?
 
 Skill, agent nebo plugin je hypotéza: „s tímhle Copilot udělá úkol líp“. Stojí tokeny a čas
-v každé session, která ho načte. **Eval** ji otestuje: prompt (**stimulus**) plus **gradery**,
+v každé session, která ho načte. **Eval** ho otestuje: prompt (**stimulus**) plus **gradery**,
 které ohodnotí, co agent udělal, spuštěné **s** přizpůsobením a **bez** něj. Rozdíl je důkaz. Každý
 trial je skutečná, účtovaná Copilot session. Práci odvedou tři nástroje:
 
 | Nástroj | Co to je | V tomto repu |
 |---|---|---|
 | **Vally CLI** (`@microsoft/vally-cli`, MIT) | Engine: pustí stimulus přes session Copilot SDK a ohodnotí výsledek | Používá se. Připnutý na `0.21.0` v `package.json` |
-| **GitHub Copilot Evals** (`eval@github-copilot-evals`) | Plugin s příkazy `/eval` a skilly jako front end k Vally. [Public preview](https://github.blog/changelog/2026-11-17-github-copilot-evals-is-now-in-public-preview/) od 2026-11-17 | Není přibalený v repu (licence source-available); nainstaluj z [github/evals](https://github.com/github/evals). `/eval` potřebuje experimentální režim. Přináší vlastní MCP server `copilot-evals`: počítej s tím, že ve 2N bude blokovaný, dokud nebude na seznamu schválených |
+| **GitHub Copilot Evals** (`eval@github-copilot-evals`) | Plugin s příkazy `/eval` a skilly jako frontend k Vally. [Public preview](https://github.blog/changelog/2026-11-17-github-copilot-evals-is-now-in-public-preview/) od 2026-11-17 | Není přibalený v repu (licence source-available); nainstaluj z [github/evals](https://github.com/github/evals). `/eval` potřebuje experimentální režim. Přináší vlastní MCP server `copilot-evals`: počítej s tím, že ve 2N bude blokovaný, dokud nebude na seznamu schválených |
 | **Obyčejný skript s `copilot -p`** (`evals/plugin-ab.sh`) | 73 řádků bashe a `jq` | Používá se na to, co Vally nepokrývá: celý plugin jako jeden celek |
 
 ## Co dělá tahle ukázka
@@ -31,7 +31,7 @@ evals/
 
 ## Soubor řádek po řádku
 
-Pro každý trial Vally zkopíruje do prázdného workspace to, co uvádí spec, pustí na stimulus jednu
+Pro každý trial Vally zkopíruje do prázdného workspace to, co uvádí specifikace, pustí na stimulus jednu
 Copilot session a pak ohodnotí stream událostí a soubory. `evals/board-tests/eval.yaml`, zkráceno
 (komentáře jsou přidané pro tenhle návod a říkají, co se vystřihlo):
 
@@ -65,7 +65,7 @@ scoring:
 ```
 
 Proč žádné `.github/`: executor načte i skilly, které najde ve workspace, takže by skill dostala
-i větev baseline. Žádný grader nepotřebuje model soudce. Soubor experimentu pustí spec znovu,
+i větev baseline. Žádný grader nepotřebuje model v roli soudce. Soubor experimentu pustí specifikaci znovu,
 jednou pro každou variantu, a změní jedno pole; 2 varianty × 2 stimuly × 2 běhy = **8 sessions**:
 
 ```yaml
@@ -131,12 +131,12 @@ práci odvedl, ne výsledek.** Jestli je jeho hodnota jinde, napiš na to kontro
 
 ## Dvě pasti a cena
 
-- **Osobní skilly prosakují do trialů.** npm skripty nastavují `EVALUATE_USE_HOST_COPILOT_HOME=1`,
+- **Osobní skilly prosakují do trialů.** Skripty npm nastavují `EVALUATE_USE_HOST_COPILOT_HOME=1`,
   aby využily tvoje přihlášení do CLI. Tím se zpřístupní tvůj Copilot home: ve větvi baseline se
   spustil osobní skill `tdd`. Zkontroluj `copilot skill list --json`: řádky se `source` jiným než
   `project` nebo `builtin`.
 - **Trialy neběží v sandboxu.** Jeden zapsal mimo svůj workspace. Žádné destruktivní stimuly.
-- **Běh stojí** jednu session za každou kombinaci varianta × stimulus × běh, v AI kreditech nebo premium requestech
+- **Běh stojí** jednu session za každou kombinaci varianta × stimulus × běh, v AI kreditech nebo prémiových požadavcích
   (`copilot help billing`). Vally žádný strop na spotřebu nemá; má ho jen skript (`--max-ai-credits 30`).
 - **Skill nebo plugin stojí kontext** v každé session: `/context` (po skillech v experimentálním režimu).
 
@@ -146,7 +146,7 @@ práci odvedl, ne výsledek.** Jestli je jeho hodnota jinde, napiš na to kontro
 |---|---|---|
 | `--runs <n>` | `vally eval` | Počet trialů na stimulus; přebíjí `defaults.runs` |
 | `--model <model-id>` | `vally eval` | Model pro testovaného agenta |
-| `--require-pass` | oba | Při neúspěšném verdiktu skončí nenulovým exit kódem. Bez něj exit kód 0 neznamená „prošlo“ |
+| `--require-pass` | oba | Při neúspěšném verdiktu skončí nenulovým návratovým kódem. Bez něj návratový kód 0 neznamená „prošlo“ |
 | `--dry-run`, `--variant <name>` | `vally experiment run` | Vypíše plán a nic nespustí; spustí jen jednu větev |
 
 Kompletní reference: [CLI: eval](https://microsoft.github.io/vally/reference/cli/eval/) · [CLI: experiment](https://microsoft.github.io/vally/reference/cli/experiment/)
@@ -161,7 +161,7 @@ Kompletní reference: [CLI: eval](https://microsoft.github.io/vally/reference/cl
 
 Claude Code: `claude plugin eval` ([Test plugins with evals](https://code.claude.com/docs/en/plugin-evals)).
 Stejná myšlenka: případy, gradery, běh s pluginem a bez něj. Tam je to vestavěné v CLI a obecně
-dostupné; tady je engine samostatný balíček a front end plugin v preview.
+dostupné; tady je engine samostatný balíček a frontend je plugin v preview.
 
 ## Když něco nefunguje
 

@@ -9,10 +9,10 @@
 | Vlastnost | Co to znamená v praxi |
 |---|---|
 | **Tokeny.** Text se krájí na tokeny o zhruba 4 znacích. Limity i ceny se počítají v tokenech. | `Board.kt` (187 řádků, 5,7 kB) je zhruba 1 400 tokenů pokaždé, když ho model čte. |
-| **Predikce dalšího tokenu.** Model ohodnotí každý možný další token, jeden vybere, připojí ho a opakuje. | Pokračuje v textu. Nic nevyhledává a nic nespouští; na to jsou nástroje (další sekce). |
+| **Predikce dalšího tokenu.** Model ohodnotí každý možný další token, jeden vybere, připojí ho a celý postup opakuje. | Pokračuje v textu. Nic nevyhledává a nic nespouští; na to jsou nástroje (další sekce). |
 | **Kontextové okno.** Všechno, co model při jednom volání vidí: systémový prompt, definice nástrojů, instrukce, konverzace, výsledky nástrojů. | Co v okně není, neexistuje: soubor, který nečetl, konvence, kterou nikdo nesepsal. |
 | **Bezstavový.** Mezi voláními se nic neuchovává. Každé volání posílá konverzaci znovu. Mezi sessions se nic nenaučí. | Nová session neví nic ze včerejška. Co má platit pokaždé, žije v souborech načítaných při startu. |
-| **Uzávěrka tréninku (training cutoff).** Váhy jsou zmrazené k určitému datu. | Zná knihovny k tomu datu. Proto instrukce tohoto repa říkají „This is Spring Boot **4**, not 3“. |
+| **Uzávěrka tréninku (training cutoff).** Váhy jsou zmrazené k určitému datu. | Zná knihovny ve stavu k tomu datu. Proto instrukce tohoto repa říkají „This is Spring Boot **4**, not 3“. |
 | **Vzorkovaný výstup.** Další token se losuje podle pravděpodobností. | Stejný prompt může dát jiný výsledek. Jeden povedený běh nic nedokazuje. |
 | **Plynulý, ne ověřený.** Špatná odpověď se čte stejně dobře jako správná. | Posuzuj podle spuštění (kompilace, test, diff), nikdy podle toho, jak jistě text zní. |
 
@@ -93,7 +93,7 @@ ukazuje je jedině výběr v `/model`. Nenastaveno znamená výchozí hodnotu mo
 |---|---|
 | Jeden běh | `copilot --model <model-id> --reasoning-effort high` |
 | Tahle session | `/model`, ↑/↓ na model, ←/→ změní úroveň, Enter |
-| Tvoje výchozí | `/config model`, nebo `copilot config effortLevel <level>` (`~/.copilot/settings.json`) |
+| Tvoje výchozí nastavení | `/config model` nebo `copilot config effortLevel <level>` (`~/.copilot/settings.json`) |
 | Tenhle repozitář | `/model --repo` (zapíše `.github/copilot/settings.json`) |
 | Jeden vlastní agent | `reasoning-effort: high` ve frontmatteru `.agent.md` ([06](06-agents.cs.md)) |
 | Plan režim | `planEffortLevel`; plan režim úroveň session nedědí |
@@ -101,11 +101,11 @@ ukazuje je jedině výběr v `/model`. Nenastaveno znamená výchozí hodnotu mo
 - **Ne s `auto`:** session se nespustí a skončí chybou
   `Error: Model "auto" does not support reasoning effort configuration (requested: "high").`
 - **Jak to vidět:** Ctrl+T zobrazí nebo skryje shrnutí uvažování u modelů, které je poskytují.
-  Skryté je to jeden řádek `Thought for Ns`; klikni na něj. Je to shrnutí, ne původní text.
+  Ve skrytém stavu je to jeden řádek `Thought for Ns`; klikni na něj. Je to shrnutí, ne původní text.
 
 | Udělej tohle | Kdy, v tomhle workshopu |
 |---|---|
-| Sniž ho, nebo vezmi model Lightweight | Mechanická práce s jasným specem: soubor s instrukcemi ve cvičení 1, skill pluginu ve cvičení 6 |
+| Sniž ho, nebo vezmi model Lightweight | Mechanická práce s jasnou specifikací: soubor s instrukcemi ve cvičení 1, skill pluginu ve cvičení 6 |
 | Nech výchozí | Jeden endpoint, jeden hook, jeden test: většina cvičení |
 | Zvyš ho na `high` | Kořenová příčina napříč soubory: chyby s kaskádovým slučováním a game-over ve cvičení 5, review, plán |
 | Nezvyšuj ho | Modelu chybí informace. Chybějící konvence potřebuje instrukci nebo skill, ne vyšší effort |
@@ -136,7 +136,7 @@ ukazuje je jedině výběr v `/model`. Nenastaveno znamená výchozí hodnotu mo
    System Prompt 9.7k, System Tools 10.4k, MCP Tools 1.1k, Custom Instructions 760. Messages je 0.
 3. Pošli `Read engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt and say in one sentence what slideLineLeft does. Change nothing.`
    Na časové ose se objeví volání nástroje pro čtení souboru a pak odpověď.
-4. Napiš `/context` znovu. Vyrostly jen Messages, v našem běhu asi o 1.5k tokenů: tvůj prompt,
+4. Napiš `/context` znovu. Vyrostly jen Messages, v našem běhu asi o 1,5k tokenů: tvůj prompt,
    90 řádků, které agent přečetl, a odpověď. Výsledek nástroje zůstává v okně a posílá se znovu
    při každém volání.
 5. Stiskni Ctrl+T. Shrnutí uvažování se rozbalí; druhý stisk je sbalí na `Thought for Ns`
@@ -168,7 +168,7 @@ effortu (`/effort`, `--effort`, `ultrathink` na jedno kolo). Oba nastavují mode
 > 🔷 **Jen Copilot:** `auto` směruje každý prompt na některý model a CLI na něj umí při rate limitu
 > přepnout; Claude Code router po promptech nemá (`opusplan` přepíná jen mezi plánem a provedením).
 
-> 🔷 **Jen Copilot:** CLI pouští i modely, které si přineseš sám: endpointy kompatibilní s OpenAI, Azure,
+> 🔷 **Jen Copilot:** CLI pouští i modely, které si přineseš sám: endpointy kompatibilní s OpenAI, endpointy Azure,
 > Anthropic nebo Google, lokální Ollamu, plně offline ([dokumentace](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-llm-models)).
 
 Menší rozdíly (effort v plan režimu, `/rubber-duck` na modelu jiného dodavatele): [12](12-copilot-vs-claude.cs.md).

@@ -10,9 +10,9 @@
 agenty, hooky, MCP servery a LSP servery. **Marketplace** je katalogový soubor
 `marketplace.json`, který vyjmenovává pluginy a říká, odkud se má každý stáhnout.
 
-Návody 02 až 06 dávají všechno do `.github/` jednoho repa. My2N má asi 170 rep, šest stacků a
+Návody 02 až 06 dávají všechno do `.github/` jednoho repa. My2N má asi 170 repozitářů, šest stacků a
 guildy, které sdílejí nástroje. Plugin v marketplace repu je cesta, jak se nástroj guildy dostane
-do ostatních rep: verzovaný, instalovaný jménem, nebo zapnutý pro repo dvěma klíči v nastavení.
+do ostatních repozitářů: verzovaný, instalovaný podle jména nebo zapnutý pro repo dvěma klíči v nastavení.
 
 ## Co dělá tahle ukázka
 
@@ -104,7 +104,7 @@ Jedno marketplace repo, které může číst každý člen guildy (jména jsou p
 ```
 
 1. Vytvoř repo. Zkopíruj `marketplace.json` a `plugin.json` z tohoto repa a změň obě hodnoty
-   `name`, nebo začni z [github/plugin-marketplace-starter](https://github.com/github/plugin-marketplace-starter).
+   `name`, nebo vyjdi z [github/plugin-marketplace-starter](https://github.com/github/plugin-marketplace-starter).
 2. Nástroj, který se osvědčil v `.github/` jednoho repa, přesuň do `plugins/<plugin>/`: skilly
    do `skills/<skill>/SKILL.md`, agenty a hooky pod `com.github.copilot/`. MCP server
    v pluginu musí i tak projít MCP allow-listem 2N.
@@ -121,8 +121,8 @@ Jedno marketplace repo, které může číst každý člen guildy (jména jsou p
 ## Vyzkoušej demo
 
 1. Spusť `scripts/copilot-ws.sh` v kořenu repa, dej složce důvěru a spusť `/2048-dev:build-test`.
-2. Na jeden nebo dva dotazy odpověz **1. Yes**. Copilot sestaví, otestuje a nic neopravuje; náš
-   běh skončil `Tests: engine 13 passed/0 failed; API 5 passed/0 failed; web 7 passed/0 failed`.
+2. Na jeden nebo dva dotazy odpověz **1. Yes**. Copilot sestaví, otestuje a nic neopraví; náš
+   běh skončil výpisem `Tests: engine 13 passed/0 failed; API 5 passed/0 failed; web 7 passed/0 failed`.
 3. `copilot plugin list` mimo session vypíše nainstalované a vestavěné pluginy, `2048-dev` ne.
 
 ## Volitelné parametry
@@ -155,6 +155,6 @@ má `claude plugin validate`; Copilot CLI validační příkaz nemá, proto ta k
 - **`/2048-dev:build-test` je neznámý** → `settings.local.json` ti plugin vypíná, nebo běhu `-p` chybí `--trust-folder`. Politiky organizace, které blokují pluginy: [předletová kontrola](preflight.cs.md).
 - **Skill se načte, ale agent chybí** → `$schema` není přesně hodnota 1.0.0 (legacy plugin).
 - **Skill z pluginu se nikdy nespustí** → zastiňuje ho projektový skill se stejným jménem. Jeden přejmenuj.
-- **Zapnutý ze vzdáleného marketplace, ale nikdy aktivní** → [otevřené issue v CLI](https://github.com/github/copilot-cli/issues/4837). Nainstaluj ho jménem.
+- **Zapnutý ze vzdáleného marketplace, ale nikdy aktivní** → [otevřené issue v CLI](https://github.com/github/copilot-cli/issues/4837). Nainstaluj ho podle jména.
 
 Dál: [08 · Oprávnění a sandbox](08-permissions-sandbox.cs.md)

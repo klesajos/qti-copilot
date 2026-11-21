@@ -30,7 +30,7 @@ Gradle, `npm test` a `npm run` běží bez dotazu, `.env` je zakázaný, na vše
 ## Soubor řádek po řádku
 
 `scripts/copilot-ws.sh` přejde do kořene repa, kde se najde `./gradlew` i hooky, a pak sám sebe
-nahradí procesem `copilot`. Session spouštěj přes něj, ne holým `copilot`:
+nahradí procesem `copilot`. Session spouštěj přes něj, ne přes holý `copilot`:
 
 ```bash
 exec copilot \
@@ -75,7 +75,7 @@ Krok 1 je demo, krok 2 je na tobě. Začni v kořenu repa:
    ```
    Souborový nástroj je odmítnut: `Permission to run this tool was denied due to the following rules:
    read(.env)`. Pak `cat .env` vypíše `DUMMY_SECRET=not-real`. `read(...)` odpovídá čtení souborů
-   vestavěnými nástroji; `cat` je shellový příkaz jen pro čtení a ty běží bez ptaní. V repu tu
+   vestavěnými nástroji; `cat` je shellový příkaz jen pro čtení a takové běží bez ptaní. V repu tu
    díru zavírá `protect-secrets.sh` ([04](04-hooks.cs.md)): `cat .env` vrátí
    `Denied by preToolUse hook: ...`. Porovnává text, takže `cat .e*` projde: je to pojistka.
 2. **Bez obsluhy:** v kořenu repa, kde na dotaz nemá kdo odpovědět.
@@ -93,7 +93,7 @@ Všechno, co agent čte, může nést instrukce (prompt injection): výsledek MC
 testů. Pravidla a hooky porovnávají text; sandbox je vrstva OS pod nimi a omezuje shellové
 příkazy, včetně tvých příkazů přes `!`. Ve výchozím stavu je vypnutý; zapneš ho ty nebo tvoje
 organizace, repo ne. `copilot --sandbox` nebo `/sandbox enable session` ho zapne pro jednu
-session, `/sandbox enable` to uloží, `/sandbox policy` vypíše efektivní politiku. První
+session, `/sandbox enable` to uloží, `/sandbox policy` vypíše výslednou politiku. První
 `/sandbox enable` nabídne instalaci certifikační autority pro proxy: Enter ji nainstaluje, `Esc`
 pokračuje bez ní. Politika v našem běhu na macOS:
 
@@ -144,14 +144,14 @@ Kompletní reference: [Tool permission patterns](https://docs.github.com/en/copi
 
 Claude Code: `permissions.allow` / `ask` / `deny` v commitnutém `.claude/settings.json` a k tomu
 sandbox pro Bash. Copilot žádný commitnutý soubor s pravidly nemá, takže repo dodává launcher a
-hooky. `--assisted-approval` (LLM soudce, ne bezpečnostní hranice) odpovídá auto režimu v Claude Code.
+hooky. `--assisted-approval` (LLM soudce, ne bezpečnostní hranice) odpovídá režimu Auto v Claude Code.
 
 > 🔷 **Jen Copilot:** organizace (tady `2n-labs`, viz [předletová kontrola](preflight.cs.md)) může CLI vypnout jako celek a uplatnit na něj [content exclusion](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/content-exclusion) z GitHubu.
 > Claude Code nemá ani jedno; nejbližší obdobou je spravované pravidlo deny.
 
 ## Když něco nefunguje
 
-- **`-p`: „Permission denied because no interactive user response was available.“** → příkaz nepokrývá žádné pravidlo allow, nebo sahá na cestu mimo pracovní adresář (`--add-dir`).
-- **Žádný dotaz tam, kde jsi ho čekal** → příkaz je jen pro čtení, nebo sis dřív uložil schválení; `/reset-allowed-tools` je smaže.
+- **`-p`: „Permission denied because no interactive user response was available.“** → příkaz není pokrytý žádným pravidlem allow nebo sahá na cestu mimo pracovní adresář (`--add-dir`).
+- **Žádný dotaz tam, kde jsi ho čekal** → příkaz je jen pro čtení nebo sis dřív uložil schválení; `/reset-allowed-tools` je smaže.
 
 Dál: [09 · Evaly](09-evals.cs.md)

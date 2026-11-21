@@ -4,7 +4,7 @@
 
 > Ověřeno na Copilot CLI 1.0.114 · Dokumentace: [CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference) · [Customization cheat sheet](https://docs.github.com/en/copilot/reference/customization-cheat-sheet)
 
-Každý přepínač a slash příkaz odsud najdeš v `copilot --help` nebo `copilot help <topic>` na 1.0.114. CLI
+Každý přepínač a slash příkaz odsud najdeš v `copilot --help` nebo `copilot help <topic>` ve verzi 1.0.114. CLI
 vychází skoro denně: když řádek nesedí, platí nápověda. Návody: [rozcestník](README.cs.md).
 
 ## Přepínače při spuštění
@@ -16,7 +16,7 @@ vychází skoro denně: když řádek nesedí, platí nápověda. Návody: [rozc
 | `--model <model-id>`, `--reasoning-effort <level>` | Model a effort pro session. `auto` nechá výběr na Copilotovi; effort s `auto` selže: `Model "auto" does not support reasoning effort configuration` |
 | `--agent <agent>` | Spustí session jako vlastního agenta; agent z pluginu je `<plugin>:<agent>` |
 | `--mode <mode>`, `--plan`, `--autopilot` | Start v režimu `interactive`, `plan` nebo `autopilot`. `--max-autopilot-continues <n>` (výchozí 5) |
-| `--fleet` | Spustí prompt s paralelními subagenty; kombinuj s `-i`, `-p` nebo se stdin z pipe |
+| `--fleet` | Spustí prompt s paralelními subagenty; kombinuj s `-i`, `-p` nebo se stdin z roury |
 | `--max-ai-credits <n>` | Strop kreditů pro session (minimum 30, měkký) |
 | `--allow-tool='<rule>'`, `--deny-tool='<rule>'` | Předem schválí nebo zablokuje odpovídající volání nástrojů pro tenhle běh; deny vyhrává |
 | `--allow-all-tools`, `--allow-all` (`--yolo`) | Žádné dotazy na nástroje; `--allow-all` navíc vypne kontroly cest a URL |
@@ -41,7 +41,7 @@ V shellu, bez session: `copilot instruction list`, `copilot skill list`, `copilo
 | | `/context`, `/compact [focus]` | Využití kontextového okna po kategoriích; shrne historii, aby ho uvolnil |
 | **Práce** | `/plan`, `/autopilot` | Plán před kódováním; zapne nebo vypne autopilota, nebo nastaví cíl s `--max-ai-credits` |
 | | `/fleet [prompt]`, `/tasks` | Rozdělí práci mezi paralelní subagenty; vypíše, co běží: `Enter` otevře přepis, `x` ukončí vybraného |
-| | `/delegate` | Pošle session cloud agentovi, který otevře PR; `--base` vybírá branch |
+| | `/delegate` | Pošle session cloudovému agentovi, který otevře PR; `--base` vybírá branch |
 | **Kód** | `/diff`, `/review`, `/security-review`, `/rubber-duck` | Ukáže změny (`Esc` zavře); agent pro review; bezpečnostní sken necommitnutých změn; nezávislá kritika |
 | **Oprávnění** | `/permissions` | Přepne režim: `manual`, `assisted`, `allow-all`; `show` vypíše režim, ne pravidla allow a deny |
 | | `/allow-all`, `/reset-allowed-tools` | Povolí všechno; smaže schválení ze session i uložená schválení pro tohle umístění |
@@ -60,14 +60,14 @@ Autopilot, `Ctrl+O` rozbalí položky timeline, `?` na prázdném promptu vypí�
 
 | Téma | Jak |
 |------|-----|
-| Výběr modelu | `/model`, `--model <model-id>`, `COPILOT_MODEL`, nebo nastavení `model`. Ve 2N jde vybrat každý model kromě rodiny Claude Fable; model, který použít nemůžeš, je v `/model` pořád vidět a po zvýraznění řekne proč. U každého modelu jsou uvedené kredity za 1M tokenů |
-| Effort | Úrovně `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`; které existují, záleží na modelu; nenastaveno znamená výchozí hodnotu modelu, u většiny `medium`. Nastavíš ho šipkami vlevo / vpravo v `/model`, přes `--reasoning-effort <level>`, nastavením `effortLevel`, `reasoning-effort:` v `.agent.md`, nebo v `/subagents` |
+| Výběr modelu | `/model`, `--model <model-id>`, `COPILOT_MODEL` nebo nastavení `model`. Ve 2N jde vybrat každý model kromě rodiny Claude Fable; model, který použít nemůžeš, je v `/model` pořád vidět a po zvýraznění řekne proč. U každého modelu jsou uvedené kredity za 1M tokenů |
+| Effort | Úrovně `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`; které existují, záleží na modelu; nenastaveno znamená výchozí hodnotu modelu, u většiny `medium`. Nastavíš ho šipkami vlevo / vpravo v `/model`, přes `--reasoning-effort <level>`, nastavením `effortLevel`, `reasoning-effort:` v `.agent.md` nebo v `/subagents` |
 | Plan režim | Vlastní model a effort: `/model plan`, `planModel`, `planEffortLevel`. Effort session se nedědí |
 | Auto | `auto` se zobrazuje jako Copilot Fusion a vybírá model pro každý prompt. `--auto-tier` / `autoTier`: `efficiency`, `balance`, `intelligence`. `fusionTier`: `standard`, `high`, `max`. V `/model` na řádku `Copilot Fusion` mění šipky vlevo / vpravo jeho `Tier` (`Standard`, `High`, `Max`) |
-| Kontextový tier | `--context default` nebo `long_context`, nastavení `contextTier`, nebo výběr tieru v `/model` |
-| Uvažování, cena | `Ctrl+T` zobrazí nebo skryje shrnutí uvažování. `/usage`: `↑ input (N cached, N written) • ↓ output (N reasoning)`; reasoning tokeny se účtují jako výstup |
+| Kontextový tier | `--context default` nebo `long_context`, nastavení `contextTier` nebo výběr úrovně v `/model` |
+| Uvažování, cena | `Ctrl+T` zobrazí nebo skryje shrnutí uvažování. `/usage`: `↑ input (N cached, N written) • ↓ output (N reasoning)`; tokeny uvažování se účtují jako výstup |
 
-Id modelu nikdy necommituj: seznam 2N se liší od tvého. Bezpečně commitnout jde `effortLevel`.
+ID modelu nikdy necommituj: seznam 2N se liší od tvého. Bezpečně commitnout jde `effortLevel`.
 
 > 🔷 **Jen Copilot:** jedno předplatné a jeden výběr pro modely od několika dodavatelů (Anthropic, OpenAI, Google, xAI, Microsoft, Moonshot AI). Claude Code běží jen na modelech Claude.
 
@@ -76,7 +76,7 @@ Id modelu nikdy necommituj: seznam 2N se liší od tvého. Bezpečně commitnout
 | Fakt | Co s tím |
 |------|----------|
 | Každé volání modelu posílá znovu celou konverzaci jako vstup | Dlouhé sessions stojí víc za kolo. Prompt cache obslouží opakovanou část za zlomek ceny; `/usage` ji ukazuje jako cached |
-| Na testovacím stroji poslal jednoslovný prompt v prázdném adresáři 20 387 vstupních tokenů, z toho 10 668 definice nástrojů | Fixní režie se platí při každém volání a každý soubor s instrukcemi a každý MCP nástroj ji zvyšuje. Čím je okno plné, ukáže `/context` |
+| Na testovacím stroji poslal jednoslovný prompt v prázdném adresáři 20 387 vstupních tokenů, z toho 10 668 připadlo na definice nástrojů | Fixní režie se platí při každém volání a každý soubor s instrukcemi a každý MCP nástroj ji zvyšuje. Co okno zaplňuje, ukáže `/context` |
 | `/compact [focus]` nahradí historii shrnutím; sám se spustí na 80 % okna | Detaily se ztratí, nejde to vrátit a stojí to kredity. Na nový úkol použij `/new` nebo `/clear` |
 | Subagent má vlastní okno | Zpátky přijde jen jeho zpráva: čtení deleguj |
 | 1 kredit = 0,01 USD; Copilot Business má 1 900 na uživatele měsíčně, ve společném poolu | Dej session strop: `--max-ai-credits <n>` nebo `/limits set max-ai-credits <n>`. Měkký strop: jedna odpověď ho může překročit, další volání se pak zablokuje. Počítají se i subagenti a kompakce |
@@ -98,7 +98,7 @@ Session na pozadí je pořád interaktivní: přepni se zpátky a odpověz na je
 
 ## Rewind
 
-`/rewind`, `/undo`, nebo `Esc Esc` na prázdném promptu: vyber kolo, pak „Conversation only“ nebo
+`/rewind`, `/undo` nebo `Esc Esc` na prázdném promptu: vyber kolo, pak „Conversation only“ nebo
 „Conversation + files“. Obnoví se jen soubory, které změnil Copilot; prompt toho kola se vrátí do
 vstupního řádku. Rewind je nevratný: nejdřív `/fork`. Kompakce ukládá checkpoint: `/session checkpoints [n]`.
 
@@ -113,7 +113,7 @@ vstupního řádku. Rewind je nevratný: nejdřív `/fork`. Kompakce ukládá ch
 | Agenti | `.github/agents/<name>.agent.md` | `agents/` |
 | Pluginy | `marketplace.json`, `plugins/<name>/plugin.json`; zapnuté přes `extraKnownMarketplaces` a `enabledPlugins` v `.github/copilot/settings.json` | `installed-plugins/` |
 | Nastavení | `.github/copilot/settings.json`, `settings.local.json` (tady ho git ignoruje) | `settings.json` |
-| Oprávnění | žádný commitnutý soubor: přepínače při spuštění ve `scripts/copilot-ws.sh`, nebo hook | `permissions-config.json` („don't ask again“) |
+| Oprávnění | žádný commitnutý soubor: přepínače při spuštění ve `scripts/copilot-ws.sh` nebo hook | `permissions-config.json` („don't ask again“) |
 
 - Čte se taky: `CLAUDE.md`, `GEMINI.md`, `.claude/rules/`, `.claude/skills/`, `.claude/agents/`,
   `.claude/commands/`, `.agents/skills/`, hooky v `.claude/settings.json`. Tohle repo nemá nic z toho.
@@ -150,7 +150,7 @@ vstupního řádku. Rewind je nevratný: nejdřív `/fork`. Kompakce ukládá ch
 | `write`, `write(path)` | Vytváření a úpravy souborů. Relativní cesta se porovnává podle koncových komponent: `write(.env)` je jakýkoli `.env`. Globy `*`, `?`, `**` |
 | `read`, `read(path)` | Čtení souborů vestavěnými nástroji, stejné porovnávání cest. Ne shellové příkazy |
 | `<mcp-server>`, `<mcp-server>(tool)` | Všechny nástroje MCP serveru; jeden nástroj |
-| `url(domain-or-url)` | Přístup na URL z shellu a web-fetch nástrojů: `url(https://*.github.com)` |
+| `url(domain-or-url)` | Přístup na URL ze shellu a z nástrojů web-fetch: `url(https://*.github.com)` |
 
 - ✅ `shell(./gradlew:*)` povolí `./gradlew :engine:test`. ❌ `shell(gradlew:*)` a
   `shell(./gradlew test)` ne. ✅ `shell(npm test)` a `shell(npm:*)` povolí `cd web && npm test`.
@@ -182,7 +182,7 @@ copilot -p "<prompt>" --trust-folder --no-ask-user --allow-tool='shell(./gradlew
 
 | Příkaz (kořen repa, po `npm ci`) | Co dělá |
 |----------------------------------|---------|
-| `npm run eval:lint` | Zvaliduje obě eval specifikace. Zdarma |
+| `npm run eval:lint` | Zvaliduje obě specifikace evalů. Zdarma |
 | `VALLY_TELEMETRY_OPTOUT=1 npx --no vally experiment run evals/experiments/board-tests-ab.experiment.yaml --dry-run` | Vypíše plán se skillem / bez něj. Zdarma |
 | `npm run eval -- -e evals/game-explorer/eval.yaml` | Spustí jeden eval. Utrácí kredity |
 | `npm run eval:ab` | Skill `board-tests`, s ním a bez něj. Utrácí kredity |
