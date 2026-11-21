@@ -16,6 +16,17 @@
 2. Switch a team toolset on for a whole repo with two settings keys; everyone gets it after trusting the folder.
 3. Version a tool, so a change can be rolled out and rolled back.
 
+**How it works:**
+
+```mermaid
+flowchart LR
+    T["Tool proven in one repo .github/"] --> P["Plugin: plugin.json + skills + agents + hooks"]
+    P --> K["marketplace.json in a shared repo"]
+    K -->|copilot plugin install| A["Repo A"]
+    K -->|enabledPlugins in settings| B["Repo B"]
+    K -->|enabledPlugins in settings| C["Repo C"]
+```
+
 ## What is a plugin?
 
 A **plugin** is a directory with a manifest, `plugin.json`, that bundles skills, agents, hooks, MCP

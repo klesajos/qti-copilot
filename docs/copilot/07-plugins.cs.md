@@ -16,6 +16,17 @@
 2. Zapni týmovou sadu nástrojů pro celé repo dvěma klíči v nastavení; každý ji dostane, jakmile složce udělí důvěru.
 3. Verzuj nástroj, aby šla změna nasadit i vrátit.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart LR
+    T["Tool proven in one repo .github/"] --> P["Plugin: plugin.json + skills + agents + hooks"]
+    P --> K["marketplace.json in a shared repo"]
+    K -->|copilot plugin install| A["Repo A"]
+    K -->|enabledPlugins in settings| B["Repo B"]
+    K -->|enabledPlugins in settings| C["Repo C"]
+```
+
 ## Co je plugin?
 
 **Plugin** je adresář s manifestem `plugin.json`, který pod jedním jménem a verzí sdružuje skilly,

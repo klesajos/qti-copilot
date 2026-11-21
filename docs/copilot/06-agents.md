@@ -16,6 +16,15 @@
 2. An explorer that finds where a feature lives without filling your session with file contents.
 3. A test writer that only writes tests, so the fix stays a separate step you can check.
 
+**How it works:**
+
+```mermaid
+flowchart LR
+    Main["Main session"] -->|task: agent kotlin-reviewer| Sub["Subagent: own context, own tools, own prompt"]
+    Sub -->|git diff, read files| Repo[("Repository")]
+    Sub -->|findings only| Main
+```
+
 ## What is a custom agent?
 
 A custom agent is a Markdown file: frontmatter plus a prompt. It has three things of its own:

@@ -16,6 +16,17 @@
 2. Předej dlouhý úkol cloud agentovi přes `/delegate` a dostaň zpátky draft pull requestu.
 3. Nech agenta běžet přes noc ve workspace v Coderu a ráno zkontroluj výsledek.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart LR
+    You["You"] --> CLI["Copilot CLI in a terminal"]
+    You --> IDE["Agent in the IntelliJ plugin"]
+    CLI -->|/delegate| Cloud["Cloud agent on GitHub: draft pull request"]
+    CLI -->|/remote on| Web["GitHub.com or GitHub Mobile steers your local session"]
+    Coder["Coder workspace"] -->|runs while your laptop is closed| Remote["Copilot CLI on a remote machine"]
+```
+
 ## Plugin pro IntelliJ IDEA
 
 Chat agent pluginu pro IntelliJ IDEA čte většinu souborů tohohle repa, ale ne všechny stejným

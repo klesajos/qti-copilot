@@ -16,6 +16,16 @@
 2. Udrž dlouhou session levnou a ostrou: `/context` ukáže, co plní okno, `/new` nebo `/compact` ho vyprázdní.
 3. Správně si vylož špatnou odpověď: chybějící informace potřebuje instrukci nebo soubor, ne větší model.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart LR
+    P["Your prompt"] --> M["Model call: system prompt + tools + instructions + whole conversation"]
+    M -->|text only| A["Answer: the turn ends"]
+    M -->|tool call| C["CLI checks permission and runs the tool"]
+    C -->|result appended to the conversation| M
+```
+
 ## LLM v sedmi řádcích
 
 | Vlastnost | Co to znamená v praxi |

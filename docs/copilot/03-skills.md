@@ -16,6 +16,20 @@
 2. Team conventions too long for the instruction file: test style, error format, logging.
 3. A repeatable job you call by name, for example `/2048-dev:build-test` builds and tests everything.
 
+**How it works:**
+
+```mermaid
+sequenceDiagram
+    participant You
+    participant CLI
+    participant Model
+    CLI->>Model: Session start: name and description of every skill
+    You->>Model: Add a test for the line 4, 4, 8, 0
+    Model->>CLI: Tool call skill board-tests
+    CLI->>Model: Full body of SKILL.md
+    Model->>CLI: Edits and a test run that follow the skill
+```
+
 ## What is a skill?
 
 A folder with a `SKILL.md`: instructions that are loaded **only when the task needs them**. The

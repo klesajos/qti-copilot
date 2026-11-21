@@ -16,6 +16,17 @@
 2. Zachyť regresi, když skill upravíš nebo přejdeš na jiný model.
 3. Porovnej dvě verze instrukce podle čísel, ne podle jednoho šťastného běhu.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart LR
+    S["Stimulus: one prompt"] --> W["Trials with the skill"]
+    S --> O["Trials without the skill"]
+    W --> G["Graders score each trial"]
+    O --> G
+    G --> R["Report: pass rate, tokens and time per variant"]
+```
+
 ## Co je eval?
 
 Skill, agent nebo plugin je hypotéza: „s tímhle Copilot udělá úkol líp“. Stojí tokeny a čas

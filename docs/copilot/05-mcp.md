@@ -16,6 +16,19 @@
 2. Search code across the organisation's repositories without leaving the session.
 3. Bring in facts the model cannot know: a ticket's acceptance criteria, a shared Copilot Space.
 
+**How it works:**
+
+```mermaid
+flowchart LR
+    M["Model"] -->|tool call| C["Copilot CLI"]
+    C -->|MCP| G["Built-in GitHub MCP server"]
+    C -->|MCP| J["Jira MCP server from .mcp.json"]
+    P{{"Organisation allow-list"}} -.->|can block| J
+    G -->|issue text| C
+    J -->|ticket text| C
+    C -->|tool result| M
+```
+
 ## What is MCP?
 
 MCP (Model Context Protocol) gives the agent tools the CLI does not ship with. A server is a

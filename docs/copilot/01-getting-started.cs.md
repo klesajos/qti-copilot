@@ -16,6 +16,15 @@
 2. Vrať špatný krok za pár sekund přes `/rewind`, místo abys uklízel ručně.
 3. Nech si každou změnu před commitem zkontrolovat přes `/review`.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart LR
+    S["Spec the task"] --> P["Plan"] --> T["Failing test"] --> F["Fix"] --> E{"Evidence: tests, /diff, /review"}
+    E -->|holds| C["Commit"]
+    E -->|wrong| R["/rewind"] --> P
+```
+
 ## Nastavení (10 min, na začátku)
 
 Potřebuješ seat Copilot Business nebo Enterprise se zapnutou politikou Copilot CLI, libovolné JDK

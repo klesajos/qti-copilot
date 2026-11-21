@@ -16,6 +16,20 @@
 2. Automaticky naformátuj každý soubor, který Copilot upraví.
 3. Nenech agenta skončit, dokud jsou testy červené.
 
+**Jak to funguje:**
+
+```mermaid
+sequenceDiagram
+    participant Model
+    participant CLI
+    participant Hook as Hook script
+    Model->>CLI: Tool call bash: cat .env
+    CLI->>Hook: preToolUse event as JSON on stdin
+    Hook-->>CLI: permissionDecision deny, with a reason
+    CLI-->>Model: Denied by preToolUse hook
+    Note over Model,Hook: The model cannot skip this step
+```
+
 ## Co je hook?
 
 Hook je příkaz, který CLI spustí samo, když nastane událost: začne session, má se spustit

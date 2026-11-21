@@ -16,6 +16,15 @@
 2. Undo a wrong turn in seconds with `/rewind` instead of cleaning up by hand.
 3. Have every change reviewed with `/review` before you commit it.
 
+**How it works:**
+
+```mermaid
+flowchart LR
+    S["Spec the task"] --> P["Plan"] --> T["Failing test"] --> F["Fix"] --> E{"Evidence: tests, /diff, /review"}
+    E -->|holds| C["Commit"]
+    E -->|wrong| R["/rewind"] --> P
+```
+
 ## Setup (10 min, at the start)
 
 You need a Copilot Business or Enterprise seat with the Copilot CLI policy enabled, any JDK

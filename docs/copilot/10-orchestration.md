@@ -16,6 +16,22 @@
 2. Run Copilot in CI or a nightly script with `copilot -p` and let the script read the result.
 3. Define a team-wide flow once in a Conductor YAML file and run it the same way every time.
 
+**How it works:**
+
+```mermaid
+flowchart TB
+    subgraph fleet ["/fleet: inside a session"]
+        F["Main agent splits the work"] --> A1["Subagent"] & A2["Subagent"] & A3["Subagent"]
+        A1 & A2 & A3 --> F2["Main agent merges the results"]
+    end
+    subgraph prog ["copilot -p: scripts and CI"]
+        P["Prompt plus allow rules"] --> J["JSONL events"] --> S["Script reads the result"]
+    end
+    subgraph cond ["Conductor: a YAML file"]
+        Y["Parallel agents"] --> Rp["Reporter agent"]
+    end
+```
+
 ## Four ways past one session
 
 Guides 02–09 shape one agent in one session. Four ways to go past that:

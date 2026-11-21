@@ -16,6 +16,16 @@
 2. Keep a long session cheap and sharp: `/context` shows what fills the window, `/new` or `/compact` empties it.
 3. Read a wrong answer correctly: missing information needs an instruction or a file, not a bigger model.
 
+**How it works:**
+
+```mermaid
+flowchart LR
+    P["Your prompt"] --> M["Model call: system prompt + tools + instructions + whole conversation"]
+    M -->|text only| A["Answer: the turn ends"]
+    M -->|tool call| C["CLI checks permission and runs the tool"]
+    C -->|result appended to the conversation| M
+```
+
 ## An LLM in seven lines
 
 | Property | What it means in practice |

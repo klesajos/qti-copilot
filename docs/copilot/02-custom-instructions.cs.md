@@ -16,6 +16,16 @@
 2. Dej každé části repa vlastní pravidla přes `applyTo`, takže pravidla pro Android se načtou, jen když Copilot sáhne na soubory pro Android.
 3. Zjisti, co repo, které už má `CLAUDE.md`, `AGENTS.md` nebo pravidla pro Cursor, Copilotu opravdu posílá (`scripts/instruction-audit.sh`).
 
+**Jak to funguje:**
+
+```mermaid
+flowchart LR
+    R[".github/copilot-instructions.md"] -->|every model call| M["Model context"]
+    A["AGENTS.md, CLAUDE.md"] -->|every model call| M
+    U["~/.copilot/copilot-instructions.md"] -->|every model call| M
+    S[".github/instructions/*.instructions.md with applyTo"] -->|only after a matching file is read or edited| M
+```
+
 ## Co jsou vlastní instrukce?
 
 Soubory v Markdownu, které Copilot načítá jako trvalé pokyny. Liší se v tom, *kdy* se dostanou k modelu:

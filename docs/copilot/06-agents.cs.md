@@ -16,6 +16,15 @@
 2. Průzkumník, který najde, kde featura žije, a nezaplní ti session obsahem souborů.
 3. Autor testů, který píše jen testy, takže oprava zůstane samostatný krok, který zkontroluješ.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart LR
+    Main["Main session"] -->|task: agent kotlin-reviewer| Sub["Subagent: own context, own tools, own prompt"]
+    Sub -->|git diff, read files| Repo[("Repository")]
+    Sub -->|findings only| Main
+```
+
 ## Co je vlastní agent?
 
 Vlastní agent je Markdown soubor: frontmatter plus prompt. Tři věci má jen pro sebe:

@@ -16,6 +16,22 @@
 2. Spusť Copilot v CI nebo v nočním skriptu přes `copilot -p` a nech skript přečíst výsledek.
 3. Popiš celotýmový postup jednou v YAML souboru pro Conductor a spouštěj ho pokaždé stejně.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart TB
+    subgraph fleet ["/fleet: inside a session"]
+        F["Main agent splits the work"] --> A1["Subagent"] & A2["Subagent"] & A3["Subagent"]
+        A1 & A2 & A3 --> F2["Main agent merges the results"]
+    end
+    subgraph prog ["copilot -p: scripts and CI"]
+        P["Prompt plus allow rules"] --> J["JSONL events"] --> S["Script reads the result"]
+    end
+    subgraph cond ["Conductor: a YAML file"]
+        Y["Parallel agents"] --> Rp["Reporter agent"]
+    end
+```
+
 ## Čtyři cesty za jednu session
 
 Návody 02–09 ladí jednoho agenta v jedné session. Čtyři způsoby, jak jít dál:

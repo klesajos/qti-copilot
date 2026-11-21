@@ -16,6 +16,16 @@
 2. Give each part of the repo its own rules with `applyTo`, so Android rules load only when Copilot touches Android files.
 3. Check what an existing repo with `CLAUDE.md`, `AGENTS.md` or Cursor rules really sends to Copilot (`scripts/instruction-audit.sh`).
 
+**How it works:**
+
+```mermaid
+flowchart LR
+    R[".github/copilot-instructions.md"] -->|every model call| M["Model context"]
+    A["AGENTS.md, CLAUDE.md"] -->|every model call| M
+    U["~/.copilot/copilot-instructions.md"] -->|every model call| M
+    S[".github/instructions/*.instructions.md with applyTo"] -->|only after a matching file is read or edited| M
+```
+
 ## What are custom instructions?
 
 Markdown files Copilot loads as standing orders. They differ in *when* they reach the model:

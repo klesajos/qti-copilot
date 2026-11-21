@@ -16,6 +16,20 @@
 2. Format every file Copilot edits, automatically.
 3. Do not let the agent finish while the tests are red.
 
+**How it works:**
+
+```mermaid
+sequenceDiagram
+    participant Model
+    participant CLI
+    participant Hook as Hook script
+    Model->>CLI: Tool call bash: cat .env
+    CLI->>Hook: preToolUse event as JSON on stdin
+    Hook-->>CLI: permissionDecision deny, with a reason
+    CLI-->>Model: Denied by preToolUse hook
+    Note over Model,Hook: The model cannot skip this step
+```
+
 ## What is a hook?
 
 A hook is a command that the CLI runs itself when an event happens: a session starts, a tool is

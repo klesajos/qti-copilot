@@ -16,6 +16,17 @@
 2. Catch a regression when you edit a skill or switch to another model.
 3. Compare two versions of an instruction on numbers, not on one lucky run.
 
+**How it works:**
+
+```mermaid
+flowchart LR
+    S["Stimulus: one prompt"] --> W["Trials with the skill"]
+    S --> O["Trials without the skill"]
+    W --> G["Graders score each trial"]
+    O --> G
+    G --> R["Report: pass rate, tokens and time per variant"]
+```
+
 ## What is an eval?
 
 A skill, agent or plugin is a hypothesis: "with this, Copilot does the task better". It costs

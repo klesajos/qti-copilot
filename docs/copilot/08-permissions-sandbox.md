@@ -16,6 +16,19 @@
 2. Keep secrets such as `.env` away from the agent.
 3. Run Copilot unattended, in a script or overnight, with exactly the rights it needs and nothing more.
 
+**How it works:**
+
+```mermaid
+flowchart TB
+    T["Tool call"] --> D{"Deny rule or a hook says deny?"}
+    D -->|yes| X["Refused"]
+    D -->|no| A{"Allow rule or saved approval?"}
+    A -->|yes| R["Runs, inside the sandbox when it is on"]
+    A -->|no| Q{"Interactive session?"}
+    Q -->|yes| Ask["You are asked"]
+    Q -->|"no: -p or autopilot"| X
+```
+
 ## What are permissions?
 
 The CLI asks before it runs a shell command, edits a file, touches a path or URL outside the

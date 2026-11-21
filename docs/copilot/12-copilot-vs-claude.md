@@ -16,6 +16,16 @@
 2. Carry your Claude Code habits over with the name-mapping table.
 3. Stop a repo that both tools read from sending the same instructions twice.
 
+**How it works:**
+
+```mermaid
+flowchart LR
+    Repo["One repository"] --> CP["Copilot CLI"]
+    Repo --> CC["Claude Code"]
+    CP -.->|reads| F1[".github/, AGENTS.md, CLAUDE.md, .claude/skills"]
+    CC -.->|reads| F2["CLAUDE.md, or AGENTS.md when there is no CLAUDE.md"]
+```
+
 ## Only in Copilot
 
 Ordered by how much a developer feels the difference. Where Claude Code has a partial

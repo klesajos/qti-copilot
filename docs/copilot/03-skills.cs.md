@@ -16,6 +16,20 @@
 2. Týmové konvence, které jsou na soubor s instrukcemi moc dlouhé: styl testů, formát chyb, logování.
 3. Opakovaná práce, kterou zavoláš jménem, třeba `/2048-dev:build-test` sestaví a otestuje všechno.
 
+**Jak to funguje:**
+
+```mermaid
+sequenceDiagram
+    participant You
+    participant CLI
+    participant Model
+    CLI->>Model: Session start: name and description of every skill
+    You->>Model: Add a test for the line 4, 4, 8, 0
+    Model->>CLI: Tool call skill board-tests
+    CLI->>Model: Full body of SKILL.md
+    Model->>CLI: Edits and a test run that follow the skill
+```
+
 ## Co je skill?
 
 Složka se souborem `SKILL.md`: instrukce, které se načtou, **jen když je úkol potřebuje**. Soubory

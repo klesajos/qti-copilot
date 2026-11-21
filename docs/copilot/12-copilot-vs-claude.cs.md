@@ -16,6 +16,16 @@
 2. Přenes si zvyky z Claude Code pomocí tabulky s mapováním názvů.
 3. Zabraň tomu, aby repo, které čtou oba nástroje, posílalo stejné instrukce dvakrát.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart LR
+    Repo["One repository"] --> CP["Copilot CLI"]
+    Repo --> CC["Claude Code"]
+    CP -.->|reads| F1[".github/, AGENTS.md, CLAUDE.md, .claude/skills"]
+    CC -.->|reads| F2["CLAUDE.md, or AGENTS.md when there is no CLAUDE.md"]
+```
+
 ## Jen v Copilotu
 
 Seřazeno podle toho, jak moc rozdíl pocítí vývojář. Kde má Claude Code částečnou

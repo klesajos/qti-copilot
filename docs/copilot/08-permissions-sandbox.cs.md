@@ -16,6 +16,19 @@
 2. Drž tajné údaje, třeba `.env`, mimo dosah agenta.
 3. Pusť Copilot bez obsluhy, ve skriptu nebo přes noc, přesně s právy, která potřebuje, a s žádnými dalšími.
 
+**Jak to funguje:**
+
+```mermaid
+flowchart TB
+    T["Tool call"] --> D{"Deny rule or a hook says deny?"}
+    D -->|yes| X["Refused"]
+    D -->|no| A{"Allow rule or saved approval?"}
+    A -->|yes| R["Runs, inside the sandbox when it is on"]
+    A -->|no| Q{"Interactive session?"}
+    Q -->|yes| Ask["You are asked"]
+    Q -->|"no: -p or autopilot"| X
+```
+
 ## Co jsou oprávnění?
 
 CLI se zeptá, než spustí shellový příkaz, upraví soubor, sáhne na cestu nebo URL mimo pracovní
