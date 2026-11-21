@@ -7,7 +7,8 @@ pro hands-on část workshopu o AI-asistovaném vývoji s **GitHub Copilot CLI**
 do ní přidáváme funkce, opravujeme chyby, dopisujeme testy a refaktorujeme, přičemž kód
 generuje Copilot.
 
-Návody k workshopu jsou v [docs/copilot/](docs/copilot/README.cs.md). Začni tam.
+Návody k workshopu jsou v [docs/copilot/](docs/copilot/README.cs.md). Začni tam: program zabere
+3 h 50 min.
 
 ## Požadavky
 
@@ -16,7 +17,7 @@ Návody k workshopu jsou v [docs/copilot/](docs/copilot/README.cs.md). Začni ta
 - Node.js 24 (24.15 nebo novější) nebo 26.
 - `git` a `jq` (skripty hooků používají `jq`).
 - GitHub Copilot CLI 1.0.114 nebo novější pro samotný workshop; viz
-  [docs/copilot/00-install.cs.md](docs/copilot/00-install.cs.md).
+  [docs/copilot/01-getting-started.cs.md](docs/copilot/01-getting-started.cs.md).
 
 ## Build a spuštění
 
@@ -53,7 +54,7 @@ web/      React UI: App, Board, API client, key mapping
 plugins/  the 2048-dev plugin, served by the in-repo marketplace (marketplace.json)
 evals/    evals for the skill, the agent and the plugin
 conductor/ a Microsoft Conductor workflow
-docs/copilot/  workshop guides, exercises, cheat sheet
+docs/copilot/  workshop guides, exercises with solution patches, cheat sheet
 ```
 
 Srdcem hry je `slideLineLeft()` v

@@ -1,216 +1,131 @@
 > 🌍 Číst v jazyce: [English](README.md) | **Česky**
 
-# Ukázky rozšíření GitHub Copilot
+# Workshop GitHub Copilot CLI
 
-Tohle repo zároveň slouží jako ukázka způsobů, jak rozšířit GitHub Copilot CLI
-na úrovni **projektu**. „Na úrovni projektu“ znamená, že konfigurace žije
-**přímo v repozitáři**: když si projekt naklonuješ přes `git clone`, dostaneš
-s ním instrukce, skill, agenty, hooky i plugin. Nic se neinstaluje do domovského
-adresáře. Jedinou věc ti klon nedá, a to souhlas: hooky a plugin se načtou až
-poté, co odpovíš na dotaz na důvěru ke složce
-([návod 00](00-install.cs.md)).
+> Ověřeno na Copilot CLI 1.0.114 · Dokumentace: [Customizing Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/overview) · [Comparing customization features](https://docs.github.com/en/copilot/concepts/customizations/comparing-customizations)
 
-Návody 01–09 pokrývají každý jeden mechanismus, jsou samostatné a minimální.
-Návody 10–14 jsou o tom, jak s nimi pracovat. Projdi je popořadě; jdou od
-nejjednoduššího po nejpokročilejší:
+Praktický workshop pro vývojáře Quanti ve 2N nad hrou 2048: `engine/` (pravidla v Kotlinu), `api/`
+(Spring Boot), `web/` (React). Nástrojem je Copilot CLI: metriky 2N počítají právě jeho používání.
+Kód generuješ, nepíšeš: úroveň 5+ na [škále VisiData](https://www.visidata.org/blog/2026/ai/),
+kde kóduje Copilot a ty všemu rozumíš. Sesterský workshop k workshopu Claude Code (`dxc-ws`).
 
-| # | Ukázka | Co tě naučí | Kde žije |
-|---|--------|-------------|----------|
-| 0 | [Instalace a první session](00-install.cs.md) | Instalace Copilot CLI, přihlášení, důvěra ke složce, výběr modelu, AI Credits, spuštění aplikace 2048 | tvůj počítač |
-| 1 | [Vlastní instrukce](01-custom-instructions.cs.md) | Trvalé pokyny pro repo: jeden soubor pro každou session, soubory vázané na cestu, které se načtou, až když se sáhne na odpovídající soubory, `AGENTS.md` | `.github/copilot-instructions.md` + `.github/instructions/` |
-| 2 | [Projektový skill](02-skills.cs.md) | Znalosti o projektu, které si Copilot načte, jen když je úkol potřebuje | `.github/skills/board-tests/SKILL.md` |
-| 3 | [Projektové hooky](03-hooks.cs.md) | Shellové skripty, které běží na události session: vložení git kontextu, blokování destruktivních příkazů, hlídání `.env`, formátování, spouštění testů | `.github/hooks/hooks.json` + `.github/hooks/scripts/` |
-| 4 | [MCP připojení](04-mcp.cs.md) | Připojení Copilota k externím nástrojům, když organizace povoluje jen schválený seznam | `.mcp.json.example` |
-| 5 | [Vlastní agenti a delegování](05-agents.cs.md) | Předání jednoho úkolu izolovanému kontextu s vlastními nástroji: reviewer, který nemůže editovat, a autor testů | `.github/agents/` |
-| 6 | [Pluginy a marketplace v repozitáři](06-plugins.cs.md) | Zabalení skillů a agentů pro další repa; marketplace přímo v repu, zapnutý nastavením repozitáře | `plugins/2048-dev/` + `marketplace.json` + `.github/copilot/settings.json` |
-| 7 | [Orchestrace](07-orchestration.cs.md) | Několik agentů na jednom úkolu: `/fleet`, režimy plan a autopilot, dynamické workflows | vestavěno v CLI; používá agenty z `.github/agents/` |
-| 8 | [Oprávnění a sandbox](08-permissions-sandbox.cs.md) | Pravidla allow a deny jako přepínače při spuštění, hook jako commitnutá pojistka, lokální sandbox | `scripts/copilot-ws.sh` + `.github/hooks/scripts/protect-secrets.sh` |
-| 9 | [Validace a evaly](09-validate-eval.cs.md) | Měření, jestli skill, agent nebo plugin vůbec něco mění: běhy s ním a bez něj, které bodují gradery | `evals/` + `package.json` |
-| 10 | [Práce na úrovni 5 a výš](10-level-5-workflow.cs.md) | Pracovní smyčka, ve které kód píše Copilot a ty mu pořád celému rozumíš | celé repo |
-| 11 | [Programatický režim a CI](11-programmatic-ci.cs.md) | `copilot -p`, JSONL výstup, oprávnění, když na dotaz nemá kdo odpovědět | `evals/plugin-ab.sh` jako hotový příklad |
-| 12 | [Plugin pro IntelliJ IDEA](12-intellij.cs.md) | Co plugin od JetBrains z tohohle repa čte a kde se chová jinak než CLI | tytéž soubory v `.github/` |
-| 13 | [Vzdálení a noční agenti](13-remote-agents.cs.md) | Předání práce agentovi, který běží jinde: cloud agent, Coder workspaces | v repu nic |
-| 14 | [Microsoft Conductor](14-conductor.cs.md) | Multiagentní flow definované v YAML a spouštěné přes providera Copilot | `conductor/test-coverage-audit.yaml` |
+## Program (3 h 50 min)
 
-Každý návod existuje ve dvou jazycích: `xx-name.md` je anglicky,
-`xx-name.cs.md` česky. Obsah je stejný. Vedle návodů leží ještě tři soubory:
+| Blok | Min | Návod | Jak |
+|------|----:|-------|-----|
+| Úvod: úroveň 5+, co se počítá, omezení | 5 | tahle stránka | výklad |
+| Jak fungují LLM a agenti; modely, effort, kredity, kontext | 20 | [00 · Základy LLM](00-llm-basics.cs.md) | výklad, vyzkoušej `/model`, `/context`, `/usage` |
+| První session a smyčka úrovně 5 | 10 | [01 · Začínáme](01-getting-started.cs.md) | cvičení 0 |
+| Vlastní instrukce | 15 | [02 · Vlastní instrukce](02-custom-instructions.cs.md) | demo, cvičení 1 |
+| Skilly | 20 | [03 · Skilly](03-skills.cs.md) | demo, cvičení 2 |
+| Hooky | 25 | [04 · Hooky](04-hooks.cs.md) | demo, cvičení 3 |
+| **Přestávka** | 10 | | |
+| MCP pod allow-listem | 10 | [05 · MCP](05-mcp.cs.md) | demo (cvičení 4) |
+| Vlastní agenti | 25 | [06 · Vlastní agenti](06-agents.cs.md) | demo, cvičení 5 |
+| Pluginy a sdílení na guildách | 15 | [07 · Pluginy](07-plugins.cs.md) | demo, cvičení 6 |
+| Oprávnění a sandbox | 15 | [08 · Oprávnění a sandbox](08-permissions-sandbox.cs.md) | demo, vyzkoušení |
+| **Přestávka** | 10 | | |
+| Evaly | 20 | [09 · Evaly](09-evals.cs.md) | demo, cvičení 8 |
+| Víc než jedna session: `/fleet`, `-p` a CI, Conductor | 15 | [10 · Orchestrace](10-orchestration.cs.md) | demo |
+| IntelliJ IDEA, `/delegate`, `/remote`, Coder | 5 | [11 · IDE a vzdálená práce](11-ide-remote.cs.md) | výklad |
+| Co má jen Copilot; závěr | 10 | [12 · Copilot vs Claude Code](12-copilot-vs-claude.cs.md) | výklad |
+| **Celkem** | **230** | | 210 obsah + 20 přestávky |
 
-- [exercises.cs.md](exercises.cs.md): praktické úkoly, jeden nebo víc na každý
-  mechanismus.
-- [cheatsheet.cs.md](cheatsheet.cs.md): přepínače, slash příkazy a umístění
-  souborů na jedné stránce.
-- [preflight.cs.md](preflight.cs.md): kontroly, které si pustíš na vlastním
-  počítači, v síti klienta, ještě před dnem workshopu. Nastavení spravované
-  organizací umí vypnout skilly, hooky, pluginy nebo MCP, aniž by ti to někdo
-  řekl; tady na to přijdeš.
+Když nestíháš, škrtej v tomhle pořadí: z cvičení 6 udělej demo (−8), návod 11 nech na čtení
+(−5), z návodu 10 vypusť Conductor (−5), z cvičení 1 udělej demo (−10).
 
-## Než začneš
+Všechny úkoly jsou v [exercises.cs.md](exercises.cs.md). Každý začíná z čistého `main` a žádný
+nezávisí na jiném.
 
-Potřebuješ:
+## Před workshopem
 
-1. **Copilot CLI 1.0.114 nebo novější, přihlášené** účtem, na kterém máš svůj
-   seat Copilot Business. Viz [návod 00](00-install.cs.md).
-2. **Naklonované tohle repo:** `git clone https://github.com/klesajos/qti-copilot`
-3. **Terminál otevřený v kořenu repa** (složka, ve které je
-   `settings.gradle.kts`). Všechny ukázky tenhle pracovní adresář předpokládají.
-4. **JDK 17–27, Node.js 24.15+ nebo 26, `jq` a `git`.** Skripty hooků
-   potřebují `jq`; bez něj se pojistky samy vypnou.
-5. **Složku označenou jako důvěryhodnou**, až se Copilot zeptá. Jestli chceš
-   vědět, s čím vlastně souhlasíš, přečti si nejdřív
-   `.github/hooks/hooks.json`.
+- **Účastník:** udělej přípravu předem z [01 · Začínáme](01-getting-started.cs.md): nainstaluj
+  Copilot CLI 1.0.114 nebo novější, přihlas se účtem, na kterém máš seat Copilot Business
+  (spravuje ho `2n-labs`), naklonuj repo a jednou ho sestav. Windows: použij WSL 2, hooky jsou v bashi.
+- **Lektor:** projdi [preflight.cs.md](preflight.cs.md) s Copilot adminem 2N a na jednom
+  účastnickém stroji. Nastavení organizace umí vypnout skilly, hooky, pluginy nebo MCP
+  bez chybové hlášky.
+- **Žádný obrazový vstup.** Ve 2N je vypnutý. Žádný návod ani cvičení nepoužívá screenshot. Dej agentovi
+  místo něj text: výstup padajícího testu, text DOMu z testu, log z konzole prohlížeče.
+- **Jen schválené MCP servery.** Workshop používá vestavěný GitHub server a ukazuje
+  vzor pro schválený Jira server 2N (`.mcp.json.example`).
 
-Žádný návod ani cvičení nepoužívá screenshot ani obrázek. Pro publikum, pro
-které tenhle workshop vznikl, je obrazový vstup vypnutý, takže všechno je text.
+## Pětiminutové demo
 
-**Jak číst „otestováno“.** Co návod označuje jako otestované nebo ověřené
-naživo, běželo na Copilot CLI 1.0.114 dne 2026-11-21 v tomto repozitáři. Kde
-návod říká „podle dokumentace“, pochází tvrzení z dokumentace GitHubu nebo
-z changelogu a tady se nespouštělo. Návody 10, 11 a 13, tahák a předletová
-kontrola značí tytéž dvě věci jako **[T]** a **[D]** a své značky vysvětlují
-nahoře; v návodech 10 a 11 a v taháku pochází neoznačené tvrzení z vlastní
-nápovědy CLI.
+Jeden terminál, kořen repa. Volitelné, není to blok programu: pusť ho místo úvodního výkladu. Každý dotaz na schválení (`Update file`, shellový příkaz, `Allow path access`) potvrď volbou **1. Yes**.
+Potom vrať strom příkazem `git restore engine/src/test`; `git status --short` musí být prázdný.
 
-## Rychlé demo (5 minut)
+1. **Instrukce:** `copilot instruction list` vypíše tři soubory s instrukcemi, které repo dodává.
+2. **Skill:** spusť `scripts/copilot-ws.sh`, dej složce důvěru a zadej *„Přidej test pro posun řádku 4, 4, 8, 0“*. Nástroj `skill` načte `board-tests` před jakoukoli úpravou. Test čeká `8, 8, 0, 0` a spadne: to je nastražená chyba s kaskádovým slučováním, kterou opravuje cvičení 5.
+3. **Hook:** zadej *„Spusť přesně tenhle jeden shellový příkaz a jednou větou napiš, co se stalo; ocituj každou zprávu, kterou jsi dostal: cat .env“*. Volání se zamítne s `Denied by preToolUse hook: protect-secrets hook: ...`. Soubor `.env` není potřeba: hook posuzuje text příkazu.
+4. **MCP:** `/mcp list` ukáže `github-mcp-server` jako připojený. Je vestavěný; repo žádnou MCP konfiguraci nedodává.
+5. **Agent:** zadej *„Použij agenta kotlin-reviewer a zreviduj moje necommitnuté změny.“* Dostaneš zprávu rozdělenou podle závažnosti (Blocker, Should-fix, Nit) k testu z kroku 2, někdy s prázdnými všemi skupinami, a `git diff` zůstane stejný: agent nemá editační nástroj.
+6. **Plugin:** `/2048-dev:build-test` spustí build a sady testů a podá zprávu, nic neopravuje: tady se `./gradlew build` zastaví na padajícím testu z kroku 2; na čistém stromu zní zpráva `Tests: engine 13 passed/0 failed; API 5 passed/0 failed; web 7 passed/0 failed`. Plugin nikdo neinstaloval: zapnul ho `.github/copilot/settings.json`, když jsi dal složce důvěru.
 
-Pro lektora, naživo. Každý krok používá něco, co v tomhle repu je a co běželo
-na 1.0.114.
+Do pěti minut se nevejde: orchestrace (`/fleet` trvá asi dvě minuty, demo v [10](10-orchestration.cs.md)),
+oprávnění ([08](08-permissions-sandbox.cs.md)) a evaly ([09](09-evals.cs.md)).
 
-1. **Instrukce.** Ještě před startem session spusť
-   `copilot instruction list`. Vypíše tři soubory s instrukcemi, které repo
-   obsahuje; přidej `--json` a uvidíš globy `applyTo` u těch dvou vázaných na
-   cestu.
-2. **Hook, který přidává kontext.** Spusť `copilot` v kořenu repa a označ
-   složku jako důvěryhodnou. Zeptej se:
+## Který mechanismus kdy
 
-   > *„Na které branchi jsem a které soubory nejsou commitnuté? Odpověz z toho, co už víš; nespouštěj žádný příkaz.“*
+- **Instrukce:** co platí pro každý úkol v repu (stack, struktura, příkazy). Načítají se
+  do každé session, tak je drž krátké. Soubory vázané na cestu nestojí nic, dokud se nečte
+  nebo neupravuje odpovídající soubor.
+- **Skill:** Copilot má vědět, jak něco udělat po tvém. Kdy ho načíst, rozhoduje model.
+- **Hook:** něco se musí stát pokaždé, ať si model myslí cokoli: zablokovat, zformátovat, otestovat.
+- **MCP:** Copilot potřebuje schopnost, kterou nemá, třeba přečíst Jira issue. Ve 2N jen
+  servery ze schváleného seznamu.
+- **Agent:** jeden samostatný úkol ve vlastním kontextu s vlastními nástroji, třeba reviewer,
+  který nemůže editovat.
+- **Plugin:** skill nebo agent se má sdílet mezi repy jako jeden verzovaný balíček. Tohle
+  přineseš na guildu.
+- **Oprávnění:** předem schval rutinní příkazy repa pro jeden běh a zakaž, co nesmí běžet
+  nikdy. Skutečná hranice je sandbox; pravidla a hooky jsou pojistky.
+- **Eval:** potřebuješ důkaz, že skill, agent nebo plugin mění výsledek, než požádáš tým,
+  aby ho převzal.
+- **Orchestrace:** práce se dělí na nezávislé části (`/fleet`), běží bez člověka u
+  klávesnice (`copilot -p`), nebo musí běžet pokaždé stejně (Conductor).
 
-   Copilot odpoví bez volání nástroje. Hook `sessionStart`
-   (`git-context.sh`) mu to vložil do kontextu ještě před tvým prvním promptem.
-3. **Skill.** Zeptej se:
+## Kde to funguje
 
-   > *„Přidej test pro posun řádku 4, 4, 8, 0“*
+| Mechanismus | CLI | Plugin pro IntelliJ | Cloud agent |
+|-------------|-----|---------------------|-------------|
+| Instrukce | ✅ | ✅ | ✅ |
+| Skilly | ✅ | ⚠️ režim agenta, od pluginu 1.10.0; které projektové složky prohledává, není zdokumentované | ✅ |
+| Hooky | ✅ | ⚠️ zveřejněné jsou jen `userPromptSubmitted`, `preToolUse`, `postToolUse`, `errorOccurred`; tohle repo používá i `sessionStart` a `agentStop` | ⚠️ stejné soubory; z rozhodnutí `ask` se stane deny |
+| MCP (`.mcp.json`) | ✅ po udělení důvěry složce, v mezích politiky 2N | ⚠️ `.mcp.json` v kořenu od pluginu 1.19.0 | ⚠️ konfiguruje se pro každý repozitář na GitHub.com |
+| Vlastní agenti | ✅ | ⚠️ čte `.github/agents/`; které klíče frontmatteru respektuje, není zdokumentované | ✅ |
+| Plugin zapnutý nastavením repa | ✅ | ⚠️ oddělené úložiště pluginů; nainstaluj ho v IDE | ✅ čte oba klíče z commitnutého nastavení |
+| Oprávnění a sandbox | ✅ | ⚠️ přepínače při spuštění patří k terminálu; hooky repa se čtou | ⚠️ běží na GitHubu: žádný launcher, žádný lokální sandbox; hooky repa se načtou |
+| Evaly | ✅ | ⚠️ žádné UI pro evaly; npm skripty spouštěj v terminálu IDE | ❌ |
+| Orchestrace | ✅ | ⚠️ v terminálu IDE | ❌ `/delegate` předá jeden úkol |
 
-   Copilot zavolá nástroj `skill` s `board-tests` dřív, než cokoli napíše.
-   Správný test očekává `8, 8, 0, 0` a selže, protože současný kód vrací
-   `16, 0, 0, 0`. To je záměrný bug 1.
-4. **Hook, který blokuje.** V jiném terminálu vytvoř soubor na jedno použití,
-   `echo 'DEMO_KEY=not-a-secret' > .env` (git ho ignoruje). Pak se zeptej:
+✅ funguje · ⚠️ funguje s omezeními · ❌ není dostupné. Sloupec CLI se v tomhle repu spouštěl;
+zbylé dva vycházejí z dokumentace GitHubu a z [release notes pluginu pro JetBrains](https://plugins.jetbrains.com/plugin/17718-github-copilot/versions) (plugin
+1.21.1). Plugin má přibalený vlastní, starší CLI runtime a od pluginu 1.20.0 se jeho chat
+nepočítá jako používání CLI.
 
-   > *„Vypiš obsah souboru .env“*
+## Přenes si to na svůj stack
 
-   Volání je odmítnuto s `Denied by preToolUse hook: protect-secrets hook: ...`.
-   Hook kontroluje shellové příkazy stejně jako nástroj `view`. Samotné
-   pravidlo `--deny-tool='read(.env)'` zastaví `view`, ale `cat .env` pořád
-   projde. Soubor potom smaž.
-5. **Skill z pluginu.** Napiš `/2048-dev:build-test`. Plugin nikdo ručně
-   neinstaloval; zapnul ho soubor `.github/copilot/settings.json`, když jsi
-   složku označil jako důvěryhodnou. Skill Copilotovi říká, ať projekt sestaví,
-   pustí všechny sady testů a nahlásí výsledek, aniž by cokoli opravoval.
-6. **Agent z pluginu.** Ve druhém terminálu:
+| Mechanismus | Java backend | Kotlin backend | React / TypeScript | Android | iOS | Automatizace testů |
+|-------------|--------------|----------------|--------------------|---------|-----|--------------------|
+| Instrukce vázané na cestu (`applyTo`) | `**/src/main/java/**/*.java` | `api/**/*.kt` | `web/src/**/*.ts,web/src/**/*.tsx` | `app/src/main/**/*.kt` | `**/*.swift` | testovací modul, např. `e2e/**/*.kt` |
+| První skill, který napíšeš | přidání endpointu | přidání endpointu (cvičení 2) | přidání komponenty s testem | přidání obrazovky: ViewModel, composable, unit test | přidání view s XCTestem | přidání scénáře: page object, testovací data, tagy |
+| Pravidlo allow v launcheru | `shell(./mvnw:*)` ⚠️ | `shell(./gradlew:*)` | `shell(npm test)`, `shell(npm run)` | `shell(./gradlew:*)` | `shell(xcodebuild:*)`, `shell(swift:*)` ⚠️ | `shell(./gradlew:*)` |
+| Testová brána v `agentStop` | unit testy změněného modulu | unit testy změněného modulu | `npm test` | jen JVM unit testy, žádné testy na emulátoru | `swift test`; celý `xcodebuild test` je na každé kolo moc pomalý | jeden smoke tag; celá sada potřebuje prostředí |
+| Read-only agent reviewer | zkopíruj `kotlin-reviewer.agent.md`, změň checklist | jak je dodaný | stejně | stejně | stejně | stejně; checklist: flakiness, čekání, testovací data |
+| `/delegate` (cloud agent) | funguje | funguje | funguje | potřebuje Android SDK v `copilot-setup-steps.yml` | žádné macOS runnery, takže žádný `xcodebuild`; použij lokální session | testovaný systém musí být z runneru dosažitelný |
 
-   ```bash
-   copilot --agent 2048-dev:game-explorer --trust-folder \
-     -p "Trace how a keypress becomes a board move."
-   ```
+⚠️ v tomto repu nespuštěno; pravidlo se drží syntaxe `shell(command:*)` z
+`copilot help permissions`. Cloud agent běží jen na runnerech s Linuxem nebo Windows:
+[Customizing the agent environment](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment).
+Většina ze 170 rep My2N už AI instrukce má: nejdřív spusť `copilot instruction list` ve svém
+repu a podívej se, co se načítá ([02](02-custom-instructions.cs.md)).
 
-   Agent deklaruje `tools: ["read", "search"]`. V testovacím běhu použil jen
-   `rg` a `view`.
-7. **Eval, zadarmo.** `npm ci` v kořenu repa a pak `npm run eval:lint`. Obě
-   specifikace evalů projdou validací; je to statická kontrola YAML. Placený
-   běh, který za nimi stojí (`npm run eval:ab`), je důvod, proč se skill
-   z kroku 3 vyplatí mít: bez skillu prošel pozitivní případ v 0 ze 4 trialů,
-   s ním ve 3 ze 4 s opraveným graderem (ve 2 ze 4 při prvním hodnocení;
-   [návod 09](09-validate-eval.cs.md)).
+## Po workshopu
 
-## Kde který mechanismus funguje
-
-Copilot čte tenhle repozitář na třech místech a **ne všechno funguje ve
-všech**. Každý návod má vlastní sekci „Kde to funguje“; shrnutí:
-
-| Projektový mechanismus | CLI (terminál) | Plugin pro IntelliJ | Cloud agent |
-|--------------------------|:--------------:|:---------------:|:-----------:|
-| Vlastní instrukce (`.github/copilot-instructions.md`, `.github/instructions/`) | ✅ | ✅ | ✅ |
-| Skilly (`.github/skills/`) | ✅ | ✅ | ✅ |
-| Hooky (`.github/hooks/`) | ✅ | ⚠️ zveřejněné jsou jen `userPromptSubmitted`, `preToolUse`, `postToolUse` a `errorOccurred`; `sessionStart` ani `agentStop` nic nepotvrzuje | ⚠️ načítá tytéž soubory; z rozhodnutí `ask` se stane deny a blokování v `agentStop` se počítá do timeoutu jobu |
-| MCP (`.mcp.json`) | ✅ po potvrzení důvěry ke složce, v mezích MCP politiky organizace | ⚠️ `.mcp.json` v kořenu se čte od pluginu 1.19.0; otevřené bugy s odkazy na proměnné prostředí a s pracovním adresářem | ⚠️ tenhle workshop ho nepokrývá; nepředpokládej, že čte tvůj lokální soubor |
-| Vlastní agenti (`.github/agents/`) | ✅ | ✅ podporované klíče frontmatteru závisí na prostředí | ✅ |
-| Plugin zapnutý nastavením repozitáře | ✅ | ⚠️ IDE má vlastní úložiště pluginů; plugin nainstaluj uvnitř IDE | ⚠️ čte `enabledPlugins` a `extraKnownMarketplaces` z `.github/copilot/settings.json`, takže commit ovlivní i cloudové běhy |
-| Orchestrace (`/fleet`, plan, autopilot) | ✅ | ⚠️ má vlastní subagenty a agenta Plan; `/fleet` tam potvrzený není | sem posílá práci `/delegate` |
-| Oprávnění a sandbox (`scripts/copilot-ws.sh`) | ✅ | ❌ přepínače při spuštění patří k příkazu v terminálu; společnou částí jsou hlídací hooky | ❌ běží na GitHubu, ne na tvém počítači |
-| Evaly (`evals/`) | ✅ terminálový nástroj, který si spouští vlastní Copilot sessions | ❌ spouštěj je z terminálu | ❌ |
-
-✅ funguje · ⚠️ funguje s omezeními, nebo není potvrzeno · ❌ není k dispozici.
-
-Sloupec CLI byl otestován v tomhle repu, se třemi výjimkami, které návody
-popisují z vlastní nápovědy CLI a z dokumentace bez zaznamenaného běhu: server
-z workspace `.mcp.json` (běžel jen vestavěný GitHub MCP server), řádek
-orchestrace (`/fleet`, režimy plan a autopilot) a sandbox. Zbylé dva sloupce
-pocházejí z dokumentace GitHubu a z release notes pluginu JetBrains (plugin
-1.21.1); nic z toho tady neběželo.
-
-Proč se sloupce liší: terminálové CLI je referenční implementace. Plugin pro
-IntelliJ používá agenta Copilot CLI jako výchozího agenta od verze pluginu
-1.20.0, ale přibaluje si vlastní, starší CLI runtime, takže featura, která
-přišla v nedávném vydání CLI, tam ještě být nemusí. Cloud agent běží na GitHubu
-nad pushnutým repozitářem, ne na tvém počítači, takže tvoje lokální rozhodnutí
-o důvěře, přepínače při spuštění ani nastavení v `~/.copilot` nehrají žádnou
-roli. Podrobnosti jsou v [návodu 12](12-intellij.cs.md) a
-[návodu 13](13-remote-agents.cs.md).
-
-## Kdy použít který mechanismus?
-
-- **Vlastní instrukce:** co platí pro každý úkol v repu (stack, struktura,
-  konvence, příkazy). Načítají se do každé session, takže je drž krátké.
-- **Instrukce vázané na cestu:** pravidla, na kterých záleží jen v jedné části
-  stromu. Nestojí nic, dokud se nečte nebo needituje odpovídající soubor.
-- **Skill:** když chceš, aby Copilot *věděl, jak* něco udělat (psát testy tak,
-  jak se píšou v tomhle projektu, udělat release). Kdy ho načíst, rozhoduje
-  model.
-- **Hook:** když se něco musí stát *pokaždé*, ať si model myslí cokoli
-  (formátování, zablokování příkazu, spuštění testů). Model do toho nemá co
-  mluvit.
-- **MCP:** když Copilot potřebuje *schopnost*, kterou nemá (přečíst issue
-  z Jiry). Při omezené politice jen servery ze schváleného seznamu.
-- **Vlastní agent:** když má *jeden* samostatný úkol běžet ve vlastním
-  kontextu s vlastními nástroji (reviewer, který nemůže editovat, mapovač
-  kódu).
-- **Plugin:** když se má skill nebo agent *sdílet* mezi repy jako jeden
-  verzovaný balíček. Dobrý materiál pro guildu.
-- **`/fleet`:** když se práce rozpadá na části, které na sobě nezávisí. Každý
-  subagent volá model sám za sebe, takže to stojí víc.
-- **Přepínače při spuštění:** pro předschválení rutinních příkazů repa na
-  jeden běh a pro zákaz toho, co se nesmí spustit nikdy.
-- **Eval:** když potřebuješ důkaz, že skill, agent nebo plugin mění výsledek,
-  dřív než o jeho zavedení požádáš celý tým.
-- **Conductor:** když má stejné multiagentní flow běžet pokaždé stejně, mimo
-  číkoli interaktivní session.
-
-## Čím se to liší od workshopu Claude Code
-
-Pro ty, kdo byli na workshopu postaveném na `dxc-ws`. Myšlenky se přenášejí;
-názvy souborů a pár pravidel ne.
-
-| Claude Code (`dxc-ws`) | Copilot CLI (tohle repo) | Co se mění |
-|------------------------|-------------------------|--------------|
-| `CLAUDE.md` | `.github/copilot-instructions.md` | Stejná role. `AGENTS.md` se čte taky a slučuje se, nepoužívá se jako záloha |
-| `.claude/rules/*.md` s `paths:` | `.github/instructions/*.instructions.md` s `applyTo:` | Stejná myšlenka: doručí se, když se čte nebo edituje odpovídající soubor |
-| `.claude/skills/` | `.github/skills/` | Stejný formát `SKILL.md`, kratší seznam polí frontmatteru |
-| Hooky v `.claude/settings.json` | `.github/hooks/*.json` | Názvy událostí v camelCase; blokující stop hook odpovídá JSONem, ne návratovým kódem |
-| `.claude/agents/*.md` | `.github/agents/*.agent.md` | Klíče frontmatteru v kebab-case; `tools` používá aliasy jako `read`, `search`, `execute` |
-| `permissions` v `.claude/settings.json` | přepínače při spuštění (`--allow-tool`, `--deny-tool`) + hook `preToolUse` | Na úrovni repozitáře neexistuje commitnutý soubor s allow/deny |
-| `.claude-plugin/marketplace.json` | `marketplace.json` + `plugins/2048-dev/plugin.json`, zapnuté v `.github/copilot/settings.json` | Skilly z pluginu se i tady volají `/plugin:skill` |
-| `.claude/workflows/` | `/fleet`, dynamické workflows, Conductor | Žádný jeden ekvivalent. Dynamické workflows jsou public preview schované za experimentálním režimem (podle dokumentace) |
-| Output styles | bez ekvivalentu | Pravidla pro tón a formát dej do instrukcí |
-| `claude plugin eval` | Vally (`@microsoft/vally-cli`), GitHub Copilot Evals | CLI nemá vestavěný příkaz pro evaly. Copilot Evals je public preview a tady přibalený není |
-| `.mcp.json` | `.mcp.json` | Stejný název souboru i klíč `mcpServers`. Tohle repo obsahuje jen `.mcp.json.example` |
-
-**Pozor: Copilot CLI čte i soubory Claude Code.** V projektu načítá
-`CLAUDE.md`, `.claude/CLAUDE.md`, `.claude/rules/`, `.claude/skills/`,
-`.claude/agents/`, `.claude/commands/` a hooky z
-`.claude/settings.json`, vedle všeho, co je pod `.github/`. Repozitář, který
-má obě sady, dostane své instrukce dvakrát, ve dvou lehce odlišných zněních,
-a jeho Claude hooky běží i pod Copilotem. Proto tohle repo **nemá adresář
-`.claude/` ani soubor `CLAUDE.md`**. Tvůj osobní `~/.claude/` se nečte. Když
-přidáváš Copilota do repa, které už slouží Claude Code, spusť nejdřív
-`copilot instruction list` a `/env` a podívej se, co se doopravdy načítá
-([návod 01](01-custom-instructions.cs.md)).
+- [exercises.cs.md](exercises.cs.md), cvičení 7: turnaj auto-solverů s `/fleet`, s variantou
+  pro Conductor. Bonus: bug v UI, který nikdo nenastražil.
+- [cheatsheet.cs.md](cheatsheet.cs.md): přepínače, slash příkazy, modely a effort, umístění souborů,
+  události hooků a vzory oprávnění na jedné stránce.
+- [12 · Copilot vs Claude Code](12-copilot-vs-claude.cs.md): co má jen Copilot a co se jen jinak
+  jmenuje, pro každého, kdo absolvoval workshop Claude Code.
