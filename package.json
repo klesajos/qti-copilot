@@ -1,0 +1,17 @@
+{
+  "name": "qti-copilot-evals",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Eval tooling for the qti-copilot workshop. The app itself lives in engine/, api/ and web/.",
+  "engines": {
+    "node": "^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "eval:lint": "VALLY_TELEMETRY_OPTOUT=1 vally lint -e evals",
+    "eval": "VALLY_TELEMETRY_OPTOUT=1 EVALUATE_USE_HOST_COPILOT_HOME=1 vally eval --output-dir evals/results",
+    "eval:ab": "VALLY_TELEMETRY_OPTOUT=1 EVALUATE_USE_HOST_COPILOT_HOME=1 vally experiment run evals/experiments/board-tests-ab.experiment.yaml --output-dir evals/results"
+  },
+  "devDependencies": {
+    "@microsoft/vally-cli": "0.21.0"
+  }
+}

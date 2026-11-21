@@ -1,0 +1,11 @@
+name: board-tests-ab
+evals:
+  - ../board-tests/eval.yaml
+matrix:
+  skills:
+    path: /environment/skills
+    values:
+      - without: []
+      - with: ["../../.github/skills/board-tests"]
+baseline:
+  skills: without

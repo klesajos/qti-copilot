@@ -1,0 +1,133 @@
+# Test-coverage audit as a Conductor workflow.
+#
+# Three read-only agents inventory one layer each in parallel; a fourth merges
+# their findings into one gap table. The routing is plain YAML, so the same
+# three inventories run every time, in the same order of responsibility.
+#
+#   conductor validate conductor/test-coverage-audit.yaml
+#   conductor run conductor/test-coverage-audit.yaml
+#
+# Run from the repository root: the agents read files relative to it.
+
+workflow:
+  name: test-coverage-audit
+  description: Inventory behaviours per layer in parallel, then report which have no test
+  version: "1.0.0"
+  entry_point: layer_inventories
+
+  runtime:
+    provider: copilot
+    # Let Copilot pick from the models your organization allows. Conductor's own
+    # default is a fixed model id, which fails when that model is not on the list.
+    default_model: auto
+
+  context:
+    mode: explicit
+
+  limits:
+    max_iterations: 10
+    timeout_seconds: 900
+
+# Every tool an agent lists must also be listed here.
+tools:
+  - view
+  - grep
+  - glob
+
+parallel:
+  - name: layer_inventories
+    description: One read-only inventory per layer, run at the same time
+    agents:
+      - engine_inventory
+      - api_inventory
+      - web_inventory
+    failure_mode: continue_on_error
+    routes:
+      - to: reporter
+
+agents:
+  - name: engine_inventory
+    description: Behaviours of the board rules and the tests that cover them
+    tools: [view, grep, glob]
+    prompt: |
+      You audit test coverage. Read only; never modify a file.
+
+      Source: engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+      Tests:  engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+
+      List every distinct behaviour the source implements (merge rules, each move
+      direction, tile spawning, win and game-over detection, input validation). For each
+      one, name the test that covers it, or say that none does.
+    output:
+      behaviours:
+        type: array
+        description: One entry per behaviour, as "behaviour — covering test name, or NONE"
+      untested_count:
+        type: number
+        description: How many behaviours have no covering test
+
+  - name: api_inventory
+    description: Behaviours of the REST service and the tests that cover them
+    tools: [view, grep, glob]
+    prompt: |
+      You audit test coverage. Read only; never modify a file.
+
+      Source: api/src/main/kotlin/com/quanti/g2048/api/
+      Tests:  api/src/test/kotlin/com/quanti/g2048/api/
+
+      List every distinct behaviour the source implements (each endpoint, each error
+      response, what happens around a move, game status). For each one, name the test
+      that covers it, or say that none does.
+    output:
+      behaviours:
+        type: array
+        description: One entry per behaviour, as "behaviour — covering test name, or NONE"
+      untested_count:
+        type: number
+        description: How many behaviours have no covering test
+
+  - name: web_inventory
+    description: Behaviours of the React UI and the tests that cover them
+    tools: [view, grep, glob]
+    prompt: |
+      You audit test coverage. Read only; never modify a file.
+
+      Source and tests: web/src/ (tests are the *.test.ts and *.test.tsx files)
+
+      List every distinct behaviour the source implements (key mapping, rendering,
+      starting a game, sending a move, error display, status messages). For each one,
+      name the test that covers it, or say that none does.
+    output:
+      behaviours:
+        type: array
+        description: One entry per behaviour, as "behaviour — covering test name, or NONE"
+      untested_count:
+        type: number
+        description: How many behaviours have no covering test
+
+  - name: reporter
+    description: Merges the three inventories into one gap report
+    tools: []
+    input:
+      - layer_inventories.outputs
+    prompt: |
+      Three auditors inventoried the test coverage of a 2048 game, one layer each:
+
+      {{ layer_inventories.outputs | json }}
+
+      Write one Markdown table with the columns Layer, Behaviour, Covered by. Put the
+      untested behaviours first. Below the table, name the three gaps you would close
+      first and say why in one line each. Use only what the auditors reported.
+    output:
+      report:
+        type: string
+        description: The Markdown gap report
+      untested_total:
+        type: number
+        description: Total number of untested behaviours across all layers
+    routes:
+      - to: $end
+
+output:
+  report: "{{ reporter.output.report }}"
+  untested_total: "{{ reporter.output.untested_total }}"

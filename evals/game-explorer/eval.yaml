@@ -1,0 +1,49 @@
+name: game-explorer
+description: Is the game-explorer agent delegated to, and does its trace reach the right files?
+type: capability
+defaults:
+  executor: copilot-sdk
+  runs: 1
+  timeout: 5m
+# The agent ships inside the 2048-dev plugin; the eval stages it as a project agent.
+agent_environment:
+  files:
+    - src: ../../plugins/2048-dev/com.github.copilot/agents/game-explorer.agent.md
+      dest: .github/agents/game-explorer.agent.md
+    - src: ../../web/src/App.tsx
+      dest: web/src/App.tsx
+    - src: ../../web/src/keys.ts
+      dest: web/src/keys.ts
+    - src: ../../web/src/api.ts
+      dest: web/src/api.ts
+    - src: ../../api/src/main/kotlin/com/quanti/g2048/api/GameController.kt
+      dest: api/src/main/kotlin/com/quanti/g2048/api/GameController.kt
+    - src: ../../api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+      dest: api/src/main/kotlin/com/quanti/g2048/api/GameService.kt
+    - src: ../../engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+      dest: engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+stimuli:
+  - name: traces-left-arrow
+    prompt: >-
+      Delegate to the game-explorer agent: trace how pressing the Left arrow key ends up
+      calling Board.move. Report its numbered trace. Do not modify any file.
+    tags:
+      suite: smoke
+    graders:
+      - type: completed
+      # Forced delegation: the main agent must hand the task to game-explorer.
+      - type: tool-calls
+        config:
+          required:
+            - name: "^task$"
+              args:
+                agent_type: "game-explorer"
+      - type: output-matches
+        config:
+          pattern: 'keys\.ts'
+      - type: output-matches
+        config:
+          pattern: 'GameService'
+      - type: diff-empty
+scoring:
+  threshold: 1

@@ -1,0 +1,64 @@
+name: board-tests
+description: Does the board-tests skill make Copilot write board tests the way this project does?
+type: capability
+defaults:
+  executor: copilot-sdk
+  runs: 2
+  timeout: 5m
+# Only application source is staged. No .github/, so the skill under test is the
+# only customization in the trial workspace.
+agent_environment:
+  skills:
+    - ../../.github/skills/board-tests
+  files:
+    - src: ../../engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+      dest: engine/src/main/kotlin/com/quanti/g2048/engine/Board.kt
+stimuli:
+  - name: game-over-edge-case
+    prompt: >-
+      Write a unit test for the 2048 board: a full board that still contains two equal
+      neighbours must not be reported as game over. Follow this project's test conventions.
+      This workspace has no build tool, so do not try to compile or run anything.
+    tags:
+      control: positive
+      suite: smoke
+    graders:
+      - type: completed
+      # The test lands where the project keeps its board tests.
+      - type: file-exists
+        config:
+          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+      # Test name is a plain-English sentence in backticks.
+      - type: file-matches
+        config:
+          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+          pattern: 'fun `[^`]+`\(\)'
+      # The board is built with the project's deterministic helper.
+      - type: file-matches
+        config:
+          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+          pattern: 'boardOf\('
+      # The correct assertion is kept, even though the current code fails it.
+      - type: file-matches
+        config:
+          path: engine/src/test/kotlin/com/quanti/g2048/engine/BoardTest.kt
+          pattern: 'assertFalse\('
+  - name: unrelated-question
+    prompt: >-
+      In two sentences, what does slideLineLeft return and what does it do to its argument?
+      Answer in chat only; do not create or change any file.
+    tags:
+      control: negative
+      suite: smoke
+    graders:
+      - type: completed
+      # A skill that fires on everything costs context for nothing.
+      - type: skill-invocation
+        config:
+          disallowed: [board-tests]
+      - type: output-matches
+        config:
+          pattern: '(?i)score'
+      - type: diff-empty
+scoring:
+  threshold: 1
