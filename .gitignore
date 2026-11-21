@@ -15,9 +15,11 @@ dist/
 .env
 .env.*
 
-# Copilot CLI: personal overrides and hook payload dumps
+# Copilot CLI: personal overrides, hook payload dumps, and your own MCP servers
+# (copy .mcp.json.example to .mcp.json; it may hold internal URLs)
 .github/copilot/settings.local.json
 .github/hooks/logs/
+.mcp.json
 
 # Eval results (contain prompts and tool output — review before sharing)
 evals/results/
