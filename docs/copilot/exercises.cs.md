@@ -49,7 +49,8 @@ Patche cvičení 0, 4 a `ex5-undo` všechny přidávají `GameServiceTest.kt`: n
    čtyři příkazy z [První session](01-getting-started.cs.md#první-session-3-min-před-cvičením-0).
 2. Plán. Vlož specifikaci. Asi po půl minutě se objeví box **Plan Ready for Review**;
    `Ctrl+E` ukáže celý plán. Zkontroluj ho: test před opravou, mění se jen dva soubory pod `api/`.
-   Zvol možnost 1, **Exit to Interactive execution mode without running the plan**.
+   Zvol **Exit to Interactive execution mode without running the plan** (ve verzi 1.0.114 možnost 3;
+   možnost 1, *Accept plan and continue*, by provedla celý plán bez zastavení na červené).
    > */plan Bug: `GameService.move` ignoruje výsledek `board.move(direction)` a spawnuje dlaždici,
    > i když se nic nepohnulo. Nejdřív padající test v novém `GameServiceTest.kt`, bez náhodných
    > dlaždic: dej `GameService` parametr konstruktoru `newBoard: () -> Board = { Board.newGame() }`.
@@ -273,8 +274,8 @@ hook `agentStop` běží při každém zastavení, ať se model rozhodl jakkoli.
    > Vitest, když jsou ve `web/src/`. Při selhání vypiš na stdout právě jeden JSON objekt
    > `{"decision":"block","reason":"..."}` a skonči s kódem 0. Do `reason` dej selhávající suity,
    > příkaz pro jejich opětovné spuštění a posledních 30 řádků výstupu testů. Z JSON na stdin
-   > přečti `stop_hook_active`: když je true, znovu neblokuj; napiš jeden řádek na stderr
-   > a skonči s kódem 2. Totéž udělej, když chybí `jq`. `hooks.json` neměň.“*
+   > přečti `stop_hook_active`: když je true a testy pořád selhávají, znovu neblokuj; napiš jeden
+   > řádek na stderr a skonči s kódem 2. Totéž udělej, když chybí `jq`. `hooks.json` neměň.“*
 3. Otestuj skript bez Copilota: hook čte JSON ze stdin a odpovídá na stdout. V druhém
    terminálu, z kořene repa, spusť tři případy: není co testovat, červená, červená po zablokování.
    ```bash
@@ -297,12 +298,14 @@ hook `agentStop` běží při každém zastavení, ať se model rozhodl jakkoli.
 4. Zpátky v session vlož navazující prompt. Session už používá nový skript: CLI
    ho při každém zastavení spouští z disku.
    > *„Ve `web/src/keys.ts` udělej `toDirection` citlivé na velikost písmen: velké `W` se už nesmí
-   > počítat jako tah. Testy nespouštěj.“*
+   > počítat jako tah. Žádný test neměň. Testy nespouštěj.“*
 
    Copilot upraví `keys.ts` a ukončí kolo. Hook spustí Vitest a pak začne kolo, které jsi
    nenapsal. Jeho promptem je `reason` z hooku: `run-tests hook: tests are failing in: web …` a
    výstup Vitestu s `× ignores the case of a WASD key`. Copilot kód znovu změní, spustí
-   `cd web && npm test` a zastaví se na zelené; při tomhle zastavení hook nevypíše nic.
+   `cd web && npm test` a zastaví se na zelené; při tomhle zastavení hook nevypíše nic. Pokud
+   místo toho přepsal padající test, brána neměla co zachytit: spusť `git restore web/src`
+   a prompt vlož znovu.
 5. Napiš `/diff`. Brána dokazuje, že testy procházejí, ne že je změna správná: Copilot může
    do mapy kláves přidat jen velká `S`, `A`, `D` a `W` vynechat. Pak spusť `git restore web/src`.
 
@@ -452,11 +455,12 @@ testů zůstanou mimo hlavní kontext a explorer ani reviewer nemůžou editovat
 4. Vlož navazující prompt. Opravuje hlavní agent; reviewer nemá nástroj na editaci.
    > *„Oprav oba bugy v Board.kt tak, aby oba nové testy prošly. Žádný test neměň. Spusť
    > ./gradlew :engine:test a nahlas počty. Pak použij agenta kotlin-reviewer, ať zreviduje
-   > necommitnuté změny, a ukaž mi jeho nálezy.“*
+   > necommitnuté změny, a ukaž mi jeho report doslova.“*
 
    Uvidíš úpravu `Board.kt` (schval ji), běh testů s 15 prošlými a pak delegaci na
    `kotlin-reviewer`. Ten si změnu přečte přes `git status` a `git diff` a nálezy hlásí jako
-   Blocker, Should-fix a Nit. Hlavní agent může ten report zkrátit na jeden řádek.
+   Blocker, Should-fix a Nit. Pokud hlavní agent report i tak zkrátí, napiš: *„Ukaž report
+   agenta kotlin-reviewer doslova.“*
 5. Opravu si přečti sám přes `git diff engine/src/main`. Po sloučení se musí procházení posunout
    za sloučenou dlaždici a `isGameOver()` musí porovnat každou buňku s pravým a spodním sousedem.
 
@@ -663,7 +667,7 @@ projde lintem i dry-runem, a umíš říct, co zaznamenaný výsledek se skillem
    Pattern, který vyžaduje konkrétní název proměnné nebo prázdný řádek, třeba `val gained = slideLineLeft\(line\)`,
    shodí správný test, který věci pojmenuje jinak. Když takový najdeš, vlož:
    > *„Uvolni u `cascade-merge-line` každý pattern graderu, který vyžaduje konkrétní název proměnné,
-   > bílé znaky nebo zalomení řádku, aby prošel každý správný test, který se řídí skillem. Zachovej jeden
+   > volání, které skill nepředepisuje (například `intArrayOf` nebo `listOf`), bílé znaky nebo zalomení řádku, aby prošel každý správný test, který se řídí skillem. Zachovej jeden
    > grader na konvenci. Spusť znovu `npm run eval:lint`.“*
 3. Lint a dry-run. Ani jeden nevolá model:
    ```bash

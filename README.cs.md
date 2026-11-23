@@ -8,7 +8,8 @@ do ní přidáváme funkce, opravujeme chyby, dopisujeme testy a refaktorujeme, 
 generuje Copilot.
 
 Návody k workshopu jsou v [docs/copilot/](docs/copilot/README.cs.md). Začni tam: program zabere
-4 h, bez přípravy předem.
+4 h, bez přípravy předem. Kontrolu stroje den předem najdeš v
+[prep.cs.md](docs/copilot/prep.cs.md), nebo spusť `scripts/check-system.sh`.
 
 ## Požadavky
 

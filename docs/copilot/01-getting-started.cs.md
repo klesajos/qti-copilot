@@ -31,6 +31,16 @@ Potřebuješ seat Copilot Business nebo Enterprise se zapnutou politikou Copilot
 17–27 (toolchain JDK 21 si Gradle stáhne sám), Node.js 24.15+ nebo 26, `jq` a `git`. Na
 Windows použij WSL 2: hooky jsou bash skripty.
 
+Na macOS je `/usr/bin/java` jen zástupný program, který bez nainstalovaného JDK selže, a `openjdk`
+z Homebrew se do `PATH` nepřidá. Buď nainstaluj Temurin (`brew install --cask temurin`), který se
+zaregistruje sám, nebo přidej JDK z Homebrew do `PATH` v `~/.zshrc` a otevři nový terminál:
+```bash
+brew install openjdk
+echo 'export PATH="$(brew --prefix openjdk)/bin:$PATH"' >> ~/.zshrc
+```
+Bez toho první `./gradlew` v session selže a Copilot začne hledat JDK mimo repozitář a žádat
+o přístup k cestám.
+
 1. **Nainstaluj CLI.** Minimum je 1.0.114; CLI se při startu aktualizuje samo. Homebrew, WinGet
    a instalační skript najdeš na [stránce o instalaci](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli).
    ```bash

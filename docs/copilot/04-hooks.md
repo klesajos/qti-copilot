@@ -149,7 +149,8 @@ exit 0
 - **`git-context.sh`** (`sessionStart`) prints the branch and up to 10 uncommitted files as
   `{"additionalContext": "..."}`. It is a snapshot from session start and is not refreshed.
 - **`block-destructive.sh`** (`preToolUse`): the same skeleton with five regex rules. Each reason
-  names the safe route, such as `git push --force-with-lease`. `rm -rf` of build output passes.
+  names the safe route, such as `git push --force-with-lease`. `rm -rf` of build output passes, and so does a
+  scratch directory: a `/tmp/…` path, or a variable the same command filled with `mktemp`.
 - **`format.sh`** (`postToolUse`) takes `.path` from an object, or the `*** Add File:` /
   `*** Update File:` headers from a patch string, and runs Prettier on `web/src/` (needs
   `cd web && npm ci`). Its `additionalContext` tells the model to re-read the now changed file.

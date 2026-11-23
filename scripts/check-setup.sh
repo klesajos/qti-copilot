@@ -14,7 +14,9 @@ miss() { printf '  MISS  %s\n        %s\n' "$1" "$2"; missing=$((missing + 1)); 
 echo "Tools"
 if command -v copilot >/dev/null; then ok "$(copilot --version 2>/dev/null | head -1)  (1.0.114 or newer)"
 else miss "copilot" "Install it: npm install -g @github/copilot"; fi
-if command -v java >/dev/null; then ok "$(java -version 2>&1 | head -1)  (JDK 17-27)"
+# macOS ships a /usr/bin/java stub that fails without a JDK, so run it instead of only finding it.
+if java -version >/dev/null 2>&1; then ok "$(java -version 2>&1 | head -1)  (JDK 17-27)"
+elif command -v java >/dev/null; then miss "java" "java is on PATH but no JDK answers. Homebrew: export PATH=\"\$(brew --prefix openjdk)/bin:\$PATH\""
 else miss "java" "Install any JDK 17-27; Gradle downloads JDK 21 itself."; fi
 if command -v node >/dev/null; then ok "node $(node --version)  (24.15+ or 26)"
 else miss "node" "Install Node.js 24.15+ or 26."; fi

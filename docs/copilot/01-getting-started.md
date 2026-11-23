@@ -31,6 +31,16 @@ You need a Copilot Business or Enterprise seat with the Copilot CLI policy enabl
 17–27 (Gradle fetches the JDK 21 toolchain itself), Node.js 24.15+ or 26, `jq` and `git`. On
 Windows use WSL 2: the hooks are bash scripts.
 
+On macOS, `/usr/bin/java` is a stub that fails until a JDK is installed, and Homebrew's `openjdk`
+is not put on `PATH`. Either install Temurin (`brew install --cask temurin`), which registers
+itself, or add Homebrew's JDK to `PATH` in `~/.zshrc` and open a new terminal:
+```bash
+brew install openjdk
+echo 'export PATH="$(brew --prefix openjdk)/bin:$PATH"' >> ~/.zshrc
+```
+Without it the first `./gradlew` in a session fails and Copilot goes looking for a JDK outside the
+repository, asking for path access.
+
 1. **Install the CLI.** 1.0.114 is the minimum; the CLI updates itself at start. Homebrew, WinGet
    and the install script are on the [install page](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli).
    ```bash

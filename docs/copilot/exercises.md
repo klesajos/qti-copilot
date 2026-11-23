@@ -48,7 +48,8 @@ The patches of exercises 0, 4 and `ex5-undo` all add `GameServiceTest.kt`: apply
    four commands of [First session](01-getting-started.md#first-session-3-min-before-exercise-0).
 2. Plan. Paste the spec. After about half a minute a **Plan Ready for Review** box appears;
    `Ctrl+E` shows the full plan. Check it: test before fix, only two files under `api/` change.
-   Choose option 1, **Exit to Interactive execution mode without running the plan**.
+   Choose **Exit to Interactive execution mode without running the plan** (option 3 in 1.0.114;
+   option 1, *Accept plan and continue*, would run the whole plan without stopping at red).
    > */plan Bug: `GameService.move` ignores the result of `board.move(direction)` and spawns a tile
    > even when nothing moved. Failing test first, in a new `GameServiceTest.kt`, without random
    > tiles: give `GameService` a constructor parameter `newBoard: () -> Board = { Board.newGame() }`.
@@ -270,8 +271,8 @@ the changed part of the tree fail, and only warns when they still fail on the ne
    > when `web/src/` has. On failure print exactly one JSON object
    > `{"decision":"block","reason":"..."}` on stdout and exit 0. Put the failing suites, the command
    > to rerun them and the last 30 lines of the test output into `reason`. Read `stop_hook_active`
-   > from the JSON on stdin: when it is true, do not block again; write one line to stderr and
-   > exit 2. Do the same when `jq` is missing. Do not change `hooks.json`."*
+   > from the JSON on stdin: when it is true and the tests still fail, do not block again; write
+   > one line to stderr and exit 2. Do the same when `jq` is missing. Do not change `hooks.json`."*
 3. Test the script without Copilot: a hook reads JSON on stdin and answers on stdout. In a second
    terminal, from the repository root, run three cases: nothing to test, red, red after a block.
    ```bash
@@ -294,12 +295,14 @@ the changed part of the tree fail, and only warns when they still fail on the ne
 4. Back in the session, paste the follow-up. The session already uses the new script: the CLI
    starts it from disk on every stop.
    > *"In `web/src/keys.ts`, make `toDirection` case-sensitive: an upper-case `W` must no longer
-   > count as a move. Do not run the tests."*
+   > count as a move. Do not change any test. Do not run the tests."*
 
    Copilot edits `keys.ts` and ends its turn. The hook runs Vitest, then a turn starts that you did
    not type. Its prompt is the hook's `reason`: `run-tests hook: tests are failing in: web …` and
    the Vitest output with `× ignores the case of a WASD key`. Copilot changes the code again, runs
-   `cd web && npm test` and stops on green; on that stop the hook prints nothing.
+   `cd web && npm test` and stops on green; on that stop the hook prints nothing. If the failing
+   test was rewritten instead, the gate had nothing to catch: run `git restore web/src` and paste
+   the prompt again.
 5. Type `/diff`. The gate proves that the tests pass, not that the change is right: Copilot can
    add upper-case `S`, `A`, `D` to the key map and leave `W` out. Then run `git restore web/src`.
 
@@ -449,11 +452,12 @@ output stay out of the main context, and the explorer and the reviewer cannot ed
 4. Paste the follow-up. The main agent fixes; the reviewer has no edit tool.
    > *"Fix both bugs in Board.kt so that the two new tests pass. Do not change any test. Run
    > ./gradlew :engine:test and report the counts. Then use the kotlin-reviewer agent to review the
-   > uncommitted changes and show me its findings."*
+   > uncommitted changes and show me its report word for word."*
 
    You see an edit to `Board.kt` (approve it), a test run with 15 passed, then a delegation to
    `kotlin-reviewer`. It reads the change with `git status` and `git diff` and reports findings as
-   Blocker, Should-fix and Nit. The main agent may shorten that report to one line.
+   Blocker, Should-fix and Nit. If the main agent still shortens the report, ask: *"Show the
+   kotlin-reviewer report verbatim."*
 5. Read the fix yourself with `git diff engine/src/main`. After a merge the scan must move past
    the merged tile, and `isGameOver()` must compare every cell with its right and lower neighbour.
 
@@ -658,8 +662,8 @@ lints and dry-runs, and you can say what the recorded with/without result proves
    `slideLineLeft` for merge rules, expected value first) and passes every correct test. A
    pattern that pins a variable name or a blank line, such as `val gained = slideLineLeft\(line\)`,
    fails a correct test that names things differently. If you find one, paste:
-   > *"Loosen every grader pattern of `cascade-merge-line` that pins a variable name, whitespace or
-   > a line break, so that any correct test that follows the skill passes. Keep one grader per
+   > *"Loosen every grader pattern of `cascade-merge-line` that pins a variable name, a call the
+   > skill does not prescribe (such as `intArrayOf` or `listOf`), whitespace or a line break, so that any correct test that follows the skill passes. Keep one grader per
    > convention. Run `npm run eval:lint` again."*
 3. Lint and dry-run. Neither calls a model:
    ```bash

@@ -42,6 +42,7 @@ depends on another.
 - **Nothing prepared in advance.** Setup is the first 10 minutes of block 01
   ([01 · Getting started](01-getting-started.md)): install Copilot CLI 1.0.114 or later, log in
   with your Copilot Business or Enterprise seat, clone, build. Windows: WSL 2, the hooks are bash.
+  Five optional minutes the day before: [prep.md](prep.md) (`scripts/check-system.sh` checks the versions).
 - **`scripts/check-setup.sh`** then shows in 20 seconds what works on your account. Organisation
   settings can switch off skills, hooks, plugins or MCP without an error; skip what is blocked.
 - **No image input needed.** Some organisations disable it, so no guide or exercise uses a screenshot. Give the agent

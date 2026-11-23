@@ -149,7 +149,8 @@ exit 0
 - **`git-context.sh`** (`sessionStart`) vypíše branch a až 10 necommitnutých souborů jako
   `{"additionalContext": "..."}`. Je to snímek ze startu session a neobnovuje se.
 - **`block-destructive.sh`** (`preToolUse`): stejná kostra s pěti regex pravidly. Každý důvod
-  jmenuje bezpečnou cestu, například `git push --force-with-lease`. `rm -rf` na výstup buildu projde.
+  jmenuje bezpečnou cestu, například `git push --force-with-lease`. `rm -rf` na výstup buildu projde, stejně jako
+  dočasná složka: cesta `/tmp/…` nebo proměnná, kterou stejný příkaz naplnil přes `mktemp`.
 - **`format.sh`** (`postToolUse`) vezme `.path` z objektu, nebo hlavičky `*** Add File:` /
   `*** Update File:` z řetězce s patchem, a spustí Prettier na `web/src/` (potřebuje
   `cd web && npm ci`). Jeho `additionalContext` říká modelu, aby si změněný soubor přečetl znovu.

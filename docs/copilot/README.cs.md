@@ -42,6 +42,7 @@ nezávisí na jiném.
 - **Nic připraveného předem.** Nastavení je prvních 10 minut bloku 01
   ([01 · Začínáme](01-getting-started.cs.md)): nainstaluj Copilot CLI 1.0.114 nebo novější, přihlas
   se seatem Copilot Business nebo Enterprise, naklonuj, sestav. Windows: WSL 2, hooky jsou v bashi.
+  Pět volitelných minut den předem: [prep.cs.md](prep.cs.md) (`scripts/check-system.sh` zkontroluje verze).
 - **`scripts/check-setup.sh`** pak za 20 sekund ukáže, co na tvém účtu funguje. Nastavení
   organizace umí bez chyby vypnout skilly, hooky, pluginy nebo MCP; co je blokované, přeskoč.
 - **Obrazový vstup není potřeba.** Některé organizace ho vypínají, proto žádný návod ani cvičení nepoužívá screenshot. Dej agentovi
