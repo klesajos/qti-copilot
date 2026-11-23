@@ -89,6 +89,19 @@ o přístup k cestám.
      ok    built-in GitHub MCP server, 6 tools (guide 05)
    ```
 
+   <details>
+   <summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+   *Zástupný program macOS, žádné JDK v `PATH`: `MISS java`*
+
+   ![Zástupný program macOS, žádné JDK v PATH: MISS java](screenshots/setup-01-java-missing.png)
+
+   *Po opravě JDK: každý řádek `ok`*
+
+   ![Po opravě JDK: každý řádek ok](screenshots/setup-02-all-ok.png)
+
+   </details>
+
 ## První session (3 min, před cvičením 0)
 
 V kořenu repa spusť `scripts/copilot-ws.sh` a napiš tyhle příkazy. Odpovídají na otázku „Co tohle

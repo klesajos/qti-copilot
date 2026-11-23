@@ -73,6 +73,35 @@ Patche cvičení 0, 4 a `ex5-undo` všechny přidávají `GameServiceTest.kt`: n
 - `git status --short` → ` M …/GameService.kt` a `?? …/GameServiceTest.kt`, nic dalšího
 - Krok 3 skončil na neúspěšné aserci, ne na chybě kompilace, a bez opravy
 
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*Dotaz na důvěru ke složce*
+
+![Dotaz na důvěru ke složce](screenshots/ex0-01-folder-trust.png)
+
+*Plán, test před opravou*
+
+![Plán, test před opravou](screenshots/ex0-02-plan-ready.png)
+
+*Schválení úpravy*
+
+![Schválení úpravy](screenshots/ex0-03-update-file.png)
+
+*Červená: neúspěšná aserce, zatím bez opravy*
+
+![Červená: neúspěšná aserce, zatím bez opravy](screenshots/ex0-04-red.png)
+
+*Zelená: 6 testů prošlo*
+
+![Zelená: 6 testů prošlo](screenshots/ex0-05-green.png)
+
+*`/diff`: dva soubory pod `api/`*
+
+![/diff: dva soubory pod api/](screenshots/ex0-06-diff.png)
+
+</details>
+
 ### Klíčová část řešení
 
 ```diff
@@ -137,6 +166,15 @@ do souboru instrukcí vázaného na cestu, ne do každého promptu; `engine/` a 
   `Tests  11 passed (11)`), žádné nálezy ESLintu, `✓ built in …`
 - `grep -rn 'style=' web/src` → nevypíše nic
 - `git status --short` → jen `.github/instructions/web.instructions.md` a cesty pod `web/src/`
+
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*Pravidla načtena; npm nejdřív selže v kořeni, opakování ve `web/` projde*
+
+![Pravidla načtena; npm nejdřív selže v kořeni, opakování ve web/ projde](screenshots/ex1-01-tile-colours.png)
+
+</details>
 
 ### Klíčová část řešení
 
@@ -222,6 +260,15 @@ endpointu, a s ním postavený `DELETE /api/v1/games/{id}`: 204, strukturovaná 
 - `grep -cE 'NO_CONTENT|noContent\(\)' api/src/main/kotlin/com/quanti/g2048/api/GameController.kt` → `1`
 - `./gradlew :api:test` → `BUILD SUCCESSFUL`
 - `grep -o 'tests="[0-9]*"' api/build/test-results/test/*.xml` → víc než `tests="5"` (reference: 8)
+
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*`skill(api-endpoint)` načten, endpoint pro smazání přidán*
+
+![skill(api-endpoint) načten, endpoint pro smazání přidán](screenshots/ex2-01-delete-endpoint.png)
+
+</details>
 
 ### Klíčová část řešení
 
@@ -316,6 +363,19 @@ hook `agentStop` běží při každém zastavení, ať se model rozhodl jakkoli.
 - Červený test: `payload true | $hook; echo "exit=$?"` → jeden řádek s varováním, pak `exit=2`
 - V session začíná kolo, které jsi nenapsal, textem `run-tests hook: tests are failing in: web`
 
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*Hook vrací padající testy zpět*
+
+![Hook vrací padající testy zpět](screenshots/ex3-01-gate-sent-back.png)
+
+*`/diff` po opravě*
+
+![/diff po opravě](screenshots/ex3-02-diff.png)
+
+</details>
+
 ### Klíčová část řešení
 
 ```diff
@@ -388,6 +448,23 @@ implementuje ho: každý stav hry, který API vrací, nese `bestScore`. Pull req
 - `./gradlew build` → `BUILD SUCCESSFUL`
 - `./gradlew :api:bootRun`; `curl -s -X POST localhost:8080/api/v1/games | jq .data.bestScore` → `0`
 - `/pr view` → pull request branche `best-score`
+
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*`/mcp get github-mcp-server` → `tools (2)`*
+
+![/mcp get github-mcp-server → tools (2)](screenshots/ex4-01-mcp-tools.png)
+
+*`list_issues` přes MCP, pak kritéria z `ex4-issue.md`*
+
+![list_issues přes MCP, pak kritéria z ex4-issue.md](screenshots/ex4-02-criteria.png)
+
+*Implementováno jen v `api`, build zelený, 9 API testů*
+
+![Implementováno jen v api, build zelený, 9 API testů](screenshots/ex4-03-implemented.png)
+
+</details>
 
 ### Klíčová část řešení
 
@@ -471,6 +548,19 @@ testů zůstanou mimo hlavní kontext a explorer ani reviewer nemůžou editovat
   → `tests="15" skipped="0" failures="0"`
 - `git status --short` → dva změněné soubory, `Board.kt` a `BoardTest.kt`
 - Report agenta `kotlin-reviewer` neobsahuje žádný Blocker
+
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*Explorer, pak test writer: 2 z 15 červené*
+
+![Explorer, pak test writer: 2 z 15 červené](screenshots/ex5-01-agents-red.png)
+
+*15 z 15 zelené, report revieweru bez Blockeru*
+
+![15 z 15 zelené, report revieweru bez Blockeru](screenshots/ex5-02-fix-and-review.png)
+
+</details>
 
 ### Klíčová část řešení
 
@@ -557,6 +647,19 @@ udělej smoke test), ve verzi 1.1.0 a session ho nabízí jako `/2048-dev:run-lo
 - `jq -r '.plugins[0].version, .metadata.version' marketplace.json` → `1.1.0`, pak `1.0.0`
 - Dva příkazy z kroku 3 → `• 2048-dev (v1.1.0)`, pak `build-test` a `run-local`
 - Krok 4 odpoví oběma příkazy a oběma porty
+
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*Návrhy `/2048-dev:` obsahují `run-local`*
+
+![Návrhy /2048-dev: obsahují run-local](screenshots/ex6-01-slash-suggestions.png)
+
+*`run-local` odpoví oběma příkazy a porty*
+
+![run-local odpoví oběma příkazy a porty](screenshots/ex6-02-run-local-answer.png)
+
+</details>
 
 ### Klíčová část řešení
 
@@ -691,6 +794,19 @@ projde lintem i dry-runem, a umíš říct, co zaznamenaný výsledek se skillem
 - Dry-run → `Baseline:   skills=without`, `Plans:      2`, stejný `Eval hash` v obou plánech
 - `git status --short` → ` M evals/board-tests/eval.yaml` a nic dalšího
 
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*Stimul `cascade-merge-line` přidán, `eval:lint` validní*
+
+![Stimul cascade-merge-line přidán, eval:lint validní](screenshots/ex8-01-eval-lint.png)
+
+*Gradery uvolněné, `eval:lint` stále validní*
+
+![Gradery uvolněné, eval:lint stále validní](screenshots/ex8-02-loosened.png)
+
+</details>
+
 ### Klíčová část řešení
 
 ```yaml
@@ -741,6 +857,19 @@ Celé řešení aplikuješ: `git apply docs/copilot/solutions/ex8.patch`
 
 - Po kroku 1: `cd web && npm test` → `1 failed`, `expected "vi.fn()" to be called 1 times, but got 2 times`
 - Po kroku 2: `cd web && npm test && npm run lint && npm run build` → `Tests  8 passed (8)`, `✓ built in`
+
+<details>
+<summary>Snímky z posledního zkušebního běhu (2026-11-23)</summary>
+
+*Červená: called 2 times*
+
+![Červená: called 2 times](screenshots/bonus-01-red.png)
+
+*Zelená: 8 prošlo, lint i build čisté*
+
+![Zelená: 8 prošlo, lint i build čisté](screenshots/bonus-02-green.png)
+
+</details>
 
 ### Klíčová část řešení
 

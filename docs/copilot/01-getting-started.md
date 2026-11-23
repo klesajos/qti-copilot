@@ -89,6 +89,19 @@ repository, asking for path access.
      ok    built-in GitHub MCP server, 6 tools (guide 05)
    ```
 
+   <details>
+   <summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+   *macOS stub, no JDK on `PATH`: `MISS java`*
+
+   ![macOS stub, no JDK on PATH: MISS java](screenshots/setup-01-java-missing.png)
+
+   *After the JDK fix: every line `ok`*
+
+   ![After the JDK fix: every line ok](screenshots/setup-02-all-ok.png)
+
+   </details>
+
 ## First session (3 min, before exercise 0)
 
 Start `scripts/copilot-ws.sh` in the repo root and type these. They answer "what did this repo

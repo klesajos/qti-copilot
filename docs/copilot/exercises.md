@@ -71,6 +71,35 @@ The patches of exercises 0, 4 and `ex5-undo` all add `GameServiceTest.kt`: apply
 - `git status --short` → ` M …/GameService.kt` and `?? …/GameServiceTest.kt`, nothing else
 - Step 3 ended on a failed assertion, not on a compile error, and without the fix
 
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*Folder trust prompt*
+
+![Folder trust prompt](screenshots/ex0-01-folder-trust.png)
+
+*The plan, test before fix*
+
+![The plan, test before fix](screenshots/ex0-02-plan-ready.png)
+
+*Edit approval*
+
+![Edit approval](screenshots/ex0-03-update-file.png)
+
+*Red: a failed assertion, no fix yet*
+
+![Red: a failed assertion, no fix yet](screenshots/ex0-04-red.png)
+
+*Green: 6 tests passed*
+
+![Green: 6 tests passed](screenshots/ex0-05-green.png)
+
+*`/diff`: two files under `api/`*
+
+![/diff: two files under api/](screenshots/ex0-06-diff.png)
+
+</details>
+
 ### Key part of the solution
 
 ```diff
@@ -134,6 +163,15 @@ instruction file, not in each prompt; `engine/` and `api/` have one, `web/` does
 - `cd web && npm test && npm run lint && npm run build` → 0 tests failed (the solution ends at `Tests  11 passed (11)`), no ESLint findings, `✓ built in …`
 - `grep -rn 'style=' web/src` → prints nothing
 - `git status --short` → `.github/instructions/web.instructions.md` and paths under `web/src/` only
+
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*Rules discovered; npm first fails at the root, the retry in `web/` passes*
+
+![Rules discovered; npm first fails at the root, the retry in web/ passes](screenshots/ex1-01-tile-colours.png)
+
+</details>
 
 ### Key part of the solution
 
@@ -219,6 +257,15 @@ endpoint, and `DELETE /api/v1/games/{id}` built with it: 204, a structured 404, 
 - `grep -cE 'NO_CONTENT|noContent\(\)' api/src/main/kotlin/com/quanti/g2048/api/GameController.kt` → `1`
 - `./gradlew :api:test` → `BUILD SUCCESSFUL`
 - `grep -o 'tests="[0-9]*"' api/build/test-results/test/*.xml` → more than `tests="5"` (reference: 8)
+
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*`skill(api-endpoint)` loaded, delete endpoint added*
+
+![skill(api-endpoint) loaded, delete endpoint added](screenshots/ex2-01-delete-endpoint.png)
+
+</details>
 
 ### Key part of the solution
 
@@ -313,6 +360,19 @@ the changed part of the tree fail, and only warns when they still fail on the ne
 - Red test: `payload true | $hook; echo "exit=$?"` → one warning line, then `exit=2`
 - In the session, a turn you did not type starts with `run-tests hook: tests are failing in: web`
 
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*The hook sends the failing tests back*
+
+![The hook sends the failing tests back](screenshots/ex3-01-gate-sent-back.png)
+
+*`/diff` after the fix*
+
+![/diff after the fix](screenshots/ex3-02-diff.png)
+
+</details>
+
 ### Key part of the solution
 
 ```diff
@@ -385,6 +445,23 @@ implements it: every game state the API returns carries `bestScore`. A pull requ
 - `./gradlew build` → `BUILD SUCCESSFUL`
 - `./gradlew :api:bootRun`; `curl -s -X POST localhost:8080/api/v1/games | jq .data.bestScore` → `0`
 - `/pr view` → the pull request of branch `best-score`
+
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*`/mcp get github-mcp-server` → `tools (2)`*
+
+![/mcp get github-mcp-server → tools (2)](screenshots/ex4-01-mcp-tools.png)
+
+*`list_issues` via MCP, then the criteria from `ex4-issue.md`*
+
+![list_issues via MCP, then the criteria from ex4-issue.md](screenshots/ex4-02-criteria.png)
+
+*Implemented in `api` only, build green, 9 API tests*
+
+![Implemented in api only, build green, 9 API tests](screenshots/ex4-03-implemented.png)
+
+</details>
 
 ### Key part of the solution
 
@@ -467,6 +544,19 @@ output stay out of the main context, and the explorer and the reviewer cannot ed
 - `grep -o 'tests="[0-9]*" skipped="[0-9]*" failures="[0-9]*"' engine/build/test-results/test/TEST-*.xml` → `tests="15" skipped="0" failures="0"`
 - `git status --short` → two modified files, `Board.kt` and `BoardTest.kt`
 - The `kotlin-reviewer` report contains no Blocker
+
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*Explorer, then test writer: 2 of 15 red*
+
+![Explorer, then test writer: 2 of 15 red](screenshots/ex5-01-agents-red.png)
+
+*15 of 15 green, reviewer report without a Blocker*
+
+![15 of 15 green, reviewer report without a Blocker](screenshots/ex5-02-fix-and-review.png)
+
+</details>
 
 ### Key part of the solution
 
@@ -553,6 +643,19 @@ smoke-test them), at version 1.1.0, and a session offers it as `/2048-dev:run-lo
 - `jq -r '.plugins[0].version, .metadata.version' marketplace.json` → `1.1.0`, then `1.0.0`
 - The two commands of step 3 → `• 2048-dev (v1.1.0)`, then `build-test` and `run-local`
 - Step 4 answers with both commands and both ports
+
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*`/2048-dev:` suggestions list `run-local`*
+
+![/2048-dev: suggestions list run-local](screenshots/ex6-01-slash-suggestions.png)
+
+*`run-local` answers with both commands and ports*
+
+![run-local answers with both commands and ports](screenshots/ex6-02-run-local-answer.png)
+
+</details>
 
 ### Key part of the solution
 
@@ -687,6 +790,19 @@ lints and dry-runs, and you can say what the recorded with/without result proves
 - The dry run → `Baseline:   skills=without`, `Plans:      2`, the same `Eval hash` in both plans
 - `git status --short` → ` M evals/board-tests/eval.yaml` and nothing else
 
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*Stimulus `cascade-merge-line` added, `eval:lint` valid*
+
+![Stimulus cascade-merge-line added, eval:lint valid](screenshots/ex8-01-eval-lint.png)
+
+*Graders loosened, `eval:lint` still valid*
+
+![Graders loosened, eval:lint still valid](screenshots/ex8-02-loosened.png)
+
+</details>
+
 ### Key part of the solution
 
 ```yaml
@@ -737,6 +853,19 @@ Apply the whole solution: `git apply docs/copilot/solutions/ex8.patch`
 
 - after step 1: `cd web && npm test` → `1 failed`, `expected "vi.fn()" to be called 1 times, but got 2 times`
 - after step 2: `cd web && npm test && npm run lint && npm run build` → `Tests  8 passed (8)`, `✓ built in`
+
+<details>
+<summary>Screenshots from the last dry run (2026-11-23)</summary>
+
+*Red: called 2 times*
+
+![Red: called 2 times](screenshots/bonus-01-red.png)
+
+*Green: 8 passed, lint and build clean*
+
+![Green: 8 passed, lint and build clean](screenshots/bonus-02-green.png)
+
+</details>
 
 ### Key part of the solution
 
